@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "path": "server",
+      "name": "Server"
+    },
+    {
+      "path": "admin",
+      "name": "Admin"
+    },
+    {
+      "path": "point-of-sale",
+      "name": "Point of Sale"
+    },
+    {
+      "path": "scanner",
+      "name": "Scanner"
+    }
+  ]
+}
