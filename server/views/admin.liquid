@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miscellaneus - Admin</title>
+  {% if session.user %}
+    <link rel="stylesheet" href="/css/app.css">
+  {% else %}
+    <link rel="stylesheet" href="/login/app.css">
+  {% endif %}
+</head>
+<body></body>
+  <div id="root"></div>
+  {% if session.user %}
+    <script type="module" src="/admin/app.js"></script>
+  {% else %}
+    <script src="/login/app.js"></script>
+  {% endif %}
+</body>
+</html>

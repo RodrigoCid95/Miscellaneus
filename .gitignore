@@ -1,3 +1,6 @@
+login/node_modules
+login/package-lock.json
+
 admin/node_modules
 admin/package-lock.json
 
@@ -9,6 +12,11 @@ scanner/package-lock.json
 
 server/node_modules
 server/package-lock.json
-server/public
+server/public/admin
+server/public/login
+server/public/point-of-sale
+server/public/scanner
 server/.debugger
 server/dist
+server/data.db
+server/key.pem

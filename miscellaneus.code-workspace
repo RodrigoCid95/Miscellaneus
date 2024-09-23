@@ -5,6 +5,10 @@
       "name": "Server"
     },
     {
+      "path": "login",
+      "name": "Login"
+    },
+    {
       "path": "admin",
       "name": "Admin"
     },
@@ -16,5 +20,18 @@
       "path": "scanner",
       "name": "Scanner"
     }
-  ]
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.debugger": true,
+      "**/key.pem": true,
+      "**/data.db": true,
+      "**/declarations.d.ts": true,
+      "**/*-lock.json": true,
+      "**/tsconfig.*": true,
+      "**/vite.config.ts": true,
+      "**/node_modules": true,
+      "**/eslint.config.js": true,
+    }
+  }
 }
