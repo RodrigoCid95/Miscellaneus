@@ -29,6 +29,9 @@ const useStyles = makeStyles({
     flexDirection: "column",
     rowGap: "10px",
   },
+  dialog: {
+    width: 'fit-content',
+  },
 })
 
 const NewUser: FC<NewUserProps> = () => {
@@ -103,7 +106,7 @@ const NewUser: FC<NewUserProps> = () => {
           icon={<AddPersonIcon />}
         />
       </DialogTrigger>
-      <DialogSurface>
+      <DialogSurface className={styles.dialog}>
         <DialogTitle>Nuevo usuario</DialogTitle>
         <DialogBody>
           <DialogContent className={styles.content}>
@@ -146,7 +149,7 @@ const NewUser: FC<NewUserProps> = () => {
             {
               loading
                 ? <Spinner />
-                : <Button appearance="primary" onClick={createUser}>Guardar</Button>
+                : <Button appearance="primary" onClick={createUser}>Crear</Button>
             }
           </DialogActions>
         </DialogBody>

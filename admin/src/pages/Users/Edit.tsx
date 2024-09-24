@@ -11,6 +11,9 @@ const useStyles = makeStyles({
     flexDirection: "column",
     rowGap: "10px",
   },
+  dialog: {
+    width: 'fit-content',
+  },
 })
 
 const EditUser: FC<EditUserProps> = ({ loadUserListEmitter, user }) => {
@@ -74,7 +77,7 @@ const EditUser: FC<EditUserProps> = ({ loadUserListEmitter, user }) => {
           icon={<EditIcon />}
         />
       </DialogTrigger>
-      <DialogSurface>
+      <DialogSurface className={styles.dialog}>
         <DialogTitle>Editar usuario</DialogTitle>
         <DialogBody>
           <DialogContent className={styles.content}>

@@ -26,6 +26,10 @@ import {
   BoxMultiple20Regular,
   Person20Filled,
   Person20Regular,
+  BarcodeScanner20Filled,
+  BarcodeScanner20Regular,
+  ContactCardGroup20Filled,
+  ContactCardGroup20Regular
 } from "@fluentui/react-icons"
 import { router } from './utils/Router'
 import LogoutButton from "./components/logout"
@@ -43,6 +47,18 @@ const routes: Route[] = [
     title: 'Productos',
     Icon: bundleIcon(BoxMultiple20Filled, BoxMultiple20Regular),
     page: lazy(() => import('./pages/Products'))
+  },
+  {
+    path: 'barcodes',
+    title: 'Códigos de barras',
+    Icon: bundleIcon(BarcodeScanner20Filled, BarcodeScanner20Regular),
+    page: lazy(() => import('./pages/BarCodes'))
+  },
+  {
+    path: 'providers',
+    title: 'Proveedores',
+    Icon: bundleIcon(ContactCardGroup20Filled, ContactCardGroup20Regular),
+    page: lazy(() => import('./pages/Providers'))
   },
   {
     path: 'users',

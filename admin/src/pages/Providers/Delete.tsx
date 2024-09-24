@@ -1,7 +1,7 @@
-import { useCallback, useState, type FC } from "react"
-import { type Emitter } from "../../utils/Emitters"
+import { type FC, useCallback, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
+import { loadProvidersEmitter } from "./List"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -15,7 +15,7 @@ const useStyles = makeStyles({
   },
 })
 
-const DeleteUser: FC<DeleteUserProps> = ({ loadUserListEmitter, user }) => {
+const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
   const styles = useStyles()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
@@ -28,15 +28,14 @@ const DeleteUser: FC<DeleteUserProps> = ({ loadUserListEmitter, user }) => {
     setChecked(Boolean(data.checked))
   }, [setChecked])
 
-  const deleteUser = useCallback(() => {
+  const deleteProvider = useCallback(() => {
     setLoading(true)
-    fetch(`${window.location.origin}/api/users/${user.id}`, {
+    fetch(`${window.location.origin}/api/providers/${item.id}`, {
       method: 'delete'
     })
-      .then(res => res.json())
       .then(() => {
         setOpen(false)
-        loadUserListEmitter.emit()
+        loadProvidersEmitter.emit()
       })
   }, [setLoading])
 
@@ -56,10 +55,10 @@ const DeleteUser: FC<DeleteUserProps> = ({ loadUserListEmitter, user }) => {
         />
       </DialogTrigger>
       <DialogSurface className={styles.dialog}>
-        <DialogTitle>Eliminar usuario</DialogTitle>
+        <DialogTitle>Eliminar proveedor</DialogTitle>
         <DialogBody>
           <DialogContent className={styles.content}>
-            <p>¿Estás seguro(a) que quieres eliminar el usuario "{user.name}({user.userName})"?</p>
+            <p>¿Estás seguro(a) que quieres eliminar el proveedor "{item.name}"?</p>
             <Checkbox
               checked={checked}
               onChange={handleChange}
@@ -70,7 +69,7 @@ const DeleteUser: FC<DeleteUserProps> = ({ loadUserListEmitter, user }) => {
             {
               loading
                 ? <Spinner />
-                : <Button disabled={!checked} appearance="primary" onClick={deleteUser}>Eliminar</Button>
+                : <Button disabled={!checked} appearance="primary" onClick={deleteProvider}>Eliminar</Button>
             }
             {!loading && (
               <DialogTrigger disableButtonEnhancement>
@@ -84,9 +83,8 @@ const DeleteUser: FC<DeleteUserProps> = ({ loadUserListEmitter, user }) => {
   )
 }
 
-export default DeleteUser
+export default DeleteProvider
 
-interface DeleteUserProps {
-  loadUserListEmitter: Emitter
-  user: Miscellaneous.User
+interface DeleteProviderProps {
+  item: Miscellaneous.Provider
 }
