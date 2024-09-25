@@ -13,7 +13,7 @@
 <body>
   <div id="root"></div>
   {% if session.user %}
-    <script src="/point-of-sale/app.js"></script>
+    <script type="module" src="/point-of-sale/app.js"></script>
   {% else %}
     <script type="module" src="/login/app.js"></script>
   {% endif %}

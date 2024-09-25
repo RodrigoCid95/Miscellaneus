@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Card, CardHeader, makeStyles, Title1, Toolbar, ToolbarDivider, Text } from '@fluentui/react-components'
+import { Card, CardHeader, makeStyles, Title1, Toolbar, ToolbarDivider, Text, Button, Spinner } from '@fluentui/react-components'
+import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from '@fluentui/react-icons'
 import LogoutButton from './Components/logout'
 import Searcher from './Components/Searcher'
 import ProductList from './Components/List'
 
+const CheckIcon = bundleIcon(CheckmarkSquare20Filled, CheckmarkSquare20Regular)
 const useStyle = makeStyles({
   app: {
     display: 'flex',
@@ -33,32 +35,37 @@ const useStyle = makeStyles({
 function App() {
   const styles = useStyle()
   const [productGroups, setProductGroups] = useState<Miscellaneous.ProductGroup[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleOnCheckout = useCallback(async () => {
-    const user: Miscellaneous.User = await fetch(`${window.location.origin}/api/profile`).then(res => res.json())
-    const date = new Date()
-    const newSales: Miscellaneous.NewSale[] = []
-    for (const product of productGroups) {
-      newSales.push({
-        product: {
-          id: product.id,
-          name: product.name
+    if (!loading && productGroups.length > 0) {
+      setLoading(true)
+      const user: Miscellaneous.User = await fetch(`${window.location.origin}/api/profile`).then(res => res.json())
+      const date = new Date()
+      const newSales: Miscellaneous.NewSale[] = []
+      for (const product of productGroups) {
+        newSales.push({
+          product: {
+            id: product.id,
+            name: product.name
+          },
+          user: user.id,
+          date: date.toLocaleDateString(),
+          count: product.count,
+          total: product.price * product.count
+        })
+      }
+      await fetch(`${window.location.origin}/api/sales`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        user: user.id,
-        date: date.toLocaleDateString(),
-        count: product.count,
-        total: product.price * product.count
+        body: JSON.stringify(newSales)
       })
+      setProductGroups([])
+      setLoading(false)
     }
-    await fetch(`${window.location.origin}/api/sales`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newSales)
-    })
-    setProductGroups([])
-  }, [productGroups, setProductGroups])
+  }, [productGroups, setProductGroups, loading, setLoading])
 
   useEffect(() => {
     const checkout = (event: KeyboardEvent) => {
@@ -104,6 +111,16 @@ function App() {
       <div className={styles.header}>
         <Toolbar>
           <Title1>Miscellaneous</Title1>
+          {productGroups.length > 0 && (
+            <>
+              <ToolbarDivider />
+              {
+                !loading
+                  ? <Button appearance="transparent" icon={<CheckIcon />} onClick={handleOnCheckout}/>
+                  : <Spinner />
+              }
+            </>
+          )}
           <ToolbarDivider />
           <LogoutButton />
         </Toolbar>
