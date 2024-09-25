@@ -1,6 +1,10 @@
+import { verifyAdminSession } from "./middlewares/sessions"
+
 @Namespace('api/providers')
+@Middlewares({ before: [verifyAdminSession] })
 export class ProviderController {
   @Model('ProvidersModel') private providersModel: Models<'ProvidersModel'>
+
   @Get('/')
   public async get(_: PXIOHTTP.Request<Miscellaneous.Session>, res: PXIOHTTP.Response): Promise<void> {
     const providers = await this.providersModel.getAll()
@@ -45,5 +49,17 @@ export class ProviderController {
     res.json({
       ok: true
     })
+  }
+}
+
+@Namespace('api/provider')
+export class ProvideController {
+  @Model('ProvidersModel') private providersModel: Models<'ProvidersModel'>
+
+  @Get('/:id')
+  public async get(req: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
+    const { id = '' } = req.params
+    const provider = await this.providersModel.get(Number(id))
+    res.json(provider)
   }
 }

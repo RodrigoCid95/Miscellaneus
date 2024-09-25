@@ -20,6 +20,9 @@ import BarCodeViewer from "./BarCode"
 
 const loadProductListEmitter = new Emitter()
 const useStyles = makeStyles({
+  container: {
+    overflow: 'auto'
+  },
   spinner: {
     marginTop: tokens.spacingVerticalL,
     marginLeft: 'auto',
@@ -30,7 +33,8 @@ const useStyles = makeStyles({
   },
   actions: {
     display: 'flex',
-    gap: tokens.spacingHorizontalM
+    gap: tokens.spacingHorizontalM,
+    flexWrap: 'wrap'
   }
 })
 
@@ -45,7 +49,7 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
     },
     renderCell: (item) => {
       return (
-        <TableCellLayout>
+        <TableCellLayout truncate>
           {item.name}
         </TableCellLayout>
       )
@@ -58,7 +62,7 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
     },
     renderCell: (item) => {
       return (
-        <TableCellLayout>
+        <TableCellLayout truncate>
           {item.description || ''}
         </TableCellLayout>
       )
@@ -74,7 +78,7 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
     },
     renderCell: (item) => {
       return (
-        <TableCellLayout>
+        <TableCellLayout truncate>
           {item.provider.name}
         </TableCellLayout>
       )
@@ -87,7 +91,7 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
     },
     renderCell: (item) => {
       return (
-        <TableCellLayout>
+        <TableCellLayout truncate>
           {item.sku}
         </TableCellLayout>
       )
@@ -100,7 +104,7 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
     },
     renderCell: (item) => {
       return (
-        <TableCellLayout>
+        <TableCellLayout truncate>
           ${item.price}
         </TableCellLayout>
       )
@@ -116,7 +120,7 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
     },
     renderCell: (item) => {
       return (
-        <TableCellLayout>
+        <TableCellLayout truncate>
           {item.stock}
         </TableCellLayout>
       )
@@ -131,7 +135,7 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
       const styles = useStyles()
 
       return (
-        <div className={styles.actions}>
+        <TableCellLayout className={styles.actions}>
           <BarCodeViewer barCode={{
             id: item.sku as unknown as number,
             name: item.name,
@@ -139,7 +143,7 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
           }} />
           <EditProduct item={item} />
           <DeleteProduct item={item} />
-        </div>
+        </TableCellLayout>
       )
     },
   }),
@@ -169,7 +173,7 @@ const ProductList: FC = () => {
   }, [loadProductList])
 
   return (
-    <>
+    <div className={styles.container}>
       {loading && <Spinner className={styles.spinner} />}
       {!loading && (
         <DataGrid
@@ -178,6 +182,7 @@ const ProductList: FC = () => {
           columns={columns}
           sortable
           getRowId={(item: Miscellaneous.Product) => item.id}
+          resizableColumns
         >
           <DataGridHeader>
             <DataGridRow>
@@ -197,7 +202,7 @@ const ProductList: FC = () => {
           </DataGridBody>
         </DataGrid>
       )}
-    </>
+    </div>
   )
 }
 

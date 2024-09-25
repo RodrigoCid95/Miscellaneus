@@ -1,8 +1,8 @@
 import { type FC, useCallback, useState } from "react"
 import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, makeStyles, DialogActions } from "@fluentui/react-components"
-import { bundleIcon, Eye20Filled, Eye20Regular } from "@fluentui/react-icons"
+import { bundleIcon, BarcodeScanner20Filled, BarcodeScanner20Regular } from "@fluentui/react-icons"
 
-const EyeIcon = bundleIcon(Eye20Filled, Eye20Regular)
+const BarcodeScannerIcon = bundleIcon(BarcodeScanner20Filled, BarcodeScanner20Regular)
 const useStyles = makeStyles({
   content: {
     display: "flex",
@@ -39,7 +39,7 @@ const BarCodeViewer: FC<BarCodeViewerProps> = ({ barCode }) => {
       <DialogTrigger disableButtonEnhancement>
         <Button
           aria-label="View"
-          icon={<EyeIcon />}
+          icon={<BarcodeScannerIcon />}
         />
       </DialogTrigger>
       <DialogSurface className={styles.dialog}>

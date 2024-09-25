@@ -84,7 +84,7 @@ const EditProduct: FC<EditProductProps> = ({ item }) => {
         setOpen(false)
         loadProductListEmitter.emit()
       })
-  }, [name, description, sku, price, minStock, provider, setNameVerification, setSkuVerification, setPriceVerification, setMinStockVerification])
+  }, [name, description, sku, price, stock, minStock, provider, setNameVerification, setSkuVerification, setPriceVerification, setMinStockVerification])
 
   return (
     <>

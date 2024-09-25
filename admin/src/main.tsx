@@ -1,7 +1,7 @@
+import { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components'
 import App from './App.tsx'
-import { useEffect, useState } from 'react'
 
 const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)')
 

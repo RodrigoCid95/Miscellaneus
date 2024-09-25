@@ -1,7 +1,11 @@
+import { verifyAdminSession } from "./middlewares/sessions"
+
 @Namespace('api/products')
+@Middlewares({ before: [verifyAdminSession] })
 export class ProductsController {
   @Model('ProductsModel') private productsModel: Models<'ProductsModel'>
   @Model('ProvidersModel') private providersModel: Models<'ProvidersModel'>
+  
   @Get('/')
   public async index(_: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
     const productResults = await this.productsModel.getAll()
@@ -60,5 +64,32 @@ export class ProductsController {
     res.json({
       ok: true
     })
+  }
+}
+
+@Namespace('api/products')
+export class ProductsPublicController {
+  @Model('ProductsModel') private productsModel: Models<'ProductsModel'>
+  @Model('ProvidersModel') private providersModel: Models<'ProvidersModel'>
+
+  @Get('/:query')
+  public async get(req: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
+    const { query = '' } = req.params
+    const productResults = await this.productsModel.find(query)
+    const providerResults = await this.providersModel.getAll()
+    const products: Miscellaneous.Product[] = productResults.map(({ rowid: id, name, description, sku, price, stock, min_stock: minStock, provider: providerId }) => {
+      const provider = providerResults.find(provider => provider.id === providerId) as Miscellaneous.Provider
+      return {
+        id,
+        name,
+        description,
+        sku,
+        price,
+        stock,
+        minStock,
+        provider
+      }
+    })
+    res.json(products)
   }
 }

@@ -27,9 +27,21 @@ export class ProductsModel {
       })
     })
   }
+  public async find(query: string): Promise<Miscellaneous.ProductResult[]> {
+    return await new Promise<Miscellaneous.ProductResult[]>(resolve => {
+      this.db.all<Miscellaneous.ProductResult>('SELECT rowid, * FROM products WHERE name LIKE ? OR sku LIKE ?', [`%${query}%`, `%${query}%`], (err, rows) => {
+        if (err) {
+          console.error(err)
+          resolve([])
+        } else {
+          resolve(rows)
+        }
+      })
+    })
+  }
   public async create({ name, description, sku, price, stock, minStock, provider }: Miscellaneous.NewProduct): Promise<void> {
     await new Promise<void>(resolve => {
-      this.db.run('INSERT INTO products (name, description, sku, price, stock, min_stock, provider) VALUES (?, ?, ?, ?, ?, ?)', [name, description, sku, price, stock, minStock, provider], (err) => {
+      this.db.run('INSERT INTO products (name, description, sku, price, stock, min_stock, provider) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, description, sku, price, stock, minStock, provider], (err) => {
         if (err) {
           console.error(err)
         }

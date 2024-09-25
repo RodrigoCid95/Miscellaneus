@@ -22,6 +22,9 @@ declare global {
     interface NewProduct extends Omit<Omit<ProductResult, 'rowid'>, 'min_stock'> {
       minStock: number
     }
+    interface ProductGroup extends Miscellaneous.Product {
+      count: number
+    }
   }
 }
 
