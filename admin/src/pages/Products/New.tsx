@@ -95,6 +95,7 @@ const NewProduct: FC<NewProductProps> = () => {
           setDescription('')
           setSku('')
           setPrice(0)
+          setStock(0)
           setMinStock(0)
           setProvider(null)
         }}

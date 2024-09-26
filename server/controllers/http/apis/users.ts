@@ -62,6 +62,7 @@ const verifyFields = (veryPass: boolean = true) => async function (req: PXIOHTTP
 @Middlewares({ before: [verifyAdminSession] })
 export class UsersController {
   @Model('UsersModel') public usersModel: Models<'UsersModel'>
+  
   @Get('/')
   public async index(req: PXIOHTTP.Request<Miscellaneous.Session>, res: PXIOHTTP.Response): Promise<void> {
     const results = await this.usersModel.getAll()

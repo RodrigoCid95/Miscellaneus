@@ -1,1 +1,1 @@
-CREATE TABLE IF NOT EXISTS bar_codes (name TEXT, title TEXT, value TEXT);
+CREATE TABLE IF NOT EXISTS bar_codes (name TEXT, tag TEXT, value TEXT);

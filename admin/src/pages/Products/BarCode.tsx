@@ -25,7 +25,7 @@ const BarCodeViewer: FC<BarCodeViewerProps> = ({ barCode }) => {
 
   const handleDownload = useCallback(() => {
     const anchor = document.createElement('a')
-    anchor.href = `${window.location.origin}/api/bar-code/${barCode.id}`
+    anchor.href = `${window.location.origin}/bar-code/${barCode.id}`
     anchor.download = `${barCode.name}.png`
     anchor.click()
   }, [setOpen])
@@ -46,7 +46,7 @@ const BarCodeViewer: FC<BarCodeViewerProps> = ({ barCode }) => {
         <DialogTitle>{barCode.name}</DialogTitle>
         <DialogBody>
           <DialogContent className={styles.content}>
-            <img className={styles.img} src={`${window.location.origin}/api/bar-code/${barCode.id}`} alt={barCode.name} />
+            <img className={styles.img} src={`${window.location.origin}/bar-code/${barCode.id}`} alt={barCode.name} />
           </DialogContent>
           <DialogActions>
             <Button appearance="primary" onClick={handleDownload}>Descargar</Button>

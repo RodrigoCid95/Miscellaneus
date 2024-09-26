@@ -14,9 +14,9 @@ export class SalesModel {
       })
     })
   }
-  public async create({ product, user, date, count, total }: Miscellaneous.NewSale): Promise<void> {
+  public async create({ product, count, total }: Miscellaneous.NewSale, idUser: Miscellaneous.User['id'], date: Miscellaneous.SaleResult['date']): Promise<void> {
     return await new Promise<void>(resolve => {
-      this.db.run('INSERT INTO sales (id_product, id_user, date, count, total) VALUES (?, ?, ?, ?, ?)', [product.id, user, date, count, total], (err) => {
+      this.db.run('INSERT INTO sales (id_product, id_user, date, count, total) VALUES (?, ?, ?, ?, ?)', [product, idUser, date, count, total], (err) => {
         if (err) {
           console.error(err)
         }

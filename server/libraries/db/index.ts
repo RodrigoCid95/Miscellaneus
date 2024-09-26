@@ -15,5 +15,9 @@ export const db = async () => {
   await new Promise(resolve => connector.run(providers, resolve))
   await new Promise(resolve => connector.run(products, resolve))
   await new Promise(resolve => connector.run(sales, resolve))
+  const results = await new Promise<Miscellaneous.UserResult[]>(resolve => connector.all<Miscellaneous.UserResult>('SELECT * FROM users', (_, rows) => resolve(rows)))
+  if (results.length === 0) {
+    await new Promise<void>(resolve => connector.run('INSERT INTO users (name, user_name, hash, is_admin) VALUES (?, ?, ?, ?)', ['Admin', 'admin', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 1], resolve))
+  }
   return connector
 }

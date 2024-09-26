@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
 import { Card, CardHeader, makeStyles, Title1, Toolbar, ToolbarDivider, Text, Button, Spinner } from '@fluentui/react-components'
 import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from '@fluentui/react-icons'
 import LogoutButton from './Components/logout'
-import Searcher from './Components/Searcher'
-import ProductList from './Components/List'
+
+const Searcher = lazy(() => import('./Components/Searcher'))
+const ProductList = lazy(() => import('./Components/List'))
 
 const CheckIcon = bundleIcon(CheckmarkSquare20Filled, CheckmarkSquare20Regular)
 const useStyle = makeStyles({
@@ -40,17 +41,10 @@ function App() {
   const handleOnCheckout = useCallback(async () => {
     if (!loading && productGroups.length > 0) {
       setLoading(true)
-      const user: Miscellaneous.User = await fetch(`${window.location.origin}/api/profile`).then(res => res.json())
-      const date = new Date()
       const newSales: Miscellaneous.NewSale[] = []
       for (const product of productGroups) {
         newSales.push({
-          product: {
-            id: product.id,
-            name: product.name
-          },
-          user: user.id,
-          date: date.toLocaleDateString(),
+          product: product.id,
           count: product.count,
           total: product.price * product.count
         })
@@ -116,7 +110,7 @@ function App() {
               <ToolbarDivider />
               {
                 !loading
-                  ? <Button appearance="transparent" icon={<CheckIcon />} onClick={handleOnCheckout}/>
+                  ? <Button appearance="transparent" icon={<CheckIcon />} onClick={handleOnCheckout} />
                   : <Spinner />
               }
             </>
@@ -124,10 +118,14 @@ function App() {
           <ToolbarDivider />
           <LogoutButton />
         </Toolbar>
-        <Searcher onPush={handleOnPush} />
+        <Suspense fallback={<Spinner />}>
+          <Searcher onPush={handleOnPush} />
+        </Suspense>
       </div>
       <div className={styles.content}>
-        <ProductList products={productGroups} onUpdate={setProductGroups} />
+        <Suspense fallback={<Spinner />}>
+          <ProductList products={productGroups} onUpdate={setProductGroups} />
+        </Suspense>
       </div>
       <div className={styles.footer}>
         <Card className={styles.total}>

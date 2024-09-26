@@ -12,17 +12,12 @@ declare global {
       rowid: number
       id_product: Miscellaneous.ProductResult['rowid']
       id_user: Miscellaneous.UserResult['rowid']
-      date: string
+      date: number
       count: number
       total: number
     }
     interface NewSale {
-      product: {
-        id: Miscellaneous.ProductResult['rowid']
-        name: Miscellaneous.ProductResult['name']
-      }
-      user: Miscellaneous.UserResult['rowid']
-      date: string
+      product: Miscellaneous.ProductResult['rowid']
       count: number
       total: number
     }

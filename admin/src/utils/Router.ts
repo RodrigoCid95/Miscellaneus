@@ -14,7 +14,7 @@ class Router {
     this.#listeners = {
       change: new Emitter()
     }
-    this.#path = 'products'
+    this.#path = ''
   }
   on(event: RouterEvents, callback: Callback) {
     this.#listeners[event].on(callback)

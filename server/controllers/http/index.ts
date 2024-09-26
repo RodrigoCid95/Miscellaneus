@@ -1,11 +1,13 @@
+import JsBarcode from 'jsbarcode'
+import { createCanvas } from 'canvas'
 import escpos from 'escpos'
 import escposUSB from 'escpos-usb'
 import escposNetwork from 'escpos-network'
 import { verifyPointSaleSession, verifyAdminSession } from './middlewares/sessions'
 
 export class IndexController {
-  @Model('UsersModel') private usersModel: Models<'UsersModel'>
-
+  @Model('BarCodesModel') private barCodesModel: Models<'BarCodesModel'>
+  
   @Before([verifyPointSaleSession])
   @View('/')
   public index = 'index'
@@ -13,9 +15,31 @@ export class IndexController {
   @Before([verifyAdminSession])
   @View('/admin')
   public admin = 'admin'
-
-  @View('/scanner')
-  public scanner = 'scanner'
+  
+  @Get('/bar-code/:value')
+  public async barCode(req: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
+    const { value } = req.params
+    const { title } = req.query
+    let barCode = await this.barCodesModel.get(Number(value))
+    if (!barCode) {
+      barCode = {
+        id: NaN,
+        name: '',
+        tag: typeof title === 'string' ? title !== '' ? title : value : value,
+        value
+      }
+    }
+    const canvas = createCanvas(1000, 1000)
+    JsBarcode(canvas, barCode.value, {
+      text: barCode.tag
+    })
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    res.set('Pragma', 'no-cache')
+    res.set('Expires', '0')
+    res.set('Surrogate-Control', 'no-store')
+    res.set('Content-Type', 'image/png')
+    res.send(canvas.toBuffer())
+  }
 
   @Get('/test')
   public test(req: PXIOHTTP.Request<Miscellaneous.Session>, res: PXIOHTTP.Response) {

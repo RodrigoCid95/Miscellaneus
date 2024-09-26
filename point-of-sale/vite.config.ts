@@ -11,7 +11,7 @@ export default defineConfig({
       },
       output: {
         entryFileNames: 'app.js'
-      }
+      },
     },
     outDir: './../server/public/point-of-sale',
     emptyOutDir: true,

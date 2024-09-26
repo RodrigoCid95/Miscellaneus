@@ -1,5 +1,6 @@
 export * from './auth'
 export * from './barCodes'
+export * from './history'
 export * from './products'
 export * from './profile'
 export * from './providers'

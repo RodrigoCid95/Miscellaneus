@@ -1,5 +1,3 @@
-import JsBarcode from 'jsbarcode'
-import { createCanvas } from 'canvas'
 import { verifyAdminSession } from './middlewares/sessions'
 
 @Namespace('api/bar-codes')
@@ -50,34 +48,5 @@ export class BarCodesController {
     res.json({
       ok: true
     })
-  }
-}
-
-@Namespace('api/bar-code')
-export class BarCodeController {
-  @Model('BarCodesModel') private barCodesModel: Models<'BarCodesModel'>
-  @Get('/:value')
-  public async barCode(req: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
-    const { value } = req.params
-    const { title } = req.query
-    let barCode = await this.barCodesModel.get(Number(value))
-    if (!barCode) {
-      barCode = {
-        id: NaN,
-        name: '',
-        tag: typeof title === 'string' ? title !== '' ? title : value : value,
-        value
-      }
-    }
-    const canvas = createCanvas(1000, 1000)
-    JsBarcode(canvas, barCode.value, {
-      text: barCode.tag
-    })
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
-    res.set('Pragma', 'no-cache')
-    res.set('Expires', '0')
-    res.set('Surrogate-Control', 'no-store')
-    res.set('Content-Type', 'image/png')
-    res.send(canvas.toBuffer())
   }
 }

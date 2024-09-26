@@ -38,7 +38,7 @@ export class SalesController {
         id: saleResult.rowid,
         product,
         user,
-        date: saleResult.date,
+        date: `saleResult.date`,
         count: saleResult.count,
         total: saleResult.total
       })
@@ -46,7 +46,7 @@ export class SalesController {
     res.json(sales)
   }
   @Post('/')
-  public async create(req: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
+  public async create(req: PXIOHTTP.Request<Miscellaneous.Session>, res: PXIOHTTP.Response): Promise<void> {
     const sales: Miscellaneous.NewSale[] = req.body
     if (!Array.isArray(sales)) {
       res.json({
@@ -56,10 +56,13 @@ export class SalesController {
       })
       return
     }
+    const { id: idUser } = req.session.user as Miscellaneous.User
+    const date = new Date()
+    const UTC = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getUTCMilliseconds())
     const report: string[][] = []
     let totalTotal = 0
-    for (const { product, user, date, count, total } of sales) {
-      if (!product || !user || !date || !count || !total) {
+    for (const { product, count, total } of sales) {
+      if (!product || !count || !total) {
         res.json({
           ok: false,
           code: 'bad-request',
@@ -67,8 +70,18 @@ export class SalesController {
         })
         return
       }
-      await this.salesModel.create({ product, user, date, count, total })
-      report.push([count.toString(), product.name, total.toFixed(2).toString()])
+      const productResult = await this.productsModel.get(product) as Miscellaneous.ProductResult
+      await this.salesModel.create({ product, count, total }, idUser, UTC)
+      await this.productsModel.update(product, {
+        name: productResult.name,
+        description: productResult.description,
+        sku: productResult.sku,
+        price: productResult.price,
+        stock: productResult.stock - count,
+        minStock: productResult.min_stock,
+        provider: productResult.provider
+      })
+      report.push([count.toString(), productResult.name, total.toFixed(2).toString()])
       totalTotal += total
     }
     escpos.USB = escposUSB
