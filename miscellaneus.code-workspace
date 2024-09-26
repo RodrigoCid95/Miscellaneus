@@ -1,20 +1,12 @@
 {
   "folders": [
     {
-      "path": "server",
-      "name": "Server"
+      "name": "Server",
+      "path": "server"
     },
     {
-      "path": "login",
-      "name": "Login"
-    },
-    {
-      "path": "admin",
-      "name": "Admin"
-    },
-    {
-      "path": "point-of-sale",
-      "name": "Point of Sale"
+      "name": "Client",
+      "path": "client"
     }
   ],
   "settings": {

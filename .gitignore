@@ -1,21 +1,9 @@
-login/node_modules
-login/package-lock.json
-
-admin/node_modules
-admin/package-lock.json
-
-point-of-sale/node_modules
-point-of-sale/package-lock.json
-
-scanner/node_modules
-scanner/package-lock.json
+client/node_modules
+client/package-lock.json
 
 server/node_modules
 server/package-lock.json
-server/public/admin
-server/public/login
-server/public/point-of-sale
-server/public/scanner
+server/public
 server/.debugger
 server/dist
 server/data.db

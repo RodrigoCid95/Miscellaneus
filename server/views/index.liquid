@@ -7,15 +7,15 @@
   {% if session.user %}
     <link rel="stylesheet" href="/css/app.css">
   {% else %}
-    <link rel="stylesheet" href="/login/app.css">
+    <link rel="stylesheet" href="/css/login.css">
   {% endif %}
 </head>
 <body>
   <div id="root"></div>
   {% if session.user %}
-    <script type="module" src="/point-of-sale/app.js"></script>
+    <script type="module" src="/js/checkout.js"></script>
   {% else %}
-    <script type="module" src="/login/app.js"></script>
+    <script type="module" src="/js/login.js"></script>
   {% endif %}
 </body>
 </html>
