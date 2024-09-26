@@ -15,10 +15,6 @@
     {
       "path": "point-of-sale",
       "name": "Point of Sale"
-    },
-    {
-      "path": "scanner",
-      "name": "Scanner"
     }
   ],
   "settings": {
