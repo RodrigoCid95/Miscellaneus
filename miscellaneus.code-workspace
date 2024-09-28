@@ -21,5 +21,99 @@
       "**/node_modules": true,
       "**/eslint.config.js": true,
     }
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build Client",
+        "command": "npm",
+        "type": "shell",
+        "args": [
+          "run",
+          "build"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}/../client"
+        },
+        "presentation": {
+          "reveal": "always"
+        },
+        "group": "build"
+      },
+      {
+        "label": "Build Server",
+        "command": "npm",
+        "type": "shell",
+        "args": [
+          "run",
+          "build"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}/../server"
+        },
+        "presentation": {
+          "reveal": "always"
+        },
+        "group": "build"
+      },
+      {
+        "label": "Install Server Dependencies",
+        "command": "npm",
+        "type": "shell",
+        "args": [
+          "install"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}/../server/dist"
+        },
+        "presentation": {
+          "reveal": "always"
+        },
+        "group": "build"
+      },
+      {
+        "label": "Packing Server",
+        "command": "npx",
+        "type": "shell",
+        "args": [
+          "pkg",
+          ".",
+          "--targets",
+          "node18-windows-x64,node18-linux-x64",
+          "-o",
+          "../release/Miscellaneous"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}/../server/dist"
+        },
+        "presentation": {
+          "reveal": "always"
+        },
+        "group": "build"
+      },
+      {
+        "label": "Clean",
+        "command": "npx rimfar ./.debugger && npx rimfar ./dist npx rimfar ./public",
+        "options": {
+          "cwd": "${workspaceFolder}/../server"
+        },
+        "type": "shell",
+      },
+      {
+        "label": "Compile",
+        "dependsOn": [
+          "Clean",
+          "Build Client",
+          "Build Server",
+          "Install Server Dependencies",
+          "Packing Server",
+          "Clean"
+        ],
+        "dependsOrder": "sequence",
+        "group": "build",
+        "problemMatcher": []
+      }
+    ]
   }
 }
