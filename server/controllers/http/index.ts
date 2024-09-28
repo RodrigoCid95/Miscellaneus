@@ -1,5 +1,5 @@
 import JsBarcode from 'jsbarcode'
-import { createCanvas } from 'canvas'
+import { createCanvas } from '@napi-rs/canvas'
 import escpos from 'escpos'
 import escposUSB from 'escpos-usb'
 import escposNetwork from 'escpos-network'
@@ -37,8 +37,8 @@ export class IndexController {
     res.set('Pragma', 'no-cache')
     res.set('Expires', '0')
     res.set('Surrogate-Control', 'no-store')
-    res.set('Content-Type', 'image/png')
-    res.send(canvas.toBuffer())
+    res.set('Content-Type', 'image/webp')
+    res.send(canvas.toBuffer('image/webp'))
   }
 
   @Get('/test')
