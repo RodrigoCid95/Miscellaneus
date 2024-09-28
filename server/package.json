@@ -19,7 +19,7 @@
 		"px.io": "^0.12.19-beta"
 	},
 	"pxio": {
-		"type": "http-sockets",
+		"type": "http",
 		"boot": "auto",
 		"resources": [
 			"public"
