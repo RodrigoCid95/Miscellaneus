@@ -1,4 +1,5 @@
 import './BarCodes'
+import './History'
 import './Products'
 import './Providers'
 import './Sales'

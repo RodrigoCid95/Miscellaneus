@@ -1,4 +1,4 @@
-import { verifyAdminSession } from "./middlewares/sessions"
+import { verifyAdminSession, verifySession } from "./middlewares/sessions"
 
 @Namespace('api/products')
 @Middlewares({ before: [verifyAdminSession] })
@@ -68,6 +68,7 @@ export class ProductsController {
 }
 
 @Namespace('api/products')
+@Middlewares({ before: [verifySession] })
 export class ProductsPublicController {
   @Model('ProductsModel') private productsModel: Models<'ProductsModel'>
   @Model('ProvidersModel') private providersModel: Models<'ProvidersModel'>

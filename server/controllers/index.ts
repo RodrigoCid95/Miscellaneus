@@ -3,18 +3,12 @@ import { createCanvas } from '@napi-rs/canvas'
 import escpos from 'escpos'
 import escposUSB from 'escpos-usb'
 import escposNetwork from 'escpos-network'
-import { verifyPointSaleSession, verifyAdminSession } from './middlewares/sessions'
 
 export class IndexController {
   @Model('BarCodesModel') private barCodesModel: Models<'BarCodesModel'>
-  
-  @Before([verifyPointSaleSession])
+
   @View('/')
   public index = 'index'
-
-  @Before([verifyAdminSession])
-  @View('/admin')
-  public admin = 'admin'
   
   @Get('/bar-code/:value')
   public async barCode(req: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
