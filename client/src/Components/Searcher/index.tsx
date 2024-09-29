@@ -1,12 +1,34 @@
 import { type FC, type KeyboardEvent, useCallback, useState, lazy, Suspense, useRef, useEffect } from "react"
+import { type NotFoundProps } from "./NotFound"
+import { type SelectorProps } from "./Selector"
+import { type ProductOutOfStockProps } from "./ProductOutOfStock"
 import { Button, Input, makeStyles, Spinner, tokens } from "@fluentui/react-components"
 import { bundleIcon, BarcodeScanner20Filled, BarcodeScanner20Regular } from "@fluentui/react-icons"
 import { BrowserCodeReader } from '@zxing/browser'
-import NotFound from "./NotFound"
-import Selector from "./Selector"
 
 const BarCodeIcon = bundleIcon(BarcodeScanner20Filled, BarcodeScanner20Regular)
 const Scanner = lazy(() => import("./Scanner"))
+const NotFoundLazy = lazy(() => import("./NotFound"))
+const SelectorLazy = lazy(() => import("./Selector"))
+const ProductOutOfStockLazy = lazy(() => import("./ProductOutOfStock"))
+
+const NotFound: FC<NotFoundProps> = (props) => (
+  <Suspense fallback={<Spinner />}>
+    <NotFoundLazy {...props} />
+  </Suspense>
+)
+
+const Selector: FC<SelectorProps> = (props) => (
+  <Suspense fallback={<Spinner />}>
+    <SelectorLazy {...props} />
+  </Suspense>
+)
+
+const ProductOutOfStock: FC<ProductOutOfStockProps> = (props) => (
+  <Suspense fallback={<Spinner />}>
+    <ProductOutOfStockLazy {...props} />
+  </Suspense>
+)
 
 const useStyles = makeStyles({
   root: {
@@ -25,9 +47,10 @@ const Searcher: FC<SearcherProps> = ({ onPush }) => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
   const [openScanner, setOpenScanner] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [openError, setOpenError] = useState<boolean>(false)
+  const [openNotFound, setOpenNotFound] = useState<boolean>(false)
   const [value, setValue] = useState<string>('')
   const [productsToSelection, setProductsToSelection] = useState<Miscellaneous.Product[] | null>(null)
+  const [productOutOfStock, setProductOutOfStock] = useState<Miscellaneous.Product | null>(null)
 
   useEffect(() => {
     BrowserCodeReader
@@ -44,17 +67,21 @@ const Searcher: FC<SearcherProps> = ({ onPush }) => {
       .then((results: Miscellaneous.Product[]) => {
         if (results.length > 0) {
           if (results.length === 1) {
-            onPush(results)
+            if (results[0].stock === 0) {
+              setProductOutOfStock(results[0])
+            } else {
+              onPush(results)
+            }
             setLoading(false)
           } else {
             setProductsToSelection(results)
           }
           setValue('')
         } else {
-          setOpenError(true)
+          setOpenNotFound(true)
         }
       })
-  }, [onPush, setLoading, setProductsToSelection, setValue, setOpenError])
+  }, [onPush, setLoading, setProductsToSelection, setValue, setOpenNotFound, setProductOutOfStock])
 
   return (
     <div className={styles.root}>
@@ -96,26 +123,30 @@ const Searcher: FC<SearcherProps> = ({ onPush }) => {
         </>
       )}
       {loading && <Spinner />}
-      <NotFound
-        openError={openError}
-        value={value}
-        setOpenError={() => {
-          setOpenError(false)
-          setLoading(false)
-        }}
-      />
-      <Selector
-        products={productsToSelection}
-        onClose={() => {
-          setProductsToSelection(null)
-          setLoading(false)
-        }}
-        onSelect={product => {
-          setProductsToSelection(null)
-          onPush([product])
-          setLoading(false)
-        }}
-      />
+      {openNotFound && <NotFound value={value} onClose={() => setOpenNotFound(false)} />}
+      {productsToSelection !== null && (
+        <Selector
+          products={productsToSelection}
+          onClose={() => {
+            setProductsToSelection(null)
+            setLoading(false)
+          }}
+          onSelect={product => {
+            setProductsToSelection(null)
+            onPush([product])
+            setLoading(false)
+          }}
+        />
+      )}
+      {productOutOfStock !== null && (
+        <ProductOutOfStock
+          product={productOutOfStock}
+          onClose={() => {
+            setProductOutOfStock(null)
+            inputRef.current?.focus()
+          }}
+        />
+      )}
     </div>
   )
 }

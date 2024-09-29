@@ -51,7 +51,7 @@ const Selector: FC<SelectorProps> = ({ products, onClose, onSelect }) => {
   return (
     <Dialog
       modalType="alert"
-      open={products !== null}
+      open
       onOpenChange={(_, data) => {
         if (!data.open) {
           onClose()
@@ -103,7 +103,7 @@ const Selector: FC<SelectorProps> = ({ products, onClose, onSelect }) => {
 
 export default Selector
 
-interface SelectorProps {
+export interface SelectorProps {
   products: Miscellaneous.Product[] | null
   onClose: () => void
   onSelect: (product: Miscellaneous.Product) => void
