@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FC } from "react"
 import {
+  Card,
   createTableColumn,
   DataGrid,
   DataGridBody,
@@ -19,8 +20,10 @@ import DeleteProduct from "./Delete"
 import BarCodeViewer from "./BarCode"
 
 const loadProductListEmitter = new Emitter()
+const filterProductListEmitter = new Emitter()
 const useStyles = makeStyles({
-  container: {
+  root: {
+    marginTop: tokens.spacingVerticalXXL,
     overflow: 'auto'
   },
   spinner: {
@@ -116,12 +119,32 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
       return a.stock.toString().localeCompare(b.stock.toString())
     },
     renderHeaderCell: () => {
-      return 'Stock'
+      return 'Existencias'
     },
     renderCell: (item) => {
       return (
         <TableCellLayout truncate>
-          {item.stock}
+          {item.stock.toString()}
+        </TableCellLayout>
+      )
+    },
+  }),
+  createTableColumn<Miscellaneous.Product>({
+    columnId: 'status',
+    compare: (a, b) => {
+      const statusA = a.stock > 0 ? a.stock < a.minStock ? 'Por agotarse' : 'Disponible' : 'Agotado'
+      const statusB = b.stock > 0 ? b.stock < b.minStock ? 'Por agotarse' : 'Disponible' : 'Agotado'
+      return statusA.localeCompare(statusB)
+    },
+    renderHeaderCell: () => {
+      return 'Estado'
+    },
+    renderCell: (item) => {
+      const status = item.stock > 0 ? item.stock < item.minStock ? 'Por agotarse' : 'Disponible' : 'Agotado'
+
+      return (
+        <TableCellLayout truncate>
+          {status}
         </TableCellLayout>
       )
     },
@@ -158,8 +181,21 @@ const ProductList: FC = () => {
     setLoading(true)
     fetch(`${window.location.origin}/api/products`)
       .then(res => res.json())
-      .then(barCodes => {
-        setList(barCodes)
+      .then(products => {
+        setList(products)
+        setLoading(false)
+      })
+  }, [setLoading, setList])
+
+  const filterProducts = useCallback((query: string) => {
+    setLoading(true)
+    fetch(`${window.location.origin}/api/products/${query}`)
+      .then(res => res.json())
+      .then(products => {
+        const filterList = products.filter((product: Miscellaneous.Product) => {
+          return product.name.toLowerCase().includes(query.toLowerCase())
+        })
+        setList(filterList)
         setLoading(false)
       })
   }, [setLoading, setList])
@@ -167,13 +203,15 @@ const ProductList: FC = () => {
   useEffect(() => {
     loadProductList()
     loadProductListEmitter.on(loadProductList)
+    filterProductListEmitter.on(filterProducts)
     return () => {
       loadProductListEmitter.off(loadProductList)
+      filterProductListEmitter.off(filterProducts)
     }
-  }, [loadProductList])
+  }, [loadProductList, filterProducts])
 
   return (
-    <div className={styles.container}>
+    <Card className={styles.root}>
       {loading && <Spinner className={styles.spinner} />}
       {!loading && (
         <DataGrid
@@ -193,7 +231,7 @@ const ProductList: FC = () => {
           </DataGridHeader>
           <DataGridBody<Miscellaneous.Product>>
             {({ item, rowId }) => (
-              <DataGridRow<Miscellaneous.Product> key={rowId} style={{ backgroundColor: item.stock < item.minStock ? tokens.colorPaletteDarkRedBackground2 : undefined }}>
+              <DataGridRow<Miscellaneous.Product> key={rowId} style={{ backgroundColor: item.stock === 0 ? tokens.colorPaletteDarkRedBackground2 : item.stock < item.minStock ? tokens.colorPaletteDarkOrangeBackground2 : undefined }}>
                 {({ renderCell }) => (
                   <DataGridCell>{renderCell(item)}</DataGridCell>
                 )}
@@ -202,9 +240,10 @@ const ProductList: FC = () => {
           </DataGridBody>
         </DataGrid>
       )}
-    </div>
+    </Card>
   )
 }
 
-export { loadProductListEmitter }
+export { loadProductListEmitter, filterProductListEmitter }
+
 export default ProductList
