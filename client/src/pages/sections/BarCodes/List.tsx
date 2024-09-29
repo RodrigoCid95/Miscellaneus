@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FC } from "react"
 import {
+  Card,
   createTableColumn,
   DataGrid,
   DataGridBody,
@@ -20,6 +21,9 @@ import DeleteBarCode from "./Delete"
 
 const loadBarCodeListEmitter = new Emitter()
 const useStyles = makeStyles({
+  root: {
+    marginTop: tokens.spacingVerticalXXL
+  },
   spinner: {
     marginTop: tokens.spacingVerticalL,
     marginLeft: 'auto',
@@ -120,7 +124,7 @@ const BarCodeList: FC = () => {
   }, [loadBarCodeList])
 
   return (
-    <>
+    <Card className={styles.root}>
       {loading && <Spinner className={styles.spinner} />}
       {!loading && (
         <DataGrid
@@ -148,7 +152,7 @@ const BarCodeList: FC = () => {
           </DataGridBody>
         </DataGrid>
       )}
-    </>
+    </Card>
   )
 }
 

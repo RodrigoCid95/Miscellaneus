@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FC } from "react"
 import {
+  Card,
   createTableColumn,
   DataGrid,
   DataGridBody,
@@ -20,6 +21,9 @@ import DeleteProvider from "./Delete"
 
 const loadProvidersEmitter = new Emitter()
 const useStyles = makeStyles({
+  root: {
+    marginTop: tokens.spacingVerticalXXL
+  },
   spinner: {
     marginTop: tokens.spacingVerticalL,
     marginLeft: 'auto',
@@ -106,7 +110,7 @@ const ProviderList: FC = () => {
   }, [loadProviderList])
 
   return (
-    <>
+    <Card className={styles.root}>
       {loading && <Spinner className={styles.spinner} />}
       {!loading && (
         <DataGrid
@@ -134,7 +138,7 @@ const ProviderList: FC = () => {
           </DataGridBody>
         </DataGrid>
       )}
-    </>
+    </Card>
   )
 }
 

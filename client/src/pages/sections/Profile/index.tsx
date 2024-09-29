@@ -1,6 +1,6 @@
 import { type FC } from "react"
 import ToolbarPage from "./../../../Components/Toolbar"
-import { makeStyles, tokens } from "@fluentui/react-components"
+import { Card, makeStyles, tokens } from "@fluentui/react-components"
 import DataForm from "./DataForm"
 import PasswordForm from "./PasswordForm"
 
@@ -32,10 +32,14 @@ const ProfilePage: FC<ProfilePageProps> = ({ onOpenMenu, user }) => {
       <ToolbarPage title="Perfil" onOpenMenu={onOpenMenu} />
       <div className={styles.content}>
         <div className={styles.form}>
-          <DataForm user={user} />
+          <Card>
+            <DataForm user={user} />
+          </Card>
         </div>
         <div className={styles.form}>
-          <PasswordForm />
+          <Card>
+            <PasswordForm />
+          </Card>
         </div>
       </div>
     </>

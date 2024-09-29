@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FC } from "react"
 import {
+  Card,
   createTableColumn,
   DataGrid,
   DataGridBody,
@@ -19,6 +20,9 @@ import DeleteUser from "./Delete"
 
 const loadUserListEmitter = new Emitter()
 const useStyles = makeStyles({
+  root: {
+    marginTop: tokens.spacingVerticalXXL
+  },
   spinner: {
     marginTop: tokens.spacingVerticalL,
     marginLeft: 'auto',
@@ -131,7 +135,7 @@ const UserList: FC = () => {
   }, [loadUserList])
 
   return (
-    <>
+    <Card className={styles.root}>
       {loading && <Spinner className={styles.spinner} />}
       {!loading && (
         <DataGrid
@@ -159,7 +163,7 @@ const UserList: FC = () => {
           </DataGridBody>
         </DataGrid>
       )}
-    </>
+    </Card>
   )
 }
 
