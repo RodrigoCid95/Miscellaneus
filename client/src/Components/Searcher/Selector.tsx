@@ -1,4 +1,4 @@
-import { type FC } from "react"
+import { type FC, useCallback } from "react"
 import { Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions, DialogTrigger, Button, createTableColumn, TableCellLayout, TableColumnDefinition, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow } from "@fluentui/react-components"
 
 
@@ -45,9 +45,28 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
       )
     },
   }),
+  createTableColumn<Miscellaneous.Product>({
+    columnId: 'existents',
+    renderHeaderCell: () => {
+      return 'Existencias'
+    },
+    renderCell: (item) => {
+      return (
+        <TableCellLayout>
+          {item.stock === 0 ? 'Agotado' : item.stock}
+        </TableCellLayout>
+      )
+    },
+  }),
 ]
 
 const Selector: FC<SelectorProps> = ({ products, onClose, onSelect }) => {
+  const handleOnSelect = useCallback((product: Miscellaneous.Product) => {
+    if (product.stock > 0) {
+      onSelect(product)
+    }
+  }, [onSelect])
+
   return (
     <Dialog
       modalType="alert"
@@ -80,7 +99,7 @@ const Selector: FC<SelectorProps> = ({ products, onClose, onSelect }) => {
                 </DataGridHeader>
                 <DataGridBody<Miscellaneous.Product>>
                   {({ item, rowId }) => (
-                    <DataGridRow<Miscellaneous.Product> key={rowId} onClick={() => onSelect(item)}>
+                    <DataGridRow<Miscellaneous.Product> key={rowId} onClick={() => handleOnSelect(item)}>
                       {({ renderCell }) => (
                         <DataGridCell>{renderCell(item)}</DataGridCell>
                       )}

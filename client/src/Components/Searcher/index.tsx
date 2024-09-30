@@ -61,6 +61,9 @@ const Searcher: FC<SearcherProps> = ({ onPush }) => {
   }, [setDevices])
 
   const loadProducts = useCallback((query: string) => {
+    if (query === '') {
+      return
+    }
     setLoading(true)
     fetch(`${window.location.origin}/api/products/${query}`)
       .then(res => res.json())
@@ -123,7 +126,15 @@ const Searcher: FC<SearcherProps> = ({ onPush }) => {
         </>
       )}
       {loading && <Spinner />}
-      {openNotFound && <NotFound value={value} onClose={() => setOpenNotFound(false)} />}
+      {openNotFound && (
+        <NotFound
+          value={value}
+          onClose={() => {
+            setOpenNotFound(false)
+            setLoading(false)
+          }}
+        />
+      )}
       {productsToSelection !== null && (
         <Selector
           products={productsToSelection}

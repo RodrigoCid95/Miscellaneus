@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
-import { Card, CardHeader, makeStyles, Title1, Toolbar, ToolbarDivider, Text, Button, Spinner } from '@fluentui/react-components'
-import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from '@fluentui/react-icons'
+import { Card, makeStyles, Title1, Toolbar, ToolbarDivider, Button, Spinner, Title2 } from '@fluentui/react-components'
+import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular, PersonEdit20Filled, PersonEdit20Regular } from '@fluentui/react-icons'
 import LogoutButton from './../Components/logout'
 
 const Searcher = lazy(() => import('./../Components/Searcher'))
 const ProductList = lazy(() => import('./../Components/List'))
 
 const CheckIcon = bundleIcon(CheckmarkSquare20Filled, CheckmarkSquare20Regular)
+const ProfileIcon = bundleIcon(PersonEdit20Filled, PersonEdit20Regular)
 const useStyle = makeStyles({
   app: {
     display: 'flex',
@@ -19,9 +20,14 @@ const useStyle = makeStyles({
   header: {
     flexShrink: 0,
   },
+  title: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+  },
   content: {
     flexGrow: 1,
-    overflowY: 'auto',
+    overflow: 'auto',
   },
   footer: {
     flexShrink: 0,
@@ -104,7 +110,7 @@ function App() {
     <div className={styles.app}>
       <div className={styles.header}>
         <Toolbar>
-          <Title1>Miscellaneous</Title1>
+          <Title1 className={styles.title}>Miscellaneous</Title1>
           {productGroups.length > 0 && (
             <>
               <ToolbarDivider />
@@ -116,6 +122,7 @@ function App() {
             </>
           )}
           <ToolbarDivider />
+          <Button appearance="transparent" icon={<ProfileIcon />} />
           <LogoutButton />
         </Toolbar>
         <Suspense fallback={<Spinner />}>
@@ -129,10 +136,7 @@ function App() {
       </div>
       <div className={styles.footer}>
         <Card className={styles.total}>
-          <CardHeader
-            header={<Text weight="semibold">Total:</Text>}
-          />
-          <p>${calcTotal()}</p>
+          <Title2>Total: ${calcTotal()}</Title2>
         </Card>
       </div>
     </div>
