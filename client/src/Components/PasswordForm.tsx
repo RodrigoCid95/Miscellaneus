@@ -1,16 +1,14 @@
-import { type FC, useCallback, useState } from "react"
-import { Button, Divider, Field, Input, makeStyles } from "@fluentui/react-components"
+import { type FC, useCallback, useEffect, useState } from "react"
+import { Field, Input } from "@fluentui/react-components"
+import { Emitter } from "../utils/Emitters"
 
-const useStyles = makeStyles({
-  buttons: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end'
-  }
-})
+const emitters = {
+  save: new Emitter(),
+  start: new Emitter(),
+  end: new Emitter(),
+}
 
 const PasswordForm: FC<PasswordFormProps> = () => {
-  const styles = useStyles()
   const [loading, setLoading] = useState<boolean>(false)
   const [pass1, setPass1] = useState<string>('')
   const [pass2, setPass2] = useState<string>('')
@@ -37,7 +35,7 @@ const PasswordForm: FC<PasswordFormProps> = () => {
       setPassVerification3({ message: 'Las contraseñas no coinciden.', state: 'warning' })
       return
     }
-    setLoading(true)
+    emitters.start.emit()
     fetch(`${window.location.origin}/api/profile`, {
       method: 'put',
       headers: {
@@ -47,7 +45,7 @@ const PasswordForm: FC<PasswordFormProps> = () => {
     })
       .then(res => res.json())
       .then(res => {
-        setLoading(false)
+        emitters.end.emit()
         if (res.ok) {
           setPass1('')
           setPass2('')
@@ -60,9 +58,21 @@ const PasswordForm: FC<PasswordFormProps> = () => {
       })
   }, [setLoading, pass1, setPassVerification1, pass2, setPassVerification2, pass3, setPassVerification3, setPass1, setPass2, setPass3])
 
+  useEffect(() => {
+    const handleOnStart = () => setLoading(true)
+    const handleOnEnd = () => setLoading(false)
+    emitters.save.on(handleOnUpdate)
+    emitters.start.on(handleOnStart)
+    emitters.end.on(handleOnEnd)
+    return () => {
+      emitters.save.off(handleOnUpdate)
+      emitters.start.off(handleOnStart)
+      emitters.end.off(handleOnEnd)
+    }
+  }, [setLoading, handleOnUpdate])
+
   return (
     <>
-      <Divider>Contraseña</Divider>
       <Field
         label="Contraseña actual"
         validationState={passVerification1.state}
@@ -86,17 +96,13 @@ const PasswordForm: FC<PasswordFormProps> = () => {
       >
         <Input disabled={loading} type="password" value={pass3} onChange={e => setPass3(e.target.value)} onBlur={() => setPassVerification3({})} />
       </Field>
-
-      <div className={styles.buttons}>
-        <Button disabled={loading} appearance="primary" onClick={handleOnUpdate}>
-          Actualizar
-        </Button>
-      </div>
     </>
   )
 }
 
 export default PasswordForm
+
+export { emitters }
 
 interface PasswordFormProps {
 }

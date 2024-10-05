@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
 import { Card, makeStyles, Title1, Toolbar, ToolbarDivider, Button, Spinner, Title2 } from '@fluentui/react-components'
-import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular, PersonEdit20Filled, PersonEdit20Regular } from '@fluentui/react-icons'
-import LogoutButton from './../Components/logout'
+import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from '@fluentui/react-icons'
+import LogoutButton from '../../Components/logout'
 
-const Searcher = lazy(() => import('./../Components/Searcher'))
-const ProductList = lazy(() => import('./../Components/List'))
+const Searcher = lazy(() => import('../../Components/Searcher'))
+const ProductList = lazy(() => import('../../Components/List'))
+const UpdatePassword = lazy(() => import('./UpdatePassword'))
+const History = lazy(() => import('./History'))
 
 const CheckIcon = bundleIcon(CheckmarkSquare20Filled, CheckmarkSquare20Regular)
-const ProfileIcon = bundleIcon(PersonEdit20Filled, PersonEdit20Regular)
 const useStyle = makeStyles({
   app: {
     display: 'flex',
@@ -122,7 +123,12 @@ function App() {
             </>
           )}
           <ToolbarDivider />
-          <Button appearance="transparent" icon={<ProfileIcon />} />
+          <Suspense fallback={<Spinner />}>
+            <History />
+          </Suspense>
+          <Suspense fallback={<Spinner />}>
+            <UpdatePassword />
+          </Suspense>
           <LogoutButton />
         </Toolbar>
         <Suspense fallback={<Spinner />}>

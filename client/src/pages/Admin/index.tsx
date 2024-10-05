@@ -20,6 +20,8 @@ import {
   bundleIcon,
   Board20Filled,
   Board20Regular,
+  History20Filled,
+  History20Regular,
   People20Filled,
   People20Regular,
   BoxMultiple20Filled,
@@ -31,46 +33,52 @@ import {
   ContactCardGroup20Filled,
   ContactCardGroup20Regular
 } from "@fluentui/react-icons"
-import { router } from './../utils/Router'
-import LogoutButton from "./../Components/logout"
-import { profileController } from './../utils/Profile'
+import { router } from '../../utils/Router'
+import LogoutButton from "../../Components/logout"
+import { profileController } from '../../utils/Profile'
 
 const routes: Route[] = [
   {
     path: '',
     title: 'Inicio',
     Icon: bundleIcon(Board20Filled, Board20Regular),
-    page: lazy(() => import('./sections/Dashboard'))
+    page: lazy(() => import('./Dashboard'))
+  },
+  {
+    path: 'history',
+    title: 'Historial',
+    Icon: bundleIcon(History20Filled, History20Regular),
+    page: lazy(() => import('./History'))
   },
   {
     path: 'products',
     title: 'Productos',
     Icon: bundleIcon(BoxMultiple20Filled, BoxMultiple20Regular),
-    page: lazy(() => import('./sections/Products'))
+    page: lazy(() => import('./Products'))
   },
   {
     path: 'barcodes',
     title: 'Códigos de barras',
     Icon: bundleIcon(BarcodeScanner20Filled, BarcodeScanner20Regular),
-    page: lazy(() => import('./sections/BarCodes'))
+    page: lazy(() => import('./BarCodes'))
   },
   {
     path: 'providers',
     title: 'Proveedores',
     Icon: bundleIcon(ContactCardGroup20Filled, ContactCardGroup20Regular),
-    page: lazy(() => import('./sections/Providers'))
+    page: lazy(() => import('./Providers'))
   },
   {
     path: 'users',
     title: 'Usuarios',
     Icon: bundleIcon(People20Filled, People20Regular),
-    page: lazy(() => import('./sections/Users'))
+    page: lazy(() => import('./Users'))
   },
   {
     path: 'profile',
     title: 'Perfil',
     Icon: bundleIcon(Person20Filled, Person20Regular),
-    page: lazy(() => import('./sections/Profile'))
+    page: lazy(() => import('./Profile'))
   }
 ]
 

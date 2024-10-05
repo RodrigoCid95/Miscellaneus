@@ -1,5 +1,5 @@
 import { type FC, useCallback, useState } from "react"
-import { Button, Divider, Field, Input, makeStyles } from "@fluentui/react-components"
+import { Button, Field, Input, makeStyles } from "@fluentui/react-components"
 import { profileController } from './../../../utils/Profile'
 
 const useStyles = makeStyles({
@@ -56,7 +56,6 @@ const DataForm: FC<DataFormProps> = () => {
 
   return (
     <>
-      <Divider style={{ maxHeight: '16px' }}>Datos Personales</Divider>
       <Field
         label="Nombre de usuario"
         validationState={nameVerification.state}
