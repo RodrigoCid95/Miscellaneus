@@ -22,7 +22,8 @@
 		"type": "http",
 		"boot": "auto",
 		"resources": [
-			"public"
+			"public",
+			"views"
 		],
 		"loader": {
 			".sql": "text"
@@ -56,7 +57,9 @@
 			"/node_modules/sqlite3/addon-build/debug/install-root/node_sqlite3.node",
 			"/node_modules/sqlite3/addon-build/default/install-root/node_sqlite3.node",
 			"/node_modules/sqlite3/lib/binding/node-v108-linux-x64/node_sqlite3.node",
-			"/node_modules/canvas/build/Release/canvas.node"
+			"/node_modules/canvas/build/Release/canvas.node",
+			"/views/**/*",
+			"/public/**/*"
 		]
 	}
 }

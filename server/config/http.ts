@@ -5,9 +5,18 @@ import session from 'express-session'
 import compression from 'compression'
 import { Liquid } from 'liquidjs'
 
-const publicDir = path.join(process.cwd(), 'public')
-const views = path.join(process.cwd(), 'views')
-const keyPath = path.join(process.cwd(), 'key.pem')
+let publicDir = path.join(process.cwd(), 'public')
+let views = path.join(process.cwd(), 'views')
+let keyPath = path.join(path.dirname(process.argv[1]), 'key.pem')
+
+if (isRelease) {
+  const { entrypoint } = (process as any).pkg
+  const distDir = path.resolve(path.dirname(entrypoint), '..')
+  views = path.join(distDir, 'views')
+  publicDir = path.join(distDir, 'public')
+  keyPath = path.join(process.cwd(), 'key.pem')
+}
+
 if (!fs.existsSync(keyPath)) {
   const { privateKey } = crypto.generateKeyPairSync('rsa', {
     modulusLength: 2048,

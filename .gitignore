@@ -7,4 +7,4 @@ server/public
 server/.debugger
 server/dist
 server/data.db
-server/key.pem
+server/release
