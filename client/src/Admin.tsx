@@ -22,3 +22,5 @@ const Container = () => {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Container />,
 )
+
+window.addEventListener('contextmenu', e => e.preventDefault())

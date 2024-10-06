@@ -36,6 +36,7 @@ import {
 import { router } from '../../utils/Router'
 import LogoutButton from "../../Components/logout"
 import { profileController } from '../../utils/Profile'
+import { configController } from "../../utils/Config"
 
 const routes: Route[] = [
   {
@@ -81,7 +82,7 @@ const routes: Route[] = [
     page: lazy(() => import('./Profile'))
   }
 ]
-
+const ConfigLazy = lazy(() => import('./../../Components/Config'))
 const useStyles = makeStyles({
   root: {
     display: 'flex',
@@ -115,6 +116,7 @@ function App() {
   const [isOpen, setIsOpen] = useState(match.matches)
   const [type, setType] = useState<DrawerType>(match.matches ? "inline" : "overlay")
   const [profile, setProfile] = useState<Miscellaneous.User | null>(profileController.profile)
+  const [config, setConfig] = useState<Miscellaneous.Config | null>(configController.config)
   const [path, setPath] = useState<string>(router.path)
 
   const onMediaQueryChange = useCallback(
@@ -125,22 +127,28 @@ function App() {
     [setType, setIsOpen]
   )
 
-  const onRouteChange = useCallback(() => setPath(router.path), [])
-  const onProfileChange = useCallback(() => setProfile(profileController.profile), [])
+  const onRouteChange = useCallback(() => setPath(router.path), [setPath])
+  const onProfileChange = useCallback(() => setProfile(profileController.profile), [setProfile])
+  const onConfigChange = useCallback(() => setConfig(configController.config), [setConfig])
 
   useEffect(() => {
     match.addEventListener("change", onMediaQueryChange)
     router.on('change', onRouteChange)
     profileController.onChange(onProfileChange)
+    configController.onChange(onConfigChange)
     fetch(`${window.location.origin}/api/profile`)
       .then(res => res.json())
       .then(user => profileController.profile = user)
+    fetch(`${window.location.origin}/api/config`)
+      .then(res => res.json())
+      .then(config => configController.config = config)
     return () => {
       match.removeEventListener("change", onMediaQueryChange)
       router.off('change', onRouteChange)
       profileController.off(onProfileChange)
+      configController.off(onConfigChange)
     }
-  }, [onMediaQueryChange, onRouteChange])
+  }, [onMediaQueryChange, onRouteChange, onProfileChange, onConfigChange])
 
   const Page = routes.find(route => route.path === path)?.page
 
@@ -167,7 +175,7 @@ function App() {
                 ) : ''
             }
           >
-            Miscellaneus
+            {config && config.name}
             <br />
             {profile && <Caption1>{profile.name}</Caption1>}
           </DrawerHeaderTitle>
@@ -201,6 +209,9 @@ function App() {
         </DrawerBody>
 
         <DrawerFooter>
+          <Suspense fallback={<Spinner />}>
+            <ConfigLazy configController={configController} />
+          </Suspense>
           <LogoutButton />
         </DrawerFooter>
       </Drawer>

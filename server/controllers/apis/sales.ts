@@ -51,7 +51,7 @@ export class SalesController {
     }
     escpos.USB = escposUSB
     escpos.Network = escposNetwork
-    const device = new escpos.Network('0.0.0.0', 1234)
+    const device = new escpos.Network('0.0.0.0', 9100)
     const printer = new escpos.Printer(device)
     await new Promise(resolve => device.open(() => {
       printer

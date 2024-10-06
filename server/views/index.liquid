@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Miscellaneus</title>
+  {% assign title = "iniciar sesión" %}
+  {% if session.user %}
+    {% if session.user.isAdmin %}
+      {% assign title = "Administrador" %}
+    {% else %}
+      {% assign title = session.user.name %}
+    {% endif %}
+  {% endif %}
+  <title>{{ session.config.name }} | {{ title }}</title>
   {% if session.user %}
     <link rel="stylesheet" href="/css/app.css">
   {% else %}

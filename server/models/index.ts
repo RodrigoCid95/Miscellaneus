@@ -1,4 +1,5 @@
 export * from './barCodes'
+export * from  './config'
 export * from './history'
 export * from './products'
 export * from './providers'

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
-import { Card, makeStyles, Title1, Toolbar, ToolbarDivider, Button, Spinner, Title2 } from '@fluentui/react-components'
+import { Card, makeStyles, Toolbar, ToolbarDivider, Button, Spinner, Title2 } from '@fluentui/react-components'
 import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from '@fluentui/react-icons'
+import Title from './Title'
 import LogoutButton from '../../Components/logout'
 
 const Searcher = lazy(() => import('../../Components/Searcher'))
@@ -20,11 +21,6 @@ const useStyle = makeStyles({
   },
   header: {
     flexShrink: 0,
-  },
-  title: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
   },
   content: {
     flexGrow: 1,
@@ -111,7 +107,7 @@ function App() {
     <div className={styles.app}>
       <div className={styles.header}>
         <Toolbar>
-          <Title1 className={styles.title}>Miscellaneous</Title1>
+          <Title />
           {productGroups.length > 0 && (
             <>
               <ToolbarDivider />

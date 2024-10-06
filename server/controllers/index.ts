@@ -6,7 +6,16 @@ import escposNetwork from 'escpos-network'
 
 export class IndexController {
   @Model('BarCodesModel') private barCodesModel: Models<'BarCodesModel'>
+  @Model('ConfigModel') private configModel: Models<'ConfigModel'>
 
+  public async loadConfig(req: PXIOHTTP.Request<Miscellaneous.Session>, _: PXIOHTTP.Response, next: Next): Promise<void> {
+    if (!req.session.config) {
+      req.session.config = await this.configModel.loadConfig()
+    }
+    next()
+  }
+
+  @Before(['loadConfig'])
   @View('/')
   public index = 'index'
   
