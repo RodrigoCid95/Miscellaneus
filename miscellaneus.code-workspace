@@ -65,7 +65,7 @@
           "install"
         ],
         "options": {
-          "cwd": "${workspaceFolder}/../server/dist"
+          "cwd": "${workspaceFolder}/../dist"
         },
         "presentation": {
           "reveal": "always"
@@ -82,10 +82,10 @@
           "--targets",
           "node18-windows-x64,node18-linux-x64",
           "-o",
-          "../release/Miscellaneous"
+          "../server/release/Miscellaneous"
         ],
         "options": {
-          "cwd": "${workspaceFolder}/../server/dist"
+          "cwd": "${workspaceFolder}/../dist"
         },
         "presentation": {
           "reveal": "always"
@@ -94,7 +94,7 @@
       },
       {
         "label": "Clean",
-        "command": "npx rimfar ./.debugger && npx rimfar ./dist npx rimfar ./public",
+        "command": "npx rimfar ./.debugger && npx rimfar ./../dist npx rimfar ./public",
         "options": {
           "cwd": "${workspaceFolder}/../server"
         },

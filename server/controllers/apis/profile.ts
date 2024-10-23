@@ -1,4 +1,4 @@
-import { verifySession } from "./middlewares/sessions";
+import { verifySession } from "./middlewares/sessions"
 
 @Namespace('api/profile')
 @Middlewares({ before: [verifySession] })

@@ -1,5 +1,7 @@
 client/node_modules
 client/package-lock.json
+client/tsconfig.app.tsbuildinfo
+client/tsconfig.node.tsbuildinfo
 
 server/node_modules
 server/package-lock.json
@@ -8,3 +10,5 @@ server/.debugger
 server/dist
 server/data.db
 server/release
+
+dist

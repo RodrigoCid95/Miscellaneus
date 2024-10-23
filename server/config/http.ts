@@ -9,13 +9,13 @@ let publicDir = path.join(process.cwd(), 'public')
 let views = path.join(process.cwd(), 'views')
 let keyPath = path.join(path.dirname(process.argv[1]), 'key.pem')
 
-if (isRelease) {
+IS_RELEASE && ((() => {
   const { entrypoint } = (process as any).pkg
-  const distDir = path.resolve(path.dirname(entrypoint), '..')
+  const distDir = path.dirname(entrypoint)
   views = path.join(distDir, 'views')
   publicDir = path.join(distDir, 'public')
   keyPath = path.join(process.cwd(), 'key.pem')
-}
+})())
 
 if (!fs.existsSync(keyPath)) {
   const { privateKey } = crypto.generateKeyPairSync('rsa', {

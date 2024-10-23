@@ -1,4 +1,4 @@
-import { type Database } from "sqlite3";
+import { type Database } from "sqlite3"
 
 export class HistoryModel {
   @Library('db') private db: Database

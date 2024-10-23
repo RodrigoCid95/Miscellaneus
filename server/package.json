@@ -5,7 +5,7 @@
 	"scripts": {
 		"init": "pxio",
 		"start": "pxio start",
-		"build": "pxio build"
+		"build": "pxio build && mv ./dist .."
 	},
 	"keywords": [],
 	"author": "",
@@ -16,7 +16,7 @@
 		"@types/escpos": "^2.5.5",
 		"@types/express": "^4.17.21",
 		"@types/node": "^22.5.5",
-		"px.io": "^0.12.19-beta"
+		"px.io": "^0.16.22-beta"
 	},
 	"pxio": {
 		"type": "http",
@@ -27,7 +27,8 @@
 		],
 		"loader": {
 			".sql": "text"
-		}
+		},
+		"omitAuto": false
 	},
 	"dependencies": {
 		"@napi-rs/canvas": "^0.1.56",

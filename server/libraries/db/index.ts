@@ -8,7 +8,7 @@ import products from './products.sql'
 import sales from './sales.sql'
 
 export const db = async () => {
-  const { path } = configs.get('db')
+  const { path } = getConfig('db')
   const sqlite3: sqlite3 = verbose()
   const connector = new sqlite3.Database(path)
   await new Promise(resolve => connector.run(config, resolve))
