@@ -3,7 +3,7 @@ import escposUSB from 'escpos-usb'
 import escposNetwork from 'escpos-network'
 import { verifySession } from './middlewares/sessions'
 
-@Namespace('/api/sales')
+@Namespace('api', 'sales')
 @Middlewares({ before: [verifySession] })
 export class SalesController {
   @Model('SalesModel') private salesModel: Models<'SalesModel'>

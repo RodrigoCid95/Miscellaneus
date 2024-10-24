@@ -1,6 +1,6 @@
 import { verifySession, verifyAdminSession } from "./middlewares/sessions";
 
-@Namespace('api/config')
+@Namespace('api', 'config')
 export class ConfigController {
   @Model('ConfigModel') private configModel: Models<'ConfigModel'>
 

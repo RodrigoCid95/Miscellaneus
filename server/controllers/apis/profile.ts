@@ -1,6 +1,6 @@
 import { verifySession } from "./middlewares/sessions"
 
-@Namespace('api/profile')
+@Namespace('api', 'profile')
 @Middlewares({ before: [verifySession] })
 export class ProfileController {
   @Model('UsersModel') private usersModel: Models<'UsersModel'>

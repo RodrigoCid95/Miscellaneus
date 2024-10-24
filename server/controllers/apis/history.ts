@@ -1,6 +1,6 @@
 import { verifySession, verifyAdminSession } from "./middlewares/sessions"
 
-@Namespace('api/history')
+@Namespace('api', 'history')
 export class HistoryController {
   @Model('HistoryModel') private historyModel: Models<'HistoryModel'>
   @Model('UsersModel') private usersModel: Models<'UsersModel'>

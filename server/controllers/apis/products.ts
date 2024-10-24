@@ -1,6 +1,6 @@
 import { verifyAdminSession, verifySession } from "./middlewares/sessions"
 
-@Namespace('api/products')
+@Namespace('api', 'products')
 @Middlewares({ before: [verifyAdminSession] })
 export class ProductsController {
   @Model('ProductsModel') private productsModel: Models<'ProductsModel'>
