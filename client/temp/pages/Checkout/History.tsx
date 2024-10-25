@@ -1,9 +1,9 @@
-import { type FC, type ReactNode, useState } from "react"
+import { type FC, useCallback, useEffect, useState } from "react"
 import { type TableColumnDefinition, makeStyles, Dialog, DialogTrigger, ToolbarButton, DialogSurface, DialogTitle, DialogBody, DialogContent, DialogActions, Button, createTableColumn, TableCellLayout, tokens, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, Spinner, Text } from "@fluentui/react-components"
 import { bundleIcon, History20Filled, History20Regular, BoxArrowLeft20Filled, BoxArrowLeft20Regular } from "@fluentui/react-icons"
-import { HistoryContext, useHistory } from "../../context/history"
-import { getHistory, restoreHistory } from "../../services/history"
+import { Emitter } from "../../utils/Emitters"
 
+const loadHistoryListEmitter = new Emitter()
 const HistoryIcon = bundleIcon(History20Filled, History20Regular)
 const RestoreIcon = bundleIcon(BoxArrowLeft20Filled, BoxArrowLeft20Regular)
 const useStyles = makeStyles({
@@ -78,12 +78,17 @@ const columns: TableColumnDefinition<Miscellaneous.History>[] = [
     renderCell: (item) => {
       const styles = useStyles()
       const [loading, setLoading] = useState<boolean>(false)
-      const { remove } = useHistory()
 
-      const handleOnRestore = () => {
+      const handleOnRestore = useCallback(() => {
         setLoading(true)
-        remove(item.id)
-      }
+        fetch(`/api/history/${item.id}`, {
+          method: 'delete'
+        })
+          .then(() => {
+            setLoading(false)
+            loadHistoryListEmitter.emit()
+          })
+      }, [setLoading, item])
 
       return (
         <TableCellLayout truncate>
@@ -98,7 +103,23 @@ const columns: TableColumnDefinition<Miscellaneous.History>[] = [
 const History: FC<HistoryProps> = () => {
   const styles = useStyles()
   const [open, setOpen] = useState<boolean>(false)
-  const { loading, items, loadHistory } = useHistory()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [items, setItems] = useState<Miscellaneous.History[]>([])
+
+  const loadList = useCallback(() => {
+    setLoading(true)
+    fetch('/api/history')
+      .then(res => res.json())
+      .then(data => {
+        setItems(data)
+        setLoading(false)
+      })
+  }, [setLoading, setItems])
+
+  useEffect(() => {
+    loadHistoryListEmitter.on(loadList)
+    return () => loadHistoryListEmitter.off(loadList)
+  }), [loadList]
 
   return (
     <Dialog
@@ -106,7 +127,7 @@ const History: FC<HistoryProps> = () => {
       open={open}
       onOpenChange={(_, data) => {
         if (data.open) {
-          loadHistory()
+          loadList()
         }
         setOpen(data.open)
       }}
@@ -163,39 +184,7 @@ const History: FC<HistoryProps> = () => {
   )
 }
 
-const HistoryProvider: FC<HistoryProviderProps> = ({ children }) => {
-  const [items, setItems] = useState<Miscellaneous.History[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-
-  const remove = (id: Miscellaneous.History['id']) => {
-    return restoreHistory(id)
-  }
-  
-  const loadHistory = () => {
-    setLoading(true)
-    getHistory()
-      .then(data => {
-        setItems(data)
-        setLoading(false)
-      })
-  }
-
-  return (
-    <HistoryContext.Provider value={{ loading, items, remove, loadHistory }}>
-      {children}
-    </HistoryContext.Provider>
-  )
-}
-
-export default () => (
-  <HistoryProvider>
-    <History />
-  </HistoryProvider>
-)
+export default History
 
 interface HistoryProps {
-}
-
-interface HistoryProviderProps {
-  children: ReactNode
 }

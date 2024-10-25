@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState, lazy, Suspense } from 'react'
-import { Card, makeStyles, Toolbar, ToolbarDivider, Button, Spinner, Title2 } from '@fluentui/react-components'
-import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from '@fluentui/react-icons'
-import Title from './Title'
-import LogoutButton from '../../Components/logout'
+import { lazy, useState, Suspense, useEffect } from "react"
+import { Button, Card, makeStyles, Spinner, Title2, Toolbar, ToolbarDivider } from "@fluentui/react-components"
+import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from "@fluentui/react-icons"
+import Title from "../../components/Title"
+import Logout from './../../components/Logout'
+import { useCheckout, CheckoutContext } from '../../context/checkout'
+import { saveCheckout } from "../../services/checkout"
 
-const Searcher = lazy(() => import('../../Components/Searcher'))
-const ProductList = lazy(() => import('../../Components/List'))
-const UpdatePassword = lazy(() => import('./UpdatePassword'))
 const History = lazy(() => import('./History'))
+const UpdatePassword = lazy(() => import('./UpdatePassword'))
+const Searcher = lazy(() => import('../../components/Searcher'))
+const ProductList = lazy(() => import('../../components/List'))
 
 const CheckIcon = bundleIcon(CheckmarkSquare20Filled, CheckmarkSquare20Regular)
 const useStyle = makeStyles({
@@ -36,48 +38,84 @@ const useStyle = makeStyles({
   },
 })
 
-function App() {
+const Checkout = () => {
   const styles = useStyle()
+  const { productGroups, checkout, loading } = useCheckout()
+
+  let total = 0
+  for (const group of productGroups) {
+    total += group.price * group.count
+  }
+
+  return (
+    <div className={styles.app}>
+      <div className={styles.header}>
+        <Toolbar>
+          <Title />
+          {productGroups.length > 0 && (
+            <>
+              <ToolbarDivider />
+              {
+                loading
+                  ? <Spinner />
+                  : <Button appearance="transparent" icon={<CheckIcon />} onClick={checkout} />
+              }
+            </>
+          )}
+          <ToolbarDivider />
+          <Suspense fallback={<Spinner />}>
+            <History />
+          </Suspense>
+          <Suspense fallback={<Spinner />}>
+            <UpdatePassword />
+          </Suspense>
+          <Logout />
+        </Toolbar>
+        <Suspense fallback={<Spinner />}>
+          <Searcher />
+        </Suspense>
+      </div>
+      <div className={styles.content}>
+        <Suspense fallback={<Spinner />}>
+          <ProductList />
+        </Suspense>
+      </div>
+      <div className={styles.footer}>
+        <Card className={styles.total}>
+          <Title2>Total: ${total.toFixed(2)}</Title2>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+export default () => {
   const [productGroups, setProductGroups] = useState<Miscellaneous.ProductGroup[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
-  const handleOnCheckout = useCallback(async () => {
+  const checkout = () => {
     if (!loading && productGroups.length > 0) {
       setLoading(true)
-      const newSales: Miscellaneous.NewSale[] = []
-      for (const product of productGroups) {
-        newSales.push({
-          product: product.id,
-          count: product.count,
-          total: product.price * product.count
+      saveCheckout(productGroups)
+        .then(() => {
+          setProductGroups([])
+          setLoading(false)
         })
-      }
-      await fetch(`${window.location.origin}/api/sales`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newSales)
-      })
-      setProductGroups([])
-      setLoading(false)
     }
-  }, [productGroups, setProductGroups, loading, setLoading])
+  }
 
   useEffect(() => {
-    const checkout = (event: KeyboardEvent) => {
+    const handleOnKeydown = (event: KeyboardEvent) => {
       if (event.key === 'F5') {
         event.preventDefault()
-        handleOnCheckout()
+        checkout()
       }
     }
-    window.addEventListener('keydown', checkout)
-    return () => {
-      window.removeEventListener('keydown', checkout)
-    }
-  }, [handleOnCheckout])
+    window.addEventListener('keydown', handleOnKeydown)
+    return () => window.removeEventListener('keydown', handleOnKeydown)
+  })
 
-  const handleOnPush = useCallback((products: Miscellaneous.Product[]) => {
+  const push = (products: Miscellaneous.Product[]) => {
     const pGroups = [...productGroups]
     for (const product of products) {
       const index = pGroups.findIndex((p) => p.id === product.id)
@@ -93,56 +131,11 @@ function App() {
       }
     }
     setProductGroups(pGroups)
-  }, [productGroups, setProductGroups])
-
-  const calcTotal = useCallback(() => {
-    let total = 0
-    for (const group of productGroups) {
-      total += group.price * group.count
-    }
-    return total.toFixed(2)
-  }, [productGroups])
+  }
 
   return (
-    <div className={styles.app}>
-      <div className={styles.header}>
-        <Toolbar>
-          <Title />
-          {productGroups.length > 0 && (
-            <>
-              <ToolbarDivider />
-              {
-                !loading
-                  ? <Button appearance="transparent" icon={<CheckIcon />} onClick={handleOnCheckout} />
-                  : <Spinner />
-              }
-            </>
-          )}
-          <ToolbarDivider />
-          <Suspense fallback={<Spinner />}>
-            <History />
-          </Suspense>
-          <Suspense fallback={<Spinner />}>
-            <UpdatePassword />
-          </Suspense>
-          <LogoutButton />
-        </Toolbar>
-        <Suspense fallback={<Spinner />}>
-          <Searcher onPush={handleOnPush} />
-        </Suspense>
-      </div>
-      <div className={styles.content}>
-        <Suspense fallback={<Spinner />}>
-          <ProductList products={productGroups} onUpdate={setProductGroups} />
-        </Suspense>
-      </div>
-      <div className={styles.footer}>
-        <Card className={styles.total}>
-          <Title2>Total: ${calcTotal()}</Title2>
-        </Card>
-      </div>
-    </div>
+    <CheckoutContext.Provider value={{ productGroups, setProductGroups, push, checkout, loading }}>
+      <Checkout />
+    </CheckoutContext.Provider>
   )
 }
-
-export default App

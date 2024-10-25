@@ -22,8 +22,7 @@ export class SalesController {
       return
     }
     const { id: idUser } = req.session.user as Miscellaneous.User
-    const date = new Date()
-    const UTC = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getUTCMilliseconds())
+    const UTC = timeUTC.getCurrentUTC()
     const report: string[][] = []
     let totalTotal = 0
     for (const { product, count, total } of sales) {
