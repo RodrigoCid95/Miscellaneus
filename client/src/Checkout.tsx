@@ -5,7 +5,5 @@ import App from './components/App'
 const Checkout = lazy(() => import('./pages/Checkout'))
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <App>
-    <Checkout />
-  </App>,
+  <App><Checkout /></App>
 )
