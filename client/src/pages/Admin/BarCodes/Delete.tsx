@@ -1,8 +1,8 @@
 import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
-import { useProvidersContext } from "../../../context/providers"
-import { deleteProvider } from "../../../services/providers"
+import { useBarCodesContext } from "../../../context/barcodes"
+import { deleteBarCode } from "../../../services/barcodes"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -16,9 +16,9 @@ const useStyles = makeStyles({
   },
 })
 
-const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
+const DeleteBarCode: FC<DeleteBarCodeProps> = ({ item }) => {
   const styles = useStyles()
-  const { loadProviders } = useProvidersContext()
+  const { loadBarCodes } = useBarCodesContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [checked, setChecked] = useState(false)
@@ -32,10 +32,10 @@ const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
 
   const handleOnDelete = () => {
     setLoading(true)
-    deleteProvider(item.id)
+    deleteBarCode(item.id)
       .then(() => {
         setOpen(false)
-        loadProviders()
+        loadBarCodes()
       })
   }
 
@@ -55,10 +55,10 @@ const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
         />
       </DialogTrigger>
       <DialogSurface className={styles.dialog}>
-        <DialogTitle>Eliminar proveedor</DialogTitle>
+        <DialogTitle>Eliminar código de barras</DialogTitle>
         <DialogBody>
           <DialogContent className={styles.content}>
-            <p>¿Estás seguro(a) que quieres eliminar el proveedor "{item.name}"?</p>
+            <p>¿Estás seguro(a) que quieres eliminar el código de barras "{item.name}"?</p>
             <Checkbox
               checked={checked}
               onChange={handleChange}
@@ -83,8 +83,8 @@ const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
   )
 }
 
-export default DeleteProvider
+export default DeleteBarCode
 
-interface DeleteProviderProps {
-  item: Miscellaneous.Provider
+interface DeleteBarCodeProps {
+  item: Miscellaneous.BarCode
 }

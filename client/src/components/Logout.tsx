@@ -1,4 +1,4 @@
-import { type FC, useState, useCallback } from "react"
+import { type FC, useState } from "react"
 import { Spinner, Button } from "@fluentui/react-components"
 import { bundleIcon, ArrowExit20Filled, ArrowExit20Regular } from "@fluentui/react-icons"
 
@@ -7,7 +7,7 @@ const LogoutIcon = bundleIcon(ArrowExit20Filled, ArrowExit20Regular)
 const LogoutButton: FC<LogoutButtonProps> = () => {
   const [loading, setLoading] = useState<boolean>(false)
 
-  const handleOnLogout = useCallback(() => {
+  const handleOnLogout = () => {
     setLoading(true)
     fetch(`${window.location.origin}/api/auth`, {
       method: 'delete'
@@ -16,7 +16,7 @@ const LogoutButton: FC<LogoutButtonProps> = () => {
         setLoading(false)
         window.location.reload()
       })
-  }, [setLoading])
+  }
 
   if (loading) {
     return <Spinner />
