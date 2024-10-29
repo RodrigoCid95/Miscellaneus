@@ -75,7 +75,7 @@ const NewProvider: FC<NewProviderProps> = () => {
             </Field>
 
             <Field
-              label="Valor"
+              label="Teléfono"
               validationState={phoneVerification.state}
               validationMessage={phoneVerification.message}
             >
