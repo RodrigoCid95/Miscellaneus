@@ -164,7 +164,7 @@ const Admin = () => {
 const AdminAppProvider: FC<any> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(match.matches)
   const [typeDrawer, setTypeDrawer] = useState<DrawerType>(match.matches ? "inline" : "overlay")
-  const [path, setPath] = useState<string>('products')
+  const [path, setPath] = useState<string>('')
 
   useEffect(() => {
     const handleOnChange = ({ matches }: any) => {
