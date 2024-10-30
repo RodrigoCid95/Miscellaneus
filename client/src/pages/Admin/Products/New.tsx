@@ -1,12 +1,12 @@
-import { type FC, useState } from "react"
-import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, makeStyles, ToolbarButton, DialogActions, Spinner, Field, Input, Text } from "@fluentui/react-components"
+import { lazy, Suspense, useState } from "react"
+import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, makeStyles, ToolbarButton, DialogActions, Spinner, Field, Input, Text, Switch } from "@fluentui/react-components"
 import { bundleIcon, AddCircle20Filled, AddCircle20Regular } from "@fluentui/react-icons"
 import FieldProvider from "./Provider"
 import { useProductsContext } from "../../../context/products"
 import { createProduct } from "../../../services/products"
 
 const AddIcon = bundleIcon(AddCircle20Filled, AddCircle20Regular)
-
+const Variants = lazy(() => import('./Variants'))
 const useStyles = makeStyles({
   content: {
     display: "flex",
@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   },
 })
 
-const NewProduct: FC<NewProductProps> = () => {
+export default () => {
   const styles = useStyles()
   const { loadProducts } = useProductsContext()
   const [open, setOpen] = useState<boolean>(false)
@@ -36,6 +36,8 @@ const NewProduct: FC<NewProductProps> = () => {
   const [minStockVerification, setMinStockVerification] = useState<Verification>({})
   const [provider, setProvider] = useState<Miscellaneous.Provider | null>(null)
   const [providerVerification, setProviderVerification] = useState<Verification>({})
+  const [isUnit, setIsUnit] = useState(true)
+  const [variants, setVariants] = useState<any[]>([])
 
   const handleOnCreate = () => {
     if (!name) {
@@ -142,22 +144,6 @@ const NewProduct: FC<NewProductProps> = () => {
               </Field>
 
               <Field
-                label="Precio"
-                validationState={priceVerification.state}
-                validationMessage={priceVerification.message}
-              >
-                <Input
-                  contentBefore={
-                    <Text size={400}>$</Text>
-                  }
-                  type="number"
-                  value={price.toString()}
-                  onChange={(e) => setPrice(Number(e.target.value))}
-                  onBlur={() => setPriceVerification({})}
-                />
-              </Field>
-
-              <Field
                 label="Stock"
                 validationState={stockVerification.state}
                 validationMessage={stockVerification.message}
@@ -189,6 +175,34 @@ const NewProduct: FC<NewProductProps> = () => {
                 onBlur={() => setProviderVerification({})}
                 onChange={setProvider}
               />
+
+              <Switch
+                label={isUnit ? 'Vender por unidad' : 'Vender en fracciones'}
+                checked={isUnit}
+                onChange={() => setIsUnit(!isUnit)}
+              />
+
+              {!isUnit && (
+                <Suspense fallback={<Spinner />}>
+                  <Variants variants={variants} onChange={values => setVariants(values)} />
+                </Suspense>
+              )}
+
+              <Field
+                label="Precio"
+                validationState={priceVerification.state}
+                validationMessage={priceVerification.message}
+              >
+                <Input
+                  contentBefore={
+                    <Text size={400}>$</Text>
+                  }
+                  type="number"
+                  value={price.toString()}
+                  onChange={(e) => setPrice(Number(e.target.value))}
+                  onBlur={() => setPriceVerification({})}
+                />
+              </Field>
             </DialogContent>
             <DialogActions>
               {!loading && (
@@ -207,9 +221,4 @@ const NewProduct: FC<NewProductProps> = () => {
       </Dialog>
     </>
   )
-}
-
-export default NewProduct
-
-interface NewProductProps {
 }
