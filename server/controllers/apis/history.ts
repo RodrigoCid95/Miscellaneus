@@ -1,6 +1,27 @@
 import { verifySession, verifyAdminSession } from "./middlewares/sessions"
 
-@Namespace('api/history')
+const verifyParams = (req: PXIOHTTP.Request, res: PXIOHTTP.Response, next: Next) => {
+  const keysParamsEntries = Object.entries(req.params)
+  for (const [key, value] of keysParamsEntries) {
+    const val = Number(value)
+    if (isNaN(val)) {
+      res.json({
+        ok: false,
+        code: 'bad-request',
+        message: 'Parametros invalidos.'
+      })
+      return
+    }
+    req.body[key] = val
+  }
+  const user = Number(req.query.user)
+  if (!isNaN(user)) {
+    req.body.user = user
+  }
+  next()
+}
+
+@Namespace('api', 'history')
 export class HistoryController {
   @Model('HistoryModel') private historyModel: Models<'HistoryModel'>
   @Model('UsersModel') private usersModel: Models<'UsersModel'>
@@ -40,29 +61,65 @@ export class HistoryController {
     return items
   }
 
+  public async returnResults(req: PXIOHTTP.Request<Miscellaneous.Session>, res: PXIOHTTP.Response): Promise<void> {
+    let { start, end, user: id } = req.body
+    const user = req.session.user as Miscellaneous.User
+    if (!user.isAdmin) {
+      id = user.id
+    }
+    const saleResults: Miscellaneous.SaleResult[] = await this.historyModel.findRange(start, end, id)
+    const items = await this.parseResults(saleResults)
+    res.json(items)
+  }
+
   @Before([verifySession])
+  @After(['returnResults'])
   @Get('/')
-  public async rangeToDay(req: PXIOHTTP.Request<Miscellaneous.Session>, res: PXIOHTTP.Response): Promise<void> {
+  public async rangeToDay(req: PXIOHTTP.Request<Miscellaneous.Session>, res: PXIOHTTP.Response, next: Next): Promise<void> {
     const user = req.session.user as Miscellaneous.User
     if (user.isAdmin) {
       res.json([])
       return
     }
     const date = new Date()
-    const startUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 6, 0, 0, 0)
-    date.setDate(date.getDate() + 1)
-    const endUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 6, 0, 0, 0)
-    const saleResults: Miscellaneous.SaleResult[] = await this.historyModel.findRange(startUTC, endUTC, user.id)
-    const items = await this.parseResults(saleResults)
-    res.json(items)
+    req.body = timeUTC.getStartAndEndOfDay(date.getFullYear(), date.getMonth() + 1, date.getDate())
+    next()
   }
 
-  @Before([verifyAdminSession])
-  @Get('/:start/:end')
-  public async range(req: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
-    const saleResults: Miscellaneous.SaleResult[] = await this.historyModel.findRange(Number(req.params.start), Number(req.params.end))
-    const items = await this.parseResults(saleResults)
-    res.json(items)
+  @Before([verifyAdminSession, verifyParams])
+  @After(['returnResults'])
+  @Get('/day/:year/:month/:day')
+  public async day(req: PXIOHTTP.Request, _: PXIOHTTP.Response, next: Next): Promise<void> {
+    const { year, month, day } = req.body
+    req.body = { ...req.body, ...timeUTC.getStartAndEndOfDay(year, month, day) }
+    next()
+  }
+
+  @Before([verifyAdminSession, verifyParams])
+  @After(['returnResults'])
+  @Get('/week/:year/:week')
+  public async week(req: PXIOHTTP.Request, _: PXIOHTTP.Response, next: Next): Promise<void> {
+    const { year, week } = req.body
+    req.body = { ...req.body, ...timeUTC.getStartAndEndOfWeek(year, week) }
+    next()
+  }
+
+  @Before([verifyAdminSession, verifyParams])
+  @After(['returnResults'])
+  @Get('/month/:year/:month')
+  public async month(req: PXIOHTTP.Request, _: PXIOHTTP.Response, next: Next): Promise<void> {
+    const { year, month } = req.body
+    req.body = { ...req.body, ...timeUTC.getStartAndEndOfMonth(year, month) }
+    next()
+  }
+  
+  @Before([verifyAdminSession, verifyParams])
+  @After(['returnResults'])
+  @Get('/year/:year')
+  public async year(req: PXIOHTTP.Request, _: PXIOHTTP.Response, next: Next): Promise<void> {
+    const { year } = req.body
+    req.body = { ...req.body, ...timeUTC.getStartAndEndOfYear(year) }
+    next()
   }
 
   @Before([verifySession])

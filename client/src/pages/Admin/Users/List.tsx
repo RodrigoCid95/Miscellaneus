@@ -1,24 +1,8 @@
-import { useCallback, useEffect, useState, type FC } from "react"
-import {
-  Card,
-  createTableColumn,
-  DataGrid,
-  DataGridBody,
-  DataGridCell,
-  DataGridHeader,
-  DataGridHeaderCell,
-  DataGridRow,
-  makeStyles,
-  Spinner,
-  TableCellLayout,
-  TableColumnDefinition,
-  tokens
-} from "@fluentui/react-components"
-import { Emitter } from './../../../utils/Emitters'
-import EditUser from "./Edit"
-import DeleteUser from "./Delete"
+import { Card, createTableColumn, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, makeStyles, Spinner, TableCellLayout, TableColumnDefinition, tokens } from "@fluentui/react-components"
+import { useUsersContext } from "../../../context/users"
+import Edit from "./Edit"
+import Delete from "./Delete"
 
-const loadUserListEmitter = new Emitter()
 const useStyles = makeStyles({
   root: {
     marginTop: tokens.spacingVerticalXXL
@@ -97,42 +81,17 @@ const columns: TableColumnDefinition<Miscellaneous.User>[] = [
 
       return (
         <div className={styles.actions}>
-          <EditUser
-            loadUserListEmitter={loadUserListEmitter}
-            user={item}
-          />
-          <DeleteUser
-            loadUserListEmitter={loadUserListEmitter}
-            user={item}
-          />
+          <Edit user={item} />
+          <Delete user={item} />
         </div>
       )
     },
   }),
 ]
 
-const UserList: FC = () => {
+export default () => {
   const styles = useStyles()
-  const [loading, setLoading] = useState<boolean>(true)
-  const [userList, setUserList] = useState<Miscellaneous.User[]>([])
-
-  const loadUserList = useCallback(() => {
-    setLoading(true)
-    fetch(`${window.location.origin}/api/users`)
-      .then(res => res.json())
-      .then(users => {
-        setUserList(users)
-        setLoading(false)
-      })
-  }, [setLoading, setUserList])
-
-  useEffect(() => {
-    loadUserList()
-    loadUserListEmitter.on(loadUserList)
-    return () => {
-      loadUserListEmitter.off(loadUserList)
-    }
-  }, [loadUserList])
+  const { loading, items } = useUsersContext()
 
   return (
     <Card className={styles.root}>
@@ -140,7 +99,7 @@ const UserList: FC = () => {
       {!loading && (
         <DataGrid
           className={styles.table}
-          items={userList}
+          items={items}
           columns={columns}
           sortable
           getRowId={(item: Miscellaneous.User) => item.id}
@@ -166,6 +125,3 @@ const UserList: FC = () => {
     </Card>
   )
 }
-
-export { loadUserListEmitter }
-export default UserList

@@ -1,43 +1,37 @@
-import { type LazyExoticComponent, type FC, useCallback, useEffect, useState, lazy, Suspense } from "react"
-import {
-  DrawerBody,
-  DrawerHeader,
-  DrawerHeaderTitle,
-  Drawer,
-  DrawerProps,
-  Button,
-  makeStyles,
-  tokens,
-  Spinner,
-  TabList,
-  Tab,
-  DrawerFooter,
-  Caption1
-} from "@fluentui/react-components"
-import {
-  type FluentIcon,
-  Dismiss24Regular,
-  bundleIcon,
-  Board20Filled,
-  Board20Regular,
-  History20Filled,
-  History20Regular,
-  People20Filled,
-  People20Regular,
-  BoxMultiple20Filled,
-  BoxMultiple20Regular,
-  Person20Filled,
-  Person20Regular,
-  BarcodeScanner20Filled,
-  BarcodeScanner20Regular,
-  ContactCardGroup20Filled,
-  ContactCardGroup20Regular
-} from "@fluentui/react-icons"
-import { router } from '../../utils/Router'
-import LogoutButton from "../../Components/logout"
-import { profileController } from '../../utils/Profile'
-import { configController } from "../../utils/Config"
+import { lazy, useEffect, useState, Suspense, FC, LazyExoticComponent } from "react"
+import { Button, Caption1, Drawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerHeaderTitle, makeStyles, Spinner, Tab, TabList, tokens } from "@fluentui/react-components"
+import { BarcodeScanner20Filled, BarcodeScanner20Regular, Board20Filled, Board20Regular, BoxMultiple20Filled, BoxMultiple20Regular, bundleIcon, ContactCardGroup20Filled, ContactCardGroup20Regular, Dismiss24Regular, FluentIcon, History20Filled, History20Regular, People20Filled, People20Regular, Person20Filled, Person20Regular } from "@fluentui/react-icons"
+import { DrawerType, AdminAppContext, useAdminAppContext } from '../../context/admin'
+import { ConfigContext, useConfigContext } from "../../context/config"
+import { getConfig, saveConfig } from "../../services/config"
+import { getProfile } from "../../services/profile"
+import { ProfileContext, useProfileContext } from "../../context/profile"
+import LogoutButton from "../../components/Logout"
 
+const useStyles = makeStyles({
+  root: {
+    display: 'flex',
+    minHeight: '100dvh'
+  },
+  drawer: {
+    display: 'flex',
+    flexWrap: "wrap",
+    rowGap: tokens.spacingHorizontalXXL,
+    columnGap: tokens.spacingHorizontalXXL,
+  },
+  drawerHeader: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  spinner: {
+    marginTop: '16px'
+  },
+  content: {
+    padding: [tokens.spacingHorizontalXXL, tokens.spacingVerticalXXL],
+    display: 'block',
+    width: '100%'
+  }
+})
 const routes: Route[] = [
   {
     path: '',
@@ -82,81 +76,21 @@ const routes: Route[] = [
     page: lazy(() => import('./Profile'))
   }
 ]
-const ConfigLazy = lazy(() => import('./../../Components/Config'))
-const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    minHeight: '100dvh'
-  },
-  drawer: {
-    display: 'flex',
-    flexWrap: "wrap",
-    rowGap: tokens.spacingHorizontalXXL,
-    columnGap: tokens.spacingHorizontalXXL,
-  },
-  drawerHeader: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  spinner: {
-    marginTop: '16px'
-  },
-  content: {
-    padding: [tokens.spacingHorizontalXXL, tokens.spacingVerticalXXL],
-    display: 'block',
-    width: '100%'
-  }
-})
+const ConfigLazy = lazy(() => import('./../../components/Config'))
+const match = window.matchMedia("(min-width: 1024px)")
 
-type DrawerType = Required<DrawerProps>["type"]
-
-function App() {
+const Admin = () => {
   const styles = useStyles()
-  const match = window.matchMedia("(min-width: 1024px)")
-  const [isOpen, setIsOpen] = useState(match.matches)
-  const [type, setType] = useState<DrawerType>(match.matches ? "inline" : "overlay")
-  const [profile, setProfile] = useState<Miscellaneous.User | null>(profileController.profile)
-  const [config, setConfig] = useState<Miscellaneous.Config | null>(configController.config)
-  const [path, setPath] = useState<string>(router.path)
-
-  const onMediaQueryChange = useCallback(
-    ({ matches }: any) => {
-      setType(matches ? "inline" : "overlay")
-      setIsOpen(matches)
-    },
-    [setType, setIsOpen]
-  )
-
-  const onRouteChange = useCallback(() => setPath(router.path), [setPath])
-  const onProfileChange = useCallback(() => setProfile(profileController.profile), [setProfile])
-  const onConfigChange = useCallback(() => setConfig(configController.config), [setConfig])
-
-  useEffect(() => {
-    match.addEventListener("change", onMediaQueryChange)
-    router.on('change', onRouteChange)
-    profileController.onChange(onProfileChange)
-    configController.onChange(onConfigChange)
-    fetch(`${window.location.origin}/api/profile`)
-      .then(res => res.json())
-      .then(user => profileController.profile = user)
-    fetch(`${window.location.origin}/api/config`)
-      .then(res => res.json())
-      .then(config => configController.config = config)
-    return () => {
-      match.removeEventListener("change", onMediaQueryChange)
-      router.off('change', onRouteChange)
-      profileController.off(onProfileChange)
-      configController.off(onConfigChange)
-    }
-  }, [onMediaQueryChange, onRouteChange, onProfileChange, onConfigChange])
-
+  const { path, setPath, typeDrawer, isOpen, setIsOpen } = useAdminAppContext()
+  const { config } = useConfigContext()
+  const { profile } = useProfileContext()
   const Page = routes.find(route => route.path === path)?.page
 
   return (
     <div className={styles.root}>
       <Drawer
         className={styles.drawer}
-        type={type}
+        type={typeDrawer}
         separator
         open={isOpen}
         onOpenChange={(_, { open }) => setIsOpen(open)}
@@ -164,7 +98,7 @@ function App() {
         <DrawerHeader className={styles.drawerHeader}>
           <DrawerHeaderTitle
             action={
-              type === 'overlay'
+              typeDrawer === 'overlay'
                 ? (
                   <Button
                     appearance="subtle"
@@ -187,7 +121,7 @@ function App() {
           role="group"
         >
           <TabList
-            defaultSelectedValue={router.path}
+            defaultSelectedValue={path}
             vertical
           >
             {routes.map(({ path, title, Icon }, i) => (
@@ -196,7 +130,7 @@ function App() {
                 icon={<Icon />}
                 value={path}
                 onClick={() => {
-                  router.path = path
+                  setPath(path)
                   if (!match.matches) {
                     setIsOpen(false)
                   }
@@ -210,7 +144,7 @@ function App() {
 
         <DrawerFooter>
           <Suspense fallback={<Spinner />}>
-            <ConfigLazy configController={configController} />
+            <ConfigLazy />
           </Suspense>
           <LogoutButton />
         </DrawerFooter>
@@ -227,7 +161,75 @@ function App() {
   )
 }
 
-export default App
+const AdminAppProvider: FC<any> = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(match.matches)
+  const [typeDrawer, setTypeDrawer] = useState<DrawerType>(match.matches ? "inline" : "overlay")
+  const [path, setPath] = useState<string>('')
+
+  useEffect(() => {
+    const handleOnChange = ({ matches }: any) => {
+      setTypeDrawer(matches ? 'inline' : 'overlay')
+      setIsOpen(matches)
+    }
+    match.addEventListener('change', handleOnChange)
+    return () => match.removeEventListener('change', handleOnChange)
+  }, [])
+
+  return (
+    <AdminAppContext.Provider value={{ matches: match.matches, path, setPath, typeDrawer, isOpen, setIsOpen }}>
+      {children}
+    </AdminAppContext.Provider>
+  )
+}
+
+const ConfigProvider: FC<any> = ({ children }) => {
+  const [config, setConfig] = useState<Miscellaneous.Config | undefined>(undefined)
+
+  const loadConfig = () => {
+    getConfig()
+      .then(c => setConfig(c))
+  }
+
+  useEffect(() => {
+    loadConfig()
+  }, [])
+
+  const setConfiguration = async (config: Miscellaneous.Config) => {
+    await saveConfig(config)
+    setConfig(config)
+  }
+
+  return (
+    <ConfigContext.Provider value={{ config, setConfig: setConfiguration, loadConfig }}>
+      {children}
+    </ConfigContext.Provider>
+  )
+}
+
+const ProfileProvider: FC<any> = ({ children }) => {
+  const [profile, setProfile] = useState<Miscellaneous.User | undefined>(undefined)
+
+  useEffect(() => {
+    getProfile()
+      .then(p => setProfile(p))
+  }, [])
+
+  return (
+    <ProfileContext.Provider value={{ profile, setProfile }}>
+      {children}
+    </ProfileContext.Provider>
+  )
+}
+
+export default () => (
+  <AdminAppProvider>
+    <ConfigProvider>
+      <ProfileProvider>
+        <Admin />
+      </ProfileProvider>
+    </ConfigProvider>
+  </AdminAppProvider>
+)
 
 interface Route {
   path: string

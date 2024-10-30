@@ -19,5 +19,13 @@ declare global {
       key: keyof Miscellaneous.Config
       value: Miscellaneous.Config[keyof Miscellaneous.Config]
     }
+    interface ITimeUTC {
+      getCurrentUTC(): number;
+      getStartAndEndOfWeek(year: number, week: number): { start: number; end: number };
+      getStartAndEndOfDay(year: number, month: number, day: number): { start: number; end: number };
+      getStartAndEndOfMonth(year: number, month: number): { start: number; end: number };
+      getStartAndEndOfYear(year: number): { start: number; end: number };
+    }
   }
+  const timeUTC: Miscellaneous.ITimeUTC
 }

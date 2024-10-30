@@ -1,30 +1,50 @@
-import { type FC } from "react"
-import ToolbarPage from "./../../../Components/Toolbar"
+import { useEffect, useState } from "react"
+import { BarCodesContext, useBarCodesContext } from "../../../context/barcodes"
+import ToolbarPage from "../../../components/Toolbar"
+import { getBarCodes } from "../../../services/barcodes"
+import List from './List'
 import { ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, ArrowSync20Filled, ArrowSync20Regular } from "@fluentui/react-icons"
 import NewBarcode from "./New"
-import BarCodeList, { loadBarCodeListEmitter } from "./List"
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
 
-const BarCodesPage: FC<BarCodesPageProps> = ({ onOpenMenu }) => {
+const BarCodes = () => {
+  const { loadBarCodes } = useBarCodesContext()
+
   return (
     <>
-      <ToolbarPage title="Códigos de barras" onOpenMenu={onOpenMenu}>
+      <ToolbarPage title="Códigos de barras">
         <NewBarcode />
         <ToolbarButton
           appearance="transparent"
           icon={<ReloadIcon />}
-          onClick={() => loadBarCodeListEmitter.emit()}
+          onClick={loadBarCodes}
         />
       </ToolbarPage>
-      <BarCodeList />
+      <List />
     </>
   )
 }
 
-export default BarCodesPage
+export default () => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [items, setItems] = useState<Miscellaneous.BarCode[]>([])
 
-interface BarCodesPageProps {
-  onOpenMenu: () => void
+  const loadBarCodes = () => {
+    setLoading(true)
+    getBarCodes()
+      .then(barcodes => {
+        setItems(barcodes)
+        setLoading(false)
+      })
+  }
+
+  useEffect(loadBarCodes, [])
+
+  return (
+    <BarCodesContext.Provider value={{ loading, loadBarCodes, items }}>
+      <BarCodes />
+    </BarCodesContext.Provider>
+  )
 }

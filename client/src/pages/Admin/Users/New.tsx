@@ -1,25 +1,8 @@
-import { type FC, type ChangeEvent, useCallback, useState } from "react"
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogBody,
-  DialogContent,
-  DialogSurface,
-  DialogTitle, DialogTrigger,
-  Field,
-  Input,
-  makeStyles,
-  Spinner,
-  Switch,
-  ToolbarButton
-} from "@fluentui/react-components"
-import {
-  bundleIcon,
-  PersonAdd20Filled,
-  PersonAdd20Regular
-} from "@fluentui/react-icons"
-import { loadUserListEmitter } from './List'
+import { type FC, type ChangeEvent, useState } from "react"
+import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, Switch, ToolbarButton } from "@fluentui/react-components"
+import { bundleIcon, PersonAdd20Filled, PersonAdd20Regular } from "@fluentui/react-icons"
+import { useUsersContext } from "../../../context/users"
+import { createUser } from "../../../services/users"
 
 const AddPersonIcon = bundleIcon(PersonAdd20Filled, PersonAdd20Regular)
 
@@ -36,6 +19,7 @@ const useStyles = makeStyles({
 
 const NewUser: FC<NewUserProps> = () => {
   const styles = useStyles()
+  const { loadUsers } = useUsersContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [full_name, setFullName] = useState<Miscellaneous.NewUser['name']>('')
@@ -46,9 +30,9 @@ const NewUser: FC<NewUserProps> = () => {
   const [fullNameVerification, setFullNameVerification] = useState<Verification>({})
   const [passwordVerification, setPasswordVerification] = useState<Verification>({})
 
-  const handleOnIsAdminChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => setIsAdmin(ev.currentTarget.checked), [setIsAdmin])
+  const handleOnIsAdminChange = (ev: ChangeEvent<HTMLInputElement>) => setIsAdmin(ev.currentTarget.checked)
 
-  const createUser = useCallback(() => {
+  const handleOnCreate = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -68,24 +52,17 @@ const NewUser: FC<NewUserProps> = () => {
       isAdmin,
       password: password,
     }
-    fetch(`${window.location.origin}/api/users`, {
-      method: 'post',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(newUser)
-    })
-      .then(res => res.json())
+    createUser(newUser)
       .then(response => {
         if (response.ok) {
           setOpen(false)
-          loadUserListEmitter.emit()
+          loadUsers()
         } else {
           setNameVerification({ message: `El usuario "${name}" ya existe.`, state: 'warning' })
           setLoading(false)
         }
       })
-  }, [setLoading, name, full_name, isAdmin, password])
+  }
 
   return (
     <Dialog
@@ -149,7 +126,7 @@ const NewUser: FC<NewUserProps> = () => {
             {
               loading
                 ? <Spinner />
-                : <Button appearance="primary" onClick={createUser}>Crear</Button>
+                : <Button appearance="primary" onClick={handleOnCreate}>Crear</Button>
             }
           </DialogActions>
         </DialogBody>

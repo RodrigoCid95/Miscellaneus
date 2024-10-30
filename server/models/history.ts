@@ -9,7 +9,8 @@ export class HistoryModel {
       params.unshift(uid)
     }
     return await new Promise<Miscellaneous.SaleResult[]>(resolve => {
-      this.db.all<Miscellaneous.SaleResult>(`SELECT rowid, * FROM sales WHERE${uid ? ' id_user = ? AND' : ''} date BETWEEN ? AND ?`, params, (err, rows) => {
+      const query = `SELECT rowid, * FROM sales WHERE${uid ? ' id_user = ? AND' : ''} date BETWEEN ? AND ?`
+      this.db.all<Miscellaneous.SaleResult>(query, params, (err, rows) => {
         if (err) {
           console.error(err)
           resolve([])

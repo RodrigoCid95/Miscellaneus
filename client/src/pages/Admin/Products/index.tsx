@@ -1,32 +1,61 @@
-import { type FC } from "react"
-import ToolbarPage from "./../../../Components/Toolbar"
-import ProductList, { loadProductListEmitter, filterProductListEmitter } from "./List"
+import { useEffect, useState } from "react"
 import { ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, ArrowSync20Filled, ArrowSync20Regular } from "@fluentui/react-icons"
-import NewProduct from "./New"
+import ToolbarPage from "../../../components/Toolbar"
+import { ProductsContext, useProductsContext } from "../../../context/products"
+import { getFilterProducts, getProducts } from "../../../services/products"
+import New from './New'
+import List from './List'
 import Searcher from "./Searcher"
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
 
-const ProductsPage: FC<ProductsPageProps> = ({ onOpenMenu }) => {
+const Products = () => {
+  const { loadProducts } = useProductsContext()
+
   return (
     <>
-      <ToolbarPage title="Productos" onOpenMenu={onOpenMenu}>
-        <NewProduct />
+      <ToolbarPage title="Productos">
+        <New />
         <ToolbarButton
           appearance="transparent"
           icon={<ReloadIcon />}
-          onClick={() => loadProductListEmitter.emit()}
+          onClick={loadProducts}
         />
-        <Searcher onSearch={query => filterProductListEmitter.emit(query)}/>
+        <Searcher />
       </ToolbarPage>
-      <ProductList />
+      <List />
     </>
   )
 }
 
-export default ProductsPage
+export default () => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [items, setItems] = useState<Miscellaneous.Product[]>([])
 
-interface ProductsPageProps {
-  onOpenMenu(): void
+  const loadProducts = () => {
+    setLoading(true)
+    getProducts()
+      .then(products => {
+        setItems(products)
+        setLoading(false)
+      })
+  }
+
+  const filterProducts = (query: string) => {
+    setLoading(true)
+    getFilterProducts(query)
+      .then(products => {
+        setItems(products)
+        setLoading(false)
+      })
+  }
+
+  useEffect(loadProducts, [])
+
+  return (
+    <ProductsContext.Provider value={{ loading, loadProducts, filterProducts, items }}>
+      <Products />
+    </ProductsContext.Provider>
+  )
 }

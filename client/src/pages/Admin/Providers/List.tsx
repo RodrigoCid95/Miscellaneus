@@ -1,25 +1,8 @@
-import { useCallback, useEffect, useState, type FC } from "react"
-import {
-  Card,
-  createTableColumn,
-  DataGrid,
-  DataGridBody,
-  DataGridCell,
-  DataGridHeader,
-  DataGridHeaderCell,
-  DataGridRow,
-  Link,
-  makeStyles,
-  Spinner,
-  TableCellLayout,
-  TableColumnDefinition,
-  tokens
-} from "@fluentui/react-components"
-import { Emitter } from './../../../utils/Emitters'
+import { Card, createTableColumn, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, Link, makeStyles, Spinner, TableCellLayout, TableColumnDefinition, Text, tokens } from "@fluentui/react-components"
+import { useProvidersContext } from "../../../context/providers"
 import EditProvider from "./Edit"
 import DeleteProvider from "./Delete"
 
-const loadProvidersEmitter = new Emitter()
 const useStyles = makeStyles({
   root: {
     marginTop: tokens.spacingVerticalXXL
@@ -86,36 +69,17 @@ const columns: TableColumnDefinition<Miscellaneous.Provider>[] = [
   }),
 ]
 
-const ProviderList: FC = () => {
+export default () => {
   const styles = useStyles()
-  const [loading, setLoading] = useState<boolean>(true)
-  const [list, setList] = useState<Miscellaneous.Provider[]>([])
-
-  const loadProviderList = useCallback(() => {
-    setLoading(true)
-    fetch(`${window.location.origin}/api/providers`)
-      .then(res => res.json())
-      .then(barCodes => {
-        setList(barCodes)
-        setLoading(false)
-      })
-  }, [setLoading, setList])
-
-  useEffect(() => {
-    loadProviderList()
-    loadProvidersEmitter.on(loadProviderList)
-    return () => {
-      loadProvidersEmitter.off(loadProviderList)
-    }
-  }, [loadProviderList])
+  const { loading, items } = useProvidersContext()
 
   return (
     <Card className={styles.root}>
       {loading && <Spinner className={styles.spinner} />}
-      {!loading && (
+      {!loading && items.length > 0 ? (
         <DataGrid
           className={styles.table}
-          items={list}
+          items={items}
           columns={columns}
           sortable
           getRowId={(item: Miscellaneous.Provider) => item.id}
@@ -137,10 +101,7 @@ const ProviderList: FC = () => {
             )}
           </DataGridBody>
         </DataGrid>
-      )}
+      ): <Text>No hay nada por aquí.</Text>}
     </Card>
   )
 }
-
-export { loadProvidersEmitter }
-export default ProviderList

@@ -1,38 +1,49 @@
-import {
-  type FC,
-} from 'react'
-import {
-  ToolbarButton
-} from '@fluentui/react-components'
-import {
-  bundleIcon,
-  ArrowSync20Filled,
-  ArrowSync20Regular
-} from '@fluentui/react-icons'
-import ToolbarPage from './../../../Components/Toolbar'
-import UserList, { loadUserListEmitter } from './List'
-import NewUser from './New'
+import { useEffect, useState } from "react"
+import { ToolbarButton } from "@fluentui/react-components"
+import { ArrowSync20Filled, ArrowSync20Regular, bundleIcon } from "@fluentui/react-icons"
+import ToolbarPage from "../../../components/Toolbar"
+import New from './New'
+import { UsersContext, useUsersContext } from "../../../context/users"
+import { getUsers } from "../../../services/users"
+import List from "./List"
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
 
-const UsersPage: FC<UsersPageProps> = ({ onOpenMenu }) => {
+const Users = () => {
+  const { loadUsers } = useUsersContext()
   return (
     <>
-      <ToolbarPage title="Usuarios" onOpenMenu={onOpenMenu}>
-        <NewUser />
+      <ToolbarPage title='Usuarios'>
+        <New />
         <ToolbarButton
-          appearance='transparent'
+          appearance="transparent"
           icon={<ReloadIcon />}
-          onClick={() => loadUserListEmitter.emit()}
+          onClick={loadUsers}
         />
       </ToolbarPage>
-      <UserList />
+      <List />
     </>
   )
 }
 
-export default UsersPage
+export default () => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [items, setItems] = useState<Miscellaneous.User[]>([])
 
-interface UsersPageProps {
-  onOpenMenu(): void
+  const loadUsers = () => {
+    setLoading(true)
+    getUsers()
+      .then(users => {
+        setItems(users)
+        setLoading(false)
+      })
+  }
+
+  useEffect(loadUsers, [])
+
+  return (
+    <UsersContext.Provider value={{ loading, items, loadUsers }}>
+      <Users />
+    </UsersContext.Provider>
+  )
 }

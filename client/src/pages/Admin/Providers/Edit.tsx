@@ -1,7 +1,8 @@
-import { type FC, useCallback, useState } from "react"
+import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Edit20Filled, Edit20Regular } from "@fluentui/react-icons"
-import { loadProvidersEmitter } from "./List"
+import { useProvidersContext } from "../../../context/providers"
+import { updateProvider } from "../../../services/providers"
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
 
@@ -18,6 +19,7 @@ const useStyles = makeStyles({
 
 const EditProvider: FC<EditBarcodeProps> = ({ item }) => {
   const styles = useStyles()
+  const { loadProviders } = useProvidersContext()
   const [name, setName] = useState<Miscellaneous.Provider['name']>(item.name)
   const [phone, setPhone] = useState<Miscellaneous.Provider['phone']>(item.phone)
   const [open, setOpen] = useState<boolean>(false)
@@ -25,7 +27,7 @@ const EditProvider: FC<EditBarcodeProps> = ({ item }) => {
   const [nameVerification, setNameVerification] = useState<Verification>({})
   const [phoneVerification, setPhoneVerification] = useState<Verification>({})
 
-  const updateProvider = useCallback(() => {
+  const handleOnUpdate = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -36,18 +38,12 @@ const EditProvider: FC<EditBarcodeProps> = ({ item }) => {
     }
     setLoading(true)
     const newProvider: Miscellaneous.Provider = { id: item.id, name, phone }
-    fetch(`${window.location.origin}/api/providers`, {
-      method: 'put',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(newProvider)
-    })
+    updateProvider(newProvider)
       .then(() => {
         setOpen(false)
-        loadProvidersEmitter.emit()
+        loadProviders()
       })
-  }, [setLoading, name, phone, item, setNameVerification, setPhoneVerification])
+  }
 
   return (
     <Dialog
@@ -93,7 +89,7 @@ const EditProvider: FC<EditBarcodeProps> = ({ item }) => {
             {
               loading
                 ? <Spinner />
-                : <Button appearance="primary" onClick={updateProvider}>Actualizar</Button>
+                : <Button appearance="primary" onClick={handleOnUpdate}>Actualizar</Button>
             }
           </DialogActions>
         </DialogBody>

@@ -1,16 +1,11 @@
-import { type FC } from "react"
-import ToolbarPage from "./../../../Components/Toolbar"
+import ToolbarPage from "../../../components/Toolbar"
 import Board from "./Board"
 
-const DashboardPage: FC<DashboardPageProps> = ({ onOpenMenu }) => (
-  <>
-    <ToolbarPage title="Inicio" onOpenMenu={onOpenMenu} />
-    <Board />
-  </>
-)
-
-export default DashboardPage
-
-interface DashboardPageProps {
-  onOpenMenu(): void
+export default () => {
+  return (
+    <>
+      <ToolbarPage title="Inicio"></ToolbarPage>
+      <Board />
+    </>
+  )
 }

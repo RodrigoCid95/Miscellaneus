@@ -1,11 +1,15 @@
 import { type FC } from "react"
 import { Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions, DialogTrigger, Button } from "@fluentui/react-components"
+import { useSearcher } from "../../context/searcher"
 
-const NotFound: FC<NotFoundProps> = ({ onClose, value }) => {
+const NotFound: FC<NotFoundProps> = () => {
+  const { value, setOpenNotFound, setLoading } = useSearcher()
+
   return (
     <Dialog modalType="alert" open onOpenChange={(_, data) => {
       if (!data.open) {
-        onClose()
+        setOpenNotFound(false)
+        setLoading(false)
       }
     }}>
       <DialogSurface>
@@ -28,6 +32,4 @@ const NotFound: FC<NotFoundProps> = ({ onClose, value }) => {
 export default NotFound
 
 export interface NotFoundProps {
-  onClose: () => void
-  value: string
 }

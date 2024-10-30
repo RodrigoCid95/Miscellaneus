@@ -1,6 +1,7 @@
-import { type FC, type ReactNode, useState, useCallback, useEffect } from "react"
+import { type FC, type ReactNode } from "react"
 import { ToolbarButton, Title3, Toolbar, Card, makeStyles, tokens } from "@fluentui/react-components"
 import { bundleIcon, Navigation20Filled, Navigation20Regular } from "@fluentui/react-icons"
+import { useAdminAppContext } from "../context/admin"
 
 const NavigationIcon = bundleIcon(Navigation20Filled, Navigation20Regular)
 const useStyles = makeStyles({
@@ -11,35 +12,20 @@ const useStyles = makeStyles({
   }
 })
 
-const ToolbarPage: FC<ToolbarPageProps> = ({ title, onOpenMenu, children }) => {
+const ToolbarPage: FC<ToolbarPageProps> = ({ title, children }) => {
   const styles = useStyles()
-  const match = window.matchMedia("(min-width: 1024px)")
-  const [showMenuButton, setShowMenuButton] = useState<boolean>(match.matches)
+  const { matches, isOpen, setIsOpen } = useAdminAppContext()
 
-  const onMediaQueryChange = useCallback(
-    ({ matches }: any) => {
-      setShowMenuButton(matches)
-    },
-    [setShowMenuButton]
-  )
-
-  useEffect(() => {
-    match.addEventListener("change", onMediaQueryChange)
-    return () => {
-      match.removeEventListener("change", onMediaQueryChange)
-    }
-  }, [onMediaQueryChange])
-
-  if (children || !showMenuButton) {
+  if (children || !matches) {
     return (
       <Card>
         <Toolbar className={styles.toolbar}>
-          {!showMenuButton && (
+          {!matches && (
             <>
               <ToolbarButton
                 appearance='transparent'
                 icon={<NavigationIcon />}
-                onClick={onOpenMenu}
+                onClick={() => setIsOpen(!isOpen)}
               />
               <Title3>{title}</Title3>
             </>
@@ -58,6 +44,5 @@ export default ToolbarPage
 
 interface ToolbarPageProps {
   title: string
-  onOpenMenu(): void
   children?: ReactNode
 }

@@ -1,5 +1,7 @@
-import { type FC, useCallback } from "react"
+import { type FC } from "react"
 import { Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions, DialogTrigger, Button, createTableColumn, TableCellLayout, TableColumnDefinition, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow } from "@fluentui/react-components"
+import { useCheckout } from "../../context/checkout"
+import { useSearcher } from "../../context/searcher"
 
 
 const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
@@ -60,12 +62,17 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
   }),
 ]
 
-const Selector: FC<SelectorProps> = ({ products, onClose, onSelect }) => {
-  const handleOnSelect = useCallback((product: Miscellaneous.Product) => {
+const Selector: FC<SelectorProps> = () => {
+  const { push } = useCheckout()
+  const { productsToSelection, setProductsToSelection, setLoading } = useSearcher()
+
+  const handleOnSelect = (product: Miscellaneous.Product) => {
     if (product.stock > 0) {
-      onSelect(product)
+      setProductsToSelection(null)
+      push([product])
+      setLoading(false)
     }
-  }, [onSelect])
+  }
 
   return (
     <Dialog
@@ -73,7 +80,8 @@ const Selector: FC<SelectorProps> = ({ products, onClose, onSelect }) => {
       open
       onOpenChange={(_, data) => {
         if (!data.open) {
-          onClose()
+          setProductsToSelection(null)
+          setLoading(false)
         }
       }}
     >
@@ -83,9 +91,9 @@ const Selector: FC<SelectorProps> = ({ products, onClose, onSelect }) => {
           <DialogContent>
             Tu búsqueda arrojó más de un producto, elige uno:
             <br />
-            {products && (
+            {productsToSelection && (
               <DataGrid
-                items={products}
+                items={productsToSelection}
                 columns={columns}
                 sortable
                 getRowId={(item: Miscellaneous.Product) => item.id}
@@ -123,7 +131,4 @@ const Selector: FC<SelectorProps> = ({ products, onClose, onSelect }) => {
 export default Selector
 
 export interface SelectorProps {
-  products: Miscellaneous.Product[] | null
-  onClose: () => void
-  onSelect: (product: Miscellaneous.Product) => void
 }

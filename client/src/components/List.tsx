@@ -1,6 +1,7 @@
-import { type FC, useCallback, useState } from "react"
+import { type FC, useState } from "react"
 import { DataGrid, DataGridHeader, DataGridRow, DataGridHeaderCell, DataGridBody, DataGridCell, createTableColumn, TableCellLayout, TableColumnDefinition, makeStyles, tokens } from "@fluentui/react-components"
 import ProductDetails from "./Details"
+import { useCheckout } from "../context/checkout"
 
 const useStyles = makeStyles({
   root: {
@@ -79,11 +80,12 @@ const columns: TableColumnDefinition<Miscellaneous.ProductGroup>[] = [
   }),
 ]
 
-const ProductList: FC<ProductListProps> = ({ products, onUpdate }) => {
+const ProductList: FC<ProductListProps> = () => {
   const styles = useStyles()
+  const { productGroups: products, setProductGroups: onUpdate } = useCheckout()
   const [productToDetails, setProductToDetails] = useState<Miscellaneous.ProductGroup | null>(null)
 
-  const handleOnQuit = useCallback(() => {
+  const handleOnQuit = () => {
     const newList = new Array<Miscellaneous.ProductGroup>(...products)
     const index = newList.findIndex((p) => p.id === productToDetails?.id)
     if (index !== -1) {
@@ -91,9 +93,9 @@ const ProductList: FC<ProductListProps> = ({ products, onUpdate }) => {
       onUpdate(newList)
     }
     setProductToDetails(null)
-  }, [products, productToDetails, setProductToDetails, onUpdate])
+  }
 
-  const handleOnClose = useCallback((count: Miscellaneous.ProductGroup['count']) => {
+  const handleOnClose = (count: Miscellaneous.ProductGroup['count']) => {
     const newList = new Array<Miscellaneous.ProductGroup>(...products)
     const index = newList.findIndex((p) => p.id === productToDetails?.id)
     if (index !== -1) {
@@ -101,7 +103,7 @@ const ProductList: FC<ProductListProps> = ({ products, onUpdate }) => {
       onUpdate(newList)
     }
     setProductToDetails(null)
-  }, [products, productToDetails, setProductToDetails, onUpdate])
+  }
 
   return (
     <div className={styles.root}>
@@ -136,6 +138,4 @@ const ProductList: FC<ProductListProps> = ({ products, onUpdate }) => {
 export default ProductList
 
 interface ProductListProps {
-  products: Miscellaneous.ProductGroup[]
-  onUpdate: (products: Miscellaneous.ProductGroup[]) => void
 }

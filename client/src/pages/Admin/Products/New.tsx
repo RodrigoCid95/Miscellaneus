@@ -1,8 +1,9 @@
-import { type FC, useState, useCallback } from "react"
+import { type FC, useState } from "react"
 import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, makeStyles, ToolbarButton, DialogActions, Spinner, Field, Input, Text } from "@fluentui/react-components"
 import { bundleIcon, AddCircle20Filled, AddCircle20Regular } from "@fluentui/react-icons"
 import FieldProvider from "./Provider"
-import { loadProductListEmitter } from "./List"
+import { useProductsContext } from "../../../context/products"
+import { createProduct } from "../../../services/products"
 
 const AddIcon = bundleIcon(AddCircle20Filled, AddCircle20Regular)
 
@@ -19,6 +20,7 @@ const useStyles = makeStyles({
 
 const NewProduct: FC<NewProductProps> = () => {
   const styles = useStyles()
+  const { loadProducts } = useProductsContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [name, setName] = useState<Miscellaneous.NewProduct['name']>("")
@@ -35,7 +37,7 @@ const NewProduct: FC<NewProductProps> = () => {
   const [provider, setProvider] = useState<Miscellaneous.Provider | null>(null)
   const [providerVerification, setProviderVerification] = useState<Verification>({})
 
-  const handleOnSubmit = useCallback(() => {
+  const handleOnCreate = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -70,18 +72,12 @@ const NewProduct: FC<NewProductProps> = () => {
       minStock,
       provider: provider.id
     }
-    fetch(`${window.location.origin}/api/products`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newProduct)
-    })
+    createProduct(newProduct)
       .then(() => {
         setOpen(false)
-        loadProductListEmitter.emit()
+        loadProducts()
       })
-  }, [name, description, sku, price, stock, minStock, provider, setNameVerification, setSkuVerification, setPriceVerification, setMinStockVerification])
+  }
 
   return (
     <>
@@ -203,7 +199,7 @@ const NewProduct: FC<NewProductProps> = () => {
               {
                 loading
                   ? <Spinner />
-                  : <Button appearance="primary" onClick={handleOnSubmit}>Crear</Button>
+                  : <Button appearance="primary" onClick={handleOnCreate}>Crear</Button>
               }
             </DialogActions>
           </DialogBody>

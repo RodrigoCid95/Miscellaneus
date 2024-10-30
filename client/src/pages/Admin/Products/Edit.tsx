@@ -1,8 +1,9 @@
-import { type FC, useState, useCallback } from "react"
+import { type FC, useState } from "react"
 import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, makeStyles, DialogActions, Spinner, Field, Input, Text } from "@fluentui/react-components"
 import { bundleIcon, Edit20Filled, Edit20Regular } from "@fluentui/react-icons"
 import FieldProvider from "./Provider"
-import { loadProductListEmitter } from "./List"
+import { useProductsContext } from "../../../context/products"
+import { updateProduct } from "../../../services/products"
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
 
@@ -19,6 +20,7 @@ const useStyles = makeStyles({
 
 const EditProduct: FC<EditProductProps> = ({ item }) => {
   const styles = useStyles()
+  const { loadProducts } = useProductsContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [name, setName] = useState<Miscellaneous.NewProduct['name']>(item.name)
@@ -35,7 +37,7 @@ const EditProduct: FC<EditProductProps> = ({ item }) => {
   const [provider, setProvider] = useState<Miscellaneous.Provider | null>(item.provider)
   const [providerVerification, setProviderVerification] = useState<Verification>({})
 
-  const handleOnSubmit = useCallback(() => {
+  const handleOnUpdate = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -70,21 +72,12 @@ const EditProduct: FC<EditProductProps> = ({ item }) => {
       minStock,
       provider: provider.id
     }
-    fetch(`${window.location.origin}/api/products`, {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        id: item.id,
-        ...newProduct
-      })
-    })
+    updateProduct(item.id, newProduct)
       .then(() => {
         setOpen(false)
-        loadProductListEmitter.emit()
+        loadProducts()
       })
-  }, [name, description, sku, price, stock, minStock, provider, setNameVerification, setSkuVerification, setPriceVerification, setMinStockVerification])
+  }
 
   return (
     <>
@@ -199,7 +192,7 @@ const EditProduct: FC<EditProductProps> = ({ item }) => {
               {
                 loading
                   ? <Spinner />
-                  : <Button appearance="primary" onClick={handleOnSubmit}>Crear</Button>
+                  : <Button appearance="primary" onClick={handleOnUpdate}>Guardar</Button>
               }
             </DialogActions>
           </DialogBody>

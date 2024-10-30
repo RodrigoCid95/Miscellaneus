@@ -58,7 +58,7 @@ const verifyFields = (veryPass: boolean = true) => async function (req: PXIOHTTP
   next()
 }
 
-@Namespace('api/users')
+@Namespace('api', 'users')
 @Middlewares({ before: [verifyAdminSession] })
 export class UsersController {
   @Model('UsersModel') public usersModel: Models<'UsersModel'>

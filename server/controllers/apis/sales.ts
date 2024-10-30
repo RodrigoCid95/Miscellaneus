@@ -3,7 +3,7 @@ import escposUSB from 'escpos-usb'
 import escposNetwork from 'escpos-network'
 import { verifySession } from './middlewares/sessions'
 
-@Namespace('/api/sales')
+@Namespace('api', 'sales')
 @Middlewares({ before: [verifySession] })
 export class SalesController {
   @Model('SalesModel') private salesModel: Models<'SalesModel'>
@@ -22,8 +22,7 @@ export class SalesController {
       return
     }
     const { id: idUser } = req.session.user as Miscellaneous.User
-    const date = new Date()
-    const UTC = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getUTCMilliseconds())
+    const UTC = timeUTC.getCurrentUTC()
     const report: string[][] = []
     let totalTotal = 0
     for (const { product, count, total } of sales) {

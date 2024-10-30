@@ -1,4 +1,4 @@
-import { type FC, useCallback, useState } from "react"
+import { type FC, useState } from "react"
 import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, makeStyles, DialogActions } from "@fluentui/react-components"
 import { bundleIcon, Eye20Filled, Eye20Regular } from "@fluentui/react-icons"
 
@@ -23,12 +23,12 @@ const BarCodeViewer: FC<BarCodeViewerProps> = ({ barCode }) => {
   const styles = useStyles()
   const [open, setOpen] = useState<boolean>(false)
 
-  const handleDownload = useCallback(() => {
+  const handleDownload = () => {
     const anchor = document.createElement('a')
     anchor.href = `${window.location.origin}/bar-code/${barCode.id}`
     anchor.download = `${barCode.name}.png`
     anchor.click()
-  }, [setOpen])
+  }
 
   return (
     <Dialog

@@ -1,7 +1,8 @@
-import { useCallback, useState, type FC } from "react"
+import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, AddCircle20Filled, AddCircle20Regular } from "@fluentui/react-icons"
-import { loadBarCodeListEmitter } from "./List"
+import { useBarCodesContext } from "../../../context/barcodes"
+import { createBarCode } from "../../../services/barcodes"
 
 const AddIcon = bundleIcon(AddCircle20Filled, AddCircle20Regular)
 
@@ -18,6 +19,7 @@ const useStyles = makeStyles({
 
 const NewBarcode: FC<NewBarcodeProps> = () => {
   const styles = useStyles()
+  const { loadBarCodes } = useBarCodesContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [name, setName] = useState<Miscellaneous.BarCode['name']>('')
@@ -26,7 +28,7 @@ const NewBarcode: FC<NewBarcodeProps> = () => {
   const [nameVerification, setNameVerification] = useState<Verification>({})
   const [valueVerification, setValueVerification] = useState<Verification>({})
 
-  const createBarCode = useCallback(() => {
+  const handleOnCreate = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -37,18 +39,12 @@ const NewBarcode: FC<NewBarcodeProps> = () => {
     }
     setLoading(true)
     const newBarCode: Miscellaneous.NewBarCode = { name, tag, value }
-    fetch(`${window.location.origin}/api/bar-codes`, {
-      method: 'post',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(newBarCode)
-    })
+    createBarCode(newBarCode)
       .then(() => {
         setOpen(false)
-        loadBarCodeListEmitter.emit()
+        loadBarCodes()
       })
-  }, [setLoading, name, tag, value, setNameVerification, setValueVerification])
+  }
 
   return (
     <Dialog
@@ -103,7 +99,7 @@ const NewBarcode: FC<NewBarcodeProps> = () => {
             {
               loading
                 ? <Spinner />
-                : <Button appearance="primary" onClick={createBarCode}>Crear</Button>
+                : <Button appearance="primary" onClick={handleOnCreate}>Crear</Button>
             }
           </DialogActions>
         </DialogBody>

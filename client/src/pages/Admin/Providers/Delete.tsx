@@ -1,7 +1,8 @@
-import { type FC, useCallback, useState } from "react"
+import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
-import { loadProvidersEmitter } from "./List"
+import { useProvidersContext } from "../../../context/providers"
+import { deleteProvider } from "../../../services/providers"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -17,27 +18,26 @@ const useStyles = makeStyles({
 
 const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
   const styles = useStyles()
+  const { loadProviders } = useProvidersContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [checked, setChecked] = useState(false)
 
-  const handleChange = useCallback((
+  const handleChange = (
     _: any,
     data: CheckboxOnChangeData
   ) => {
     setChecked(Boolean(data.checked))
-  }, [setChecked])
+  }
 
-  const deleteProvider = useCallback(() => {
+  const handleOnDelete = () => {
     setLoading(true)
-    fetch(`${window.location.origin}/api/providers/${item.id}`, {
-      method: 'delete'
-    })
+    deleteProvider(item.id)
       .then(() => {
         setOpen(false)
-        loadProvidersEmitter.emit()
+        loadProviders()
       })
-  }, [setLoading])
+  }
 
   return (
     <Dialog
@@ -69,7 +69,7 @@ const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
             {
               loading
                 ? <Spinner />
-                : <Button disabled={!checked} appearance="primary" onClick={deleteProvider}>Eliminar</Button>
+                : <Button disabled={!checked} appearance="primary" onClick={handleOnDelete}>Eliminar</Button>
             }
             {!loading && (
               <DialogTrigger disableButtonEnhancement>

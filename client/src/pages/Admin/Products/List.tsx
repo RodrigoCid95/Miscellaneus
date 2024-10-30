@@ -1,26 +1,9 @@
-import { useCallback, useEffect, useState, type FC } from "react"
-import {
-  Card,
-  createTableColumn,
-  DataGrid,
-  DataGridBody,
-  DataGridCell,
-  DataGridHeader,
-  DataGridHeaderCell,
-  DataGridRow,
-  makeStyles,
-  Spinner,
-  TableCellLayout,
-  TableColumnDefinition,
-  tokens
-} from "@fluentui/react-components"
-import { Emitter } from './../../../utils/Emitters'
-import EditProduct from "./Edit"
-import DeleteProduct from "./Delete"
+import { Card, createTableColumn, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, makeStyles, Spinner, TableCellLayout, TableColumnDefinition, tokens } from "@fluentui/react-components"
+import { useProductsContext } from "../../../context/products"
 import BarCodeViewer from "./BarCode"
+import Edit from "./Edit"
+import Delete from "./Delete"
 
-const loadProductListEmitter = new Emitter()
-const filterProductListEmitter = new Emitter()
 const useStyles = makeStyles({
   root: {
     marginTop: tokens.spacingVerticalXXL,
@@ -164,51 +147,17 @@ const columns: TableColumnDefinition<Miscellaneous.Product>[] = [
             name: item.name,
             value: item.sku
           }} />
-          <EditProduct item={item} />
-          <DeleteProduct item={item} />
+          <Edit item={item} />
+          <Delete item={item} />
         </TableCellLayout>
       )
     },
   }),
 ]
 
-const ProductList: FC = () => {
+export default () => {
   const styles = useStyles()
-  const [loading, setLoading] = useState<boolean>(true)
-  const [list, setList] = useState<Miscellaneous.Product[]>([])
-
-  const loadProductList = useCallback(() => {
-    setLoading(true)
-    fetch(`${window.location.origin}/api/products`)
-      .then(res => res.json())
-      .then(products => {
-        setList(products)
-        setLoading(false)
-      })
-  }, [setLoading, setList])
-
-  const filterProducts = useCallback((query: string) => {
-    setLoading(true)
-    fetch(`${window.location.origin}/api/products/${query}`)
-      .then(res => res.json())
-      .then(products => {
-        const filterList = products.filter((product: Miscellaneous.Product) => {
-          return product.name.toLowerCase().includes(query.toLowerCase())
-        })
-        setList(filterList)
-        setLoading(false)
-      })
-  }, [setLoading, setList])
-
-  useEffect(() => {
-    loadProductList()
-    loadProductListEmitter.on(loadProductList)
-    filterProductListEmitter.on(filterProducts)
-    return () => {
-      loadProductListEmitter.off(loadProductList)
-      filterProductListEmitter.off(filterProducts)
-    }
-  }, [loadProductList, filterProducts])
+  const { loading, items } = useProductsContext()
 
   return (
     <Card className={styles.root}>
@@ -216,7 +165,7 @@ const ProductList: FC = () => {
       {!loading && (
         <DataGrid
           className={styles.table}
-          items={list}
+          items={items}
           columns={columns}
           sortable
           getRowId={(item: Miscellaneous.Product) => item.id}
@@ -243,7 +192,3 @@ const ProductList: FC = () => {
     </Card>
   )
 }
-
-export { loadProductListEmitter, filterProductListEmitter }
-
-export default ProductList

@@ -1,7 +1,8 @@
-import { useCallback, useState, type FC } from "react"
-import { type Emitter } from "./../../../utils/Emitters"
+import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
+import { useUsersContext } from "../../../context/users"
+import { deleteUser } from "../../../services/users"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -15,30 +16,28 @@ const useStyles = makeStyles({
   },
 })
 
-const DeleteUser: FC<DeleteUserProps> = ({ loadUserListEmitter, user }) => {
+const DeleteUser: FC<DeleteUserProps> = ({ user }) => {
   const styles = useStyles()
+  const { loadUsers } = useUsersContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [checked, setChecked] = useState(false)
 
-  const handleChange = useCallback((
+  const handleChange = (
     _: any,
     data: CheckboxOnChangeData
   ) => {
     setChecked(Boolean(data.checked))
-  }, [setChecked])
+  }
 
-  const deleteUser = useCallback(() => {
+  const handleOnDelete = () => {
     setLoading(true)
-    fetch(`${window.location.origin}/api/users/${user.id}`, {
-      method: 'delete'
-    })
-      .then(res => res.json())
+    deleteUser(user.id)
       .then(() => {
         setOpen(false)
-        loadUserListEmitter.emit()
+        loadUsers()
       })
-  }, [setLoading])
+  }
 
   return (
     <Dialog
@@ -70,7 +69,7 @@ const DeleteUser: FC<DeleteUserProps> = ({ loadUserListEmitter, user }) => {
             {
               loading
                 ? <Spinner />
-                : <Button disabled={!checked} appearance="primary" onClick={deleteUser}>Eliminar</Button>
+                : <Button disabled={!checked} appearance="primary" onClick={handleOnDelete}>Eliminar</Button>
             }
             {!loading && (
               <DialogTrigger disableButtonEnhancement>
@@ -87,6 +86,5 @@ const DeleteUser: FC<DeleteUserProps> = ({ loadUserListEmitter, user }) => {
 export default DeleteUser
 
 interface DeleteUserProps {
-  loadUserListEmitter: Emitter
   user: Miscellaneous.User
 }

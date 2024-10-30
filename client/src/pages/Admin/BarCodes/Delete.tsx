@@ -1,7 +1,8 @@
-import { type FC, useCallback, useState } from "react"
+import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
-import { loadBarCodeListEmitter } from "./List"
+import { useBarCodesContext } from "../../../context/barcodes"
+import { deleteBarCode } from "../../../services/barcodes"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -17,27 +18,26 @@ const useStyles = makeStyles({
 
 const DeleteBarCode: FC<DeleteBarCodeProps> = ({ item }) => {
   const styles = useStyles()
+  const { loadBarCodes } = useBarCodesContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [checked, setChecked] = useState(false)
 
-  const handleChange = useCallback((
+  const handleChange = (
     _: any,
     data: CheckboxOnChangeData
   ) => {
     setChecked(Boolean(data.checked))
-  }, [setChecked])
+  }
 
-  const deleteBarCode = useCallback(() => {
+  const handleOnDelete = () => {
     setLoading(true)
-    fetch(`${window.location.origin}/api/bar-codes/${item.id}`, {
-      method: 'delete'
-    })
+    deleteBarCode(item.id)
       .then(() => {
         setOpen(false)
-        loadBarCodeListEmitter.emit()
+        loadBarCodes()
       })
-  }, [setLoading])
+  }
 
   return (
     <Dialog
@@ -69,7 +69,7 @@ const DeleteBarCode: FC<DeleteBarCodeProps> = ({ item }) => {
             {
               loading
                 ? <Spinner />
-                : <Button disabled={!checked} appearance="primary" onClick={deleteBarCode}>Eliminar</Button>
+                : <Button disabled={!checked} appearance="primary" onClick={handleOnDelete}>Eliminar</Button>
             }
             {!loading && (
               <DialogTrigger disableButtonEnhancement>

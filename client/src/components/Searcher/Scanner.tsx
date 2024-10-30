@@ -1,6 +1,7 @@
 import { type FC } from 'react'
 import { makeStyles } from '@fluentui/react-components'
 import { useZxing } from "react-zxing"
+import { useSearcher } from '../../context/searcher'
 
 const useStyles = makeStyles({
   root: {
@@ -16,14 +17,16 @@ const useStyles = makeStyles({
   },
 })
 
-const Scanner: FC<ScannerProps> = ({ onInput }) => {
+const Scanner: FC<ScannerProps> = () => {
   const styles = useStyles()
+  const { setValue, loadProducts } = useSearcher()
 
   const { ref: videoRef } = useZxing({
     onDecodeResult(result) {
       const code = result.getText()
       if (code) {
-        onInput(code)
+        setValue(code)
+        loadProducts(code)
       }
     },
   })
@@ -38,5 +41,4 @@ const Scanner: FC<ScannerProps> = ({ onInput }) => {
 export default Scanner
 
 interface ScannerProps {
-  onInput: (value: string) => void
 }

@@ -1,14 +1,9 @@
-import { type FC, useCallback, useEffect, useState } from "react"
+import { type FC, type ReactNode, useState } from "react"
 import { Field, Input } from "@fluentui/react-components"
-import { Emitter } from "../utils/Emitters"
+import { PasswordFormContext, usePasswordForm } from "../context/passwordForm"
+import { updatePassword } from "../services/updatePassword"
 
-const emitters = {
-  save: new Emitter(),
-  start: new Emitter(),
-  end: new Emitter(),
-}
-
-const PasswordForm: FC<PasswordFormProps> = () => {
+const PasswordFormProvider: FC<PasswordFormProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [pass1, setPass1] = useState<string>('')
   const [pass2, setPass2] = useState<string>('')
@@ -17,7 +12,7 @@ const PasswordForm: FC<PasswordFormProps> = () => {
   const [passVerification2, setPassVerification2] = useState<Verification>({})
   const [passVerification3, setPassVerification3] = useState<Verification>({})
 
-  const handleOnUpdate = useCallback(() => {
+  const save = () => {
     if (!pass1) {
       setPassVerification1({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -35,17 +30,10 @@ const PasswordForm: FC<PasswordFormProps> = () => {
       setPassVerification3({ message: 'Las contraseñas no coinciden.', state: 'warning' })
       return
     }
-    emitters.start.emit()
-    fetch(`${window.location.origin}/api/profile`, {
-      method: 'put',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({ currentPass: pass1, newPass: pass2 })
-    })
-      .then(res => res.json())
+    setLoading(true)
+    updatePassword(pass1, pass2)
       .then(res => {
-        emitters.end.emit()
+        setLoading(false)
         if (res.ok) {
           setPass1('')
           setPass2('')
@@ -56,20 +44,47 @@ const PasswordForm: FC<PasswordFormProps> = () => {
           }
         }
       })
-  }, [setLoading, pass1, setPassVerification1, pass2, setPassVerification2, pass3, setPassVerification3, setPass1, setPass2, setPass3])
+  }
 
-  useEffect(() => {
-    const handleOnStart = () => setLoading(true)
-    const handleOnEnd = () => setLoading(false)
-    emitters.save.on(handleOnUpdate)
-    emitters.start.on(handleOnStart)
-    emitters.end.on(handleOnEnd)
-    return () => {
-      emitters.save.off(handleOnUpdate)
-      emitters.start.off(handleOnStart)
-      emitters.end.off(handleOnEnd)
-    }
-  }, [setLoading, handleOnUpdate])
+  return (
+    <PasswordFormContext.Provider value={{
+      save,
+      loading,
+      pass1,
+      pass2,
+      pass3,
+      passVerification1,
+      passVerification2,
+      passVerification3,
+      setLoading,
+      setPass1,
+      setPass2,
+      setPass3,
+      setPassVerification1,
+      setPassVerification2,
+      setPassVerification3
+    }}>
+      {children}
+    </PasswordFormContext.Provider>
+  )
+}
+
+const PasswordForm: FC<PasswordFormProps> = () => {
+  const {
+    loading,
+    pass1,
+    pass2,
+    pass3,
+    passVerification1,
+    passVerification2,
+    passVerification3,
+    setPass1,
+    setPass2,
+    setPass3,
+    setPassVerification1,
+    setPassVerification2,
+    setPassVerification3
+  } = usePasswordForm()
 
   return (
     <>
@@ -100,9 +115,11 @@ const PasswordForm: FC<PasswordFormProps> = () => {
   )
 }
 
-export default PasswordForm
+export { PasswordFormProvider, PasswordForm }
 
-export { emitters }
 
+interface PasswordFormProviderProps {
+  children: ReactNode
+}
 interface PasswordFormProps {
 }

@@ -1,25 +1,9 @@
-import { useCallback, useEffect, useState, type FC } from "react"
-import {
-  Card,
-  createTableColumn,
-  DataGrid,
-  DataGridBody,
-  DataGridCell,
-  DataGridHeader,
-  DataGridHeaderCell,
-  DataGridRow,
-  makeStyles,
-  Spinner,
-  TableCellLayout,
-  TableColumnDefinition,
-  tokens
-} from "@fluentui/react-components"
-import { Emitter } from './../../../utils/Emitters'
+import { Card, createTableColumn, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, makeStyles, Spinner, TableCellLayout, TableColumnDefinition, Text, tokens } from "@fluentui/react-components"
+import { useBarCodesContext } from "../../../context/barcodes"
 import BarCodeViewer from "./Viewer"
 import EditBarcode from "./Edit"
 import DeleteBarCode from "./Delete"
 
-const loadBarCodeListEmitter = new Emitter()
 const useStyles = makeStyles({
   root: {
     marginTop: tokens.spacingVerticalXXL
@@ -100,36 +84,17 @@ const columns: TableColumnDefinition<Miscellaneous.BarCode>[] = [
   }),
 ]
 
-const BarCodeList: FC = () => {
+export default () => {
   const styles = useStyles()
-  const [loading, setLoading] = useState<boolean>(true)
-  const [list, setList] = useState<Miscellaneous.BarCode[]>([])
-
-  const loadBarCodeList = useCallback(() => {
-    setLoading(true)
-    fetch(`${window.location.origin}/api/bar-codes`)
-      .then(res => res.json())
-      .then(barCodes => {
-        setList(barCodes)
-        setLoading(false)
-      })
-  }, [setLoading, setList])
-
-  useEffect(() => {
-    loadBarCodeList()
-    loadBarCodeListEmitter.on(loadBarCodeList)
-    return () => {
-      loadBarCodeListEmitter.off(loadBarCodeList)
-    }
-  }, [loadBarCodeList])
+  const { loading, items } = useBarCodesContext()
 
   return (
     <Card className={styles.root}>
       {loading && <Spinner className={styles.spinner} />}
-      {!loading && (
+      {!loading && items.length > 0 ? (
         <DataGrid
           className={styles.table}
-          items={list}
+          items={items}
           columns={columns}
           sortable
           getRowId={(item: Miscellaneous.BarCode) => item.id}
@@ -151,10 +116,7 @@ const BarCodeList: FC = () => {
             )}
           </DataGridBody>
         </DataGrid>
-      )}
+      ) : <Text>No hay nada por aquí</Text>}
     </Card>
   )
 }
-
-export { loadBarCodeListEmitter }
-export default BarCodeList

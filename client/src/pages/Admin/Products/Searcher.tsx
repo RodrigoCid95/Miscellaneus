@@ -1,12 +1,8 @@
-import { type FC } from "react"
 import { SearchBox } from "@fluentui/react-components"
+import { useProductsContext } from "../../../context/products"
 
-const Searcher: FC<SearcherProps> = ({ onSearch }) => {
-  return <SearchBox placeholder="Search..." onChange={(_, { value }) => onSearch(value)}/>
-}
+export default () => {
+  const { filterProducts } = useProductsContext()
 
-export default Searcher
-
-interface SearcherProps {
-  onSearch: (text: string) => void
+  return <SearchBox placeholder="Search..." onChange={(_, { value }) => filterProducts(value)} />
 }

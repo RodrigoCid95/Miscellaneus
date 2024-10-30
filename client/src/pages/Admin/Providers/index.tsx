@@ -1,30 +1,50 @@
-import { FC } from "react"
-import ToolbarPage from "./../../../Components/Toolbar"
+import { useEffect, useState } from "react"
 import { ToolbarButton } from "@fluentui/react-components"
-import ProviderList, { loadProvidersEmitter } from "./List"
 import { bundleIcon, ArrowSync20Filled, ArrowSync20Regular } from "@fluentui/react-icons"
-import NewProvider from "./New"
+import { ProvidersContext, useProvidersContext } from "../../../context/providers"
+import { getProviders } from "../../../services/providers"
+import ToolbarPage from "../../../components/Toolbar"
+import New from './New'
+import List from './List'
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
 
-const ProvidersPage: FC<ProvidersPageProps> = ({ onOpenMenu }) => {
+const Providers = () => {
+  const { loadProviders } = useProvidersContext()
+
   return (
     <>
-      <ToolbarPage title="Proveedores" onOpenMenu={onOpenMenu}>
-        <NewProvider />
+      <ToolbarPage title="Proveedores">
+        <New />
         <ToolbarButton
           appearance="transparent"
           icon={<ReloadIcon />}
-          onClick={() => loadProvidersEmitter.emit()}
+          onClick={loadProviders}
         />
       </ToolbarPage>
-      <ProviderList />
+      <List />
     </>
   )
 }
 
-export default ProvidersPage
+export default () => {
+  const [loading, setLoading] = useState(false)
+  const [items, setItems] = useState<Miscellaneous.Provider[]>([])
 
-interface ProvidersPageProps {
-  onOpenMenu: () => void
+  const loadProviders = () => {
+    setLoading(true)
+    getProviders()
+      .then(providers => {
+        setItems(providers)
+        setLoading(false)
+      })
+  }
+
+  useEffect(loadProviders, [])
+
+  return (
+    <ProvidersContext.Provider value={{ loading, loadProviders, items }}>
+      <Providers />
+    </ProvidersContext.Provider>
+  )
 }

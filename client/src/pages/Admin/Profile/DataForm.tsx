@@ -1,6 +1,7 @@
-import { type FC, useCallback, useState } from "react"
+import { type FC, useState } from "react"
 import { Button, Field, Input, makeStyles } from "@fluentui/react-components"
-import { profileController } from './../../../utils/Profile'
+import { useProfileContext } from "../../../context/profile"
+import { updateProfile } from "../../../services/profile"
 
 const useStyles = makeStyles({
   buttons: {
@@ -12,13 +13,14 @@ const useStyles = makeStyles({
 
 const DataForm: FC<DataFormProps> = () => {
   const styles = useStyles()
+  const { profile, setProfile } = useProfileContext()
   const [loading, setLoading] = useState<boolean>(false)
-  const [full_name, setFullName] = useState<Miscellaneous.NewUser['name']>(profileController.profile?.name || '')
-  const [name, setName] = useState<Miscellaneous.NewUser['userName']>(profileController.profile?.userName || '')
+  const [full_name, setFullName] = useState<Miscellaneous.NewUser['name']>(profile?.name || '')
+  const [name, setName] = useState<Miscellaneous.NewUser['userName']>(profile?.userName || '')
   const [nameVerification, setNameVerification] = useState<Verification>({})
   const [fullNameVerification, setFullNameVerification] = useState<Verification>({})
 
-  const handleOnUpdate = useCallback(() => {
+  const handleOnUpdate = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -28,22 +30,15 @@ const DataForm: FC<DataFormProps> = () => {
       return
     }
     setLoading(true)
-    fetch(`${window.location.origin}/api/profile`, {
-      method: 'post',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({ name: full_name, userName: name })
-    })
-      .then(res => res.json())
+    updateProfile({ name: full_name, userName: name })
       .then(res => {
         setLoading(false)
         if (res.ok) {
-          profileController.profile = {
-            ...(profileController.profile as Miscellaneous.User),
+          setProfile({
+            ...(profile as Miscellaneous.User),
             userName: name,
             name: full_name
-          }
+          })
         } else {
           if (res.code === 'user-already-exists') {
             setNameVerification({ message: res.message, state: 'warning' })
@@ -52,7 +47,7 @@ const DataForm: FC<DataFormProps> = () => {
           }
         }
       })
-  }, [name, setNameVerification, full_name, setFullNameVerification, setLoading])
+  }
 
   return (
     <>
@@ -84,5 +79,4 @@ const DataForm: FC<DataFormProps> = () => {
 export default DataForm
 
 interface DataFormProps {
-  user: Miscellaneous.User | null
 }

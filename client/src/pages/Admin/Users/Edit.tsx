@@ -1,7 +1,8 @@
-import { ChangeEvent, useCallback, useState, type FC } from 'react'
-import { type Emitter } from './../../../utils/Emitters'
+import { type FC, ChangeEvent, useState } from 'react'
 import { makeStyles, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogBody, DialogContent, Field, Input, Switch, DialogActions, Button, Spinner } from '@fluentui/react-components'
 import { bundleIcon, Edit20Filled, Edit20Regular } from '@fluentui/react-icons'
+import { updateUser } from '../../../services/users'
+import { useUsersContext } from '../../../context/users'
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
 
@@ -16,8 +17,9 @@ const useStyles = makeStyles({
   },
 })
 
-const EditUser: FC<EditUserProps> = ({ loadUserListEmitter, user }) => {
+const EditUser: FC<EditUserProps> = ({ user }) => {
   const styles = useStyles()
+  const { loadUsers } = useUsersContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [full_name, setFullName] = useState<Miscellaneous.NewUser['name']>(user.name)
@@ -26,9 +28,9 @@ const EditUser: FC<EditUserProps> = ({ loadUserListEmitter, user }) => {
   const [nameVerification, setNameVerification] = useState<Verification>({})
   const [fullNameVerification, setFullNameVerification] = useState<Verification>({})
 
-  const handleOnIsAdminChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => setIsAdmin(ev.currentTarget.checked), [setIsAdmin])
+  const handleOnIsAdminChange = (ev: ChangeEvent<HTMLInputElement>) => setIsAdmin(ev.currentTarget.checked)
 
-  const updateUser = useCallback(() => {
+  const handleOnUpdate = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -43,24 +45,17 @@ const EditUser: FC<EditUserProps> = ({ loadUserListEmitter, user }) => {
       name: full_name,
       isAdmin,
     }
-    fetch(`${window.location.origin}/api/users`, {
-      method: 'put',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({id: user.id, ...newUser})
-    })
-      .then(res => res.json())
+    updateUser(user.id, newUser)
       .then(response => {
         if (response.ok) {
           setOpen(false)
-          loadUserListEmitter.emit()
+          loadUsers()
         } else {
           setNameVerification({ message: `El usuario "${name}" ya existe.`, state: 'warning' })
           setLoading(false)
         }
       })
-  }, [setLoading, name, full_name, isAdmin])
+  }
 
   return (
     <Dialog
@@ -112,7 +107,7 @@ const EditUser: FC<EditUserProps> = ({ loadUserListEmitter, user }) => {
             {
               loading
                 ? <Spinner />
-                : <Button appearance="primary" onClick={updateUser}>Guardar</Button>
+                : <Button appearance="primary" onClick={handleOnUpdate}>Guardar</Button>
             }
           </DialogActions>
         </DialogBody>
@@ -124,6 +119,5 @@ const EditUser: FC<EditUserProps> = ({ loadUserListEmitter, user }) => {
 export default EditUser
 
 interface EditUserProps {
-  loadUserListEmitter: Emitter
   user: Miscellaneous.User
 }

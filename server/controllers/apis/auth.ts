@@ -1,4 +1,4 @@
-@Namespace('api/auth')
+@Namespace('api', 'auth')
 export class AuthController {
   @Model('UsersModel') private usersModel: Models<'UsersModel'>
   @Get('/')

@@ -1,8 +1,8 @@
-import { type FC, useState, useEffect } from "react"
-import ToolbarPage from "./../../../Components/Toolbar"
-import { Button, Card, CardHeader, Text, makeStyles, tokens } from "@fluentui/react-components"
+import { makeStyles, tokens, Card, CardHeader, Button, Text } from "@fluentui/react-components"
+import { PasswordForm, PasswordFormProvider } from "../../../components/PasswordForm"
+import ToolbarPage from "../../../components/Toolbar"
+import { usePasswordForm } from "../../../context/passwordForm"
 import DataForm from "./DataForm"
-import PasswordForm, { emitters } from './../../../Components/PasswordForm'
 
 const useStyles = makeStyles({
   content: {
@@ -29,31 +29,20 @@ const useStyles = makeStyles({
   },
 })
 
-const ProfilePage: FC<ProfilePageProps> = ({ onOpenMenu, user }) => {
+const Profile = () => {
   const styles = useStyles()
-  const [loading, setLoading] = useState<boolean>(false)
-
-  useEffect(() => {
-    const handleOnStart = () => setLoading(true)
-    const handleOnEnd = () => setLoading(false)
-    emitters.start.on(handleOnStart)
-    emitters.end.on(handleOnEnd)
-    return () => {
-      emitters.start.off(handleOnStart)
-      emitters.end.off(handleOnEnd)
-    }
-  }, [setLoading])
+  const { loading: pLoading, save: pSave } = usePasswordForm()
 
   return (
     <>
-      <ToolbarPage title="Perfil" onOpenMenu={onOpenMenu} />
+      <ToolbarPage title="Perfil" />
       <div className={styles.content}>
         <div className={styles.form}>
           <Card>
             <CardHeader
               header={<Text weight="semibold">Datos personales</Text>}
             />
-            <DataForm user={user} />
+            <DataForm />
           </Card>
         </div>
         <div className={styles.form}>
@@ -63,7 +52,7 @@ const ProfilePage: FC<ProfilePageProps> = ({ onOpenMenu, user }) => {
             />
             <PasswordForm />
             <div className={styles.buttons}>
-              <Button disabled={loading} appearance="primary" onClick={() => emitters.save.emit()}>
+              <Button disabled={pLoading} appearance="primary" onClick={pSave}>
                 Actualizar
               </Button>
             </div>
@@ -74,9 +63,8 @@ const ProfilePage: FC<ProfilePageProps> = ({ onOpenMenu, user }) => {
   )
 }
 
-export default ProfilePage
-
-interface ProfilePageProps {
-  onOpenMenu(): void
-  user: Miscellaneous.User | null
-}
+export default () => (
+  <PasswordFormProvider>
+    <Profile />
+  </PasswordFormProvider>
+)

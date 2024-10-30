@@ -1,6 +1,6 @@
 import { verifyAdminSession, verifySession } from "./middlewares/sessions"
 
-@Namespace('api/providers')
+@Namespace('api', 'providers')
 @Middlewares({ before: [verifyAdminSession] })
 export class ProviderController {
   @Model('ProvidersModel') private providersModel: Models<'ProvidersModel'>

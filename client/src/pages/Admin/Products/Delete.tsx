@@ -1,7 +1,8 @@
-import { type FC, useCallback, useState } from "react"
+import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
-import { loadProductListEmitter } from "./List"
+import { useProductsContext } from "../../../context/products"
+import { deleteProduct } from "../../../services/products"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -17,27 +18,26 @@ const useStyles = makeStyles({
 
 const DeleteProduct: FC<DeleteProductProps> = ({ item }) => {
   const styles = useStyles()
+  const { loadProducts } = useProductsContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [checked, setChecked] = useState(false)
 
-  const handleChange = useCallback((
+  const handleChange = (
     _: any,
     data: CheckboxOnChangeData
   ) => {
     setChecked(Boolean(data.checked))
-  }, [setChecked])
+  }
 
-  const deleteBarCode = useCallback(() => {
+  const handleOnDelete = () => {
     setLoading(true)
-    fetch(`${window.location.origin}/api/products/${item.id}`, {
-      method: 'delete'
-    })
+    deleteProduct(item.id)
       .then(() => {
         setOpen(false)
-        loadProductListEmitter.emit()
+        loadProducts()
       })
-  }, [setLoading])
+  }
 
   return (
     <Dialog
@@ -69,7 +69,7 @@ const DeleteProduct: FC<DeleteProductProps> = ({ item }) => {
             {
               loading
                 ? <Spinner />
-                : <Button disabled={!checked} appearance="primary" onClick={deleteBarCode}>Eliminar</Button>
+                : <Button disabled={!checked} appearance="primary" onClick={handleOnDelete}>Eliminar</Button>
             }
             {!loading && (
               <DialogTrigger disableButtonEnhancement>

@@ -1,5 +1,7 @@
 import { type FC, useEffect, useState } from 'react'
 import { Card, CardHeader, makeStyles, Spinner, Text, tokens } from '@fluentui/react-components'
+import { getDayHistory, getMonthHistory, getWeekHistory } from '../../../services/history'
+import { getProducts } from '../../../services/products'
 
 const useStyles = makeStyles({
   root: {
@@ -33,82 +35,59 @@ const Board: FC<BoardProps> = () => {
   const [products, setProducts] = useState<Miscellaneous.Product[] | null>(null)
 
   useEffect(() => {
-    let date = new Date()
-    const startUTCDay = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 6, 0, 0, 0)
-    date.setDate(date.getDate() + 1)
-    const endUTCDay = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 6, 0, 0, 0)
-    date = new Date()
-    date.setDate(date.getDate() - date.getDay())
-    const startUTCWeek = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-    date.setDate(date.getDate() + 7)
-    const endUTCWeek = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-    date = new Date()
-    const startURTMonth = Date.UTC(date.getFullYear(), date.getMonth())
-    date.setMonth(date.getMonth() + 1)
-    const endUTCMonth = Date.UTC(date.getFullYear(), date.getMonth())
-    fetch(`${window.location.origin}/api/history/${startUTCDay}/${endUTCDay}`)
-      .then(res => res.json())
-      .then((sales: Miscellaneous.History[]) => {
-        const topList: TopList = []
-        let total = 0
-        for (const sale of sales) {
-          total += sale.total
-          const index = topList.findIndex(item => item.name === sale.product)
-          if (index > -1) {
-            topList[index].count += sale.count
-          } else {
-            topList.push({ name: sale.product, count: sale.count })
-          }
+    const processSales = (sales: Miscellaneous.History[]) => {
+      const topList: TopList = []
+      let total = 0
+      for (const sale of sales) {
+        total += sale.total
+        const index = topList.findIndex(item => item.name === sale.product)
+        if (index > -1) {
+          topList[index].count += sale.count
+        } else {
+          topList.push({ name: sale.product, count: sale.count })
         }
-        const top = topList.sort((a, b) => b.count - a.count).slice(0, 10)
+      }
+      const top = topList.sort((a, b) => b.count - a.count).slice(0, 10)
+      return { top, total }
+    }
+
+    const date = new Date()
+    const day = date.getDate()
+    const mounth = date.getMonth() + 1
+    const year = date.getFullYear()
+    const startDate = new Date(date.getFullYear(), 0, 1)
+    const days = Math.floor((date.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000))
+    const week = Math.ceil((days + startDate.getDay() + 1) / 7)
+
+    getDayHistory(year, mounth, day)
+      .then(sales => {
+        const { top, total } = processSales(sales)
         setDayTop(top)
         setDaySales(total)
       })
-    fetch(`${window.location.origin}/api/history/${startUTCWeek}/${endUTCWeek}`)
-      .then(res => res.json())
-      .then((sales: Miscellaneous.History[]) => {
-        const topList: TopList = []
-        let total = 0
-        for (const sale of sales) {
-          total += sale.total
-          const index = topList.findIndex(item => item.name === sale.product)
-          if (index > -1) {
-            topList[index].count += sale.count
-          } else {
-            topList.push({ name: sale.product, count: sale.count })
-          }
-        }
-        const top = topList.sort((a, b) => b.count - a.count).slice(0, 10)
+
+    getWeekHistory(year, week)
+      .then(sales => {
+        const { top, total } = processSales(sales)
         setWeekTop(top)
         setWeekSales(total)
       })
-    fetch(`${window.location.origin}/api/history/${startURTMonth}/${endUTCMonth}`)
-      .then(res => res.json())
-      .then((sales: Miscellaneous.History[]) => {
-        const topList: TopList = []
-        let total = 0
-        for (const sale of sales) {
-          total += sale.total
-          const index = topList.findIndex(item => item.name === sale.product)
-          if (index > -1) {
-            topList[index].count += sale.count
-          } else {
-            topList.push({ name: sale.product, count: sale.count })
-          }
-        }
-        const top = topList.sort((a, b) => b.count - a.count).slice(0, 10)
+
+    getMonthHistory(year, mounth)
+      .then(sales => {
+        const { top, total } = processSales(sales)
         setMonthTop(top)
         setMonthSales(total)
       })
-    fetch(`${window.location.origin}/api/products`)
-      .then(res => res.json())
-      .then((products: Miscellaneous.Product[]) => {
+
+    getProducts()
+      .then(products => {
         const productList = products
           .filter(product => product.stock === 0 || product.stock < product.minStock)
           .sort((a, b) => b.stock - a.stock)
         setProducts(productList)
       })
-  }, [setDaySales, setDayTop, setWeekSales, setWeekTop, setMonthSales, setMonthTop])
+  }, [])
 
   return (
     <div className={styles.root}>

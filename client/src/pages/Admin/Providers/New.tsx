@@ -1,7 +1,8 @@
-import { useCallback, useState, type FC } from "react"
+import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, PeopleAdd20Filled, PeopleAdd20Regular } from "@fluentui/react-icons"
-import { loadProvidersEmitter } from "./List"
+import { saveProvider } from "../../../services/providers"
+import { useProvidersContext } from "../../../context/providers"
 
 const AddIcon = bundleIcon(PeopleAdd20Filled, PeopleAdd20Regular)
 
@@ -18,6 +19,7 @@ const useStyles = makeStyles({
 
 const NewProvider: FC<NewProviderProps> = () => {
   const styles = useStyles()
+  const { loadProviders } = useProvidersContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [name, setName] = useState<Miscellaneous.Provider['name']>('')
@@ -25,7 +27,7 @@ const NewProvider: FC<NewProviderProps> = () => {
   const [nameVerification, setNameVerification] = useState<Verification>({})
   const [phoneVerification, setPhoneVerification] = useState<Verification>({})
 
-  const createProvider = useCallback(() => {
+  const createProvider = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -36,18 +38,12 @@ const NewProvider: FC<NewProviderProps> = () => {
     }
     setLoading(true)
     const newProvider: Miscellaneous.NewProvider = { name, phone }
-    fetch(`${window.location.origin}/api/providers`, {
-      method: 'post',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(newProvider)
-    })
+    saveProvider(newProvider)
       .then(() => {
         setOpen(false)
-        loadProvidersEmitter.emit()
+        loadProviders()
       })
-  }, [setLoading, name, phone, setNameVerification, setPhoneVerification])
+  }
 
   return (
     <Dialog
@@ -79,7 +75,7 @@ const NewProvider: FC<NewProviderProps> = () => {
             </Field>
 
             <Field
-              label="Valor"
+              label="Teléfono"
               validationState={phoneVerification.state}
               validationMessage={phoneVerification.message}
             >

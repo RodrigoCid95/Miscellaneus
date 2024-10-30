@@ -1,7 +1,7 @@
-import { type FC, useState, useCallback } from "react"
-import { type ConfigController } from './../utils/Config'
+import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Settings20Filled, Settings20Regular } from "@fluentui/react-icons"
+import { useConfigContext } from "../context/config"
 
 const SettingsIcon = bundleIcon(Settings20Filled, Settings20Regular)
 const useStyles = makeStyles({
@@ -15,16 +15,17 @@ const useStyles = makeStyles({
   },
 })
 
-const Config: FC<ConfigProps> = ({ configController }) => {
+const Config: FC<ConfigProps> = () => {
   const styles = useStyles()
+  const { config, setConfig } = useConfigContext()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [name, setName] = useState<Miscellaneous.Config['name']>('')
+  const [name, setName] = useState<Miscellaneous.Config['name']>(config?.name || '')
   const [nameVerification, setNameVerification] = useState<Verification>({})
-  const [ipPrinter, setIpPrinter] = useState<Miscellaneous.Config['name']>('')
+  const [ipPrinter, setIpPrinter] = useState<Miscellaneous.Config['name']>(config?.ipPrinter || '')
   const [ipPrinterVerification, setIpPrinterVerification] = useState<Verification>({})
 
-  const handleOnUpdate = useCallback(() => {
+  const handleOnUpdate = () => {
     if (!name) {
       setNameVerification({ message: 'Campo requerido.', state: 'warning' })
       return
@@ -34,23 +35,12 @@ const Config: FC<ConfigProps> = ({ configController }) => {
       return
     }
     setLoading(true)
-    fetch(`${window.location.origin}/api/config`, {
-      method: 'put',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({ name, ipPrinter })
-    })
-      .then(res => res.json())
+    setConfig({ name, ipPrinter })
       .then(() => {
         setLoading(false)
-        configController.config = {
-          name,
-          ipPrinter
-        }
         setOpen(false)
       })
-  }, [name, ipPrinter, setOpen, configController])
+  }
 
   return (
     <Dialog
@@ -59,9 +49,9 @@ const Config: FC<ConfigProps> = ({ configController }) => {
       onOpenChange={(_, data) => {
         setOpen(data.open)
         if (data.open) {
-          setName(configController.config?.name || '')
+          setName(config?.name || '')
           setNameVerification({})
-          setIpPrinter(configController.config?.ipPrinter || '')
+          setIpPrinter(config?.ipPrinter || '')
           setIpPrinterVerification({})
         }
       }}
@@ -110,5 +100,4 @@ const Config: FC<ConfigProps> = ({ configController }) => {
 export default Config
 
 interface ConfigProps {
-  configController: ConfigController
 }

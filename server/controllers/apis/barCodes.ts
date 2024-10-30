@@ -1,6 +1,6 @@
 import { verifyAdminSession } from './middlewares/sessions'
 
-@Namespace('api/bar-codes')
+@Namespace('api', 'bar-codes')
 @Middlewares({ before: [verifyAdminSession] })
 export class BarCodesController {
   @Model('BarCodesModel') private barCodesModel: Models<'BarCodesModel'>
