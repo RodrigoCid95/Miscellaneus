@@ -2,7 +2,6 @@
 	"name": "server",
 	"version": "1.0.0",
 	"scripts": {
-		"init": "pxio",
 		"start": "pxio start",
 		"start:app": "pxio start -od ../app/dist/server -oa -sp",
 		"build": "pxio build",
@@ -28,7 +27,8 @@
 		"resources": [
 			"public",
 			"views",
-			"services.js"
+			"services.js",
+			"certificate"
 		],
 		"loader": {
 			".sql": "text"

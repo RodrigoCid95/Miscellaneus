@@ -51,7 +51,7 @@ function createMenu() {
       submenu: [
         {
           label: 'Iniciar servidor',
-          click: (menuItem, browserWindow, event) => startServer(menuItem)
+          click: menuItem => startServer(menuItem)
         }
       ]
     }
@@ -66,15 +66,15 @@ function startServer() {
     server = initHttpServer().http
     ipAddress = getLocalIPAddress();
     if (ipAddress) {
-      clipboard.writeText(`http://${ipAddress}:3001`)
+      clipboard.writeText(`https://${ipAddress}:3001`)
       const menuTemplate = [
         {
           label: 'Servidor',
           submenu: [
             {
-              label: `Servidor en http://${ipAddress}:3001`,
+              label: `Servidor en https://${ipAddress}:3001`,
               click: () => {
-                clipboard.writeText(`http://${ipAddress}:3001`);
+                clipboard.writeText(`https://${ipAddress}:3001`);
                 dialog.showMessageBox(mainWindow, {
                   title: 'Miscellaneous',
                   message: 'La dirección del servidor se copió al portapapeles.',
