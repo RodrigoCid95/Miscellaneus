@@ -1,3 +1,6 @@
+import JsBarcode from 'jsbarcode'
+import { createCanvas } from '@napi-rs/canvas'
+
 @Namespace('bar-codes')
 export class BarCodesController {
   @Model('BarCodesModel') private barCodesModel: Models<'BarCodesModel'>
@@ -31,5 +34,15 @@ export class BarCodesController {
     return {
       ok: true
     }
+  }
+
+  @On('getSrc')
+  public async getSrc(id: Miscellaneous.BarCode['id']): Promise<any> {
+    const barCode = await this.barCodesModel.get(id) as Miscellaneous.BarCode
+    const canvas = createCanvas(1000, 1000)
+    JsBarcode(canvas, barCode.value, {
+      text: barCode.tag
+    })
+    return canvas.toDataURLAsync('image/webp')
   }
 }

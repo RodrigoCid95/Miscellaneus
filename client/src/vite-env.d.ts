@@ -40,5 +40,6 @@ declare global {
     deleteUser(id: Miscellaneous.User['id']): Promise<void>
     login(user_name: string, password: string): Promise<any>
     logout(): Promise<void>
+    getBarCodeSrc(id: Miscellaneous.BarCode['id']): Promise<string>
   }
 }

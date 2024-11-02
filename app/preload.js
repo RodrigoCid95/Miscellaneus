@@ -13,6 +13,9 @@ const updateBarCode = barCode =>
 
 const deleteBarCode = id =>
   ipcRenderer.invoke('worker', 'bar-codes:delete', id)
+
+const getBarCodeSrc = id =>
+  ipcRenderer.invoke('worker', 'bar-codes:getSrc', id)
 //#endregion BarCodes
 //#region Products
 const saveCheckout = async productGroups => {
@@ -147,6 +150,7 @@ contextBridge.exposeInMainWorld('createBarCode', createBarCode)
 contextBridge.exposeInMainWorld('getBarCodes', getBarCodes)
 contextBridge.exposeInMainWorld('updateBarCode', updateBarCode)
 contextBridge.exposeInMainWorld('deleteBarCode', deleteBarCode)
+contextBridge.exposeInMainWorld('getBarCodeSrc', getBarCodeSrc)
 contextBridge.exposeInMainWorld('saveCheckout', saveCheckout)
 contextBridge.exposeInMainWorld('findProducts', findProducts)
 contextBridge.exposeInMainWorld('getConfig', getConfig)

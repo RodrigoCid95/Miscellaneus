@@ -26,6 +26,8 @@ const deleteBarCode = async id => {
     method: 'delete'
   })
 }
+
+const getBarCodeSrc = id => new Promise(resolve => resolve(`/bar-code/${id}`))
 //#endregion BarCodes
 //#region Products
 const saveCheckout = async productGroups => {
@@ -238,6 +240,7 @@ Object.defineProperty(window, 'createBarCode', { value: createBarCode, writable:
 Object.defineProperty(window, 'getBarCodes', { value: getBarCodes, writable: false })
 Object.defineProperty(window, 'updateBarCode', { value: updateBarCode, writable: false })
 Object.defineProperty(window, 'deleteBarCode', { value: deleteBarCode, writable: false })
+Object.defineProperty(window, 'getBarCodeSrc', { value: getBarCodeSrc, writable: false })
 Object.defineProperty(window, 'saveCheckout', { value: saveCheckout, writable: false })
 Object.defineProperty(window, 'findProducts', { value: findProducts, writable: false })
 Object.defineProperty(window, 'getConfig', { value: getConfig, writable: false })
