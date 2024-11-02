@@ -1,7 +1,6 @@
 import { type FC, ChangeEvent, useState } from 'react'
 import { makeStyles, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogBody, DialogContent, Field, Input, Switch, DialogActions, Button, Spinner } from '@fluentui/react-components'
 import { bundleIcon, Edit20Filled, Edit20Regular } from '@fluentui/react-icons'
-import { updateUser } from '../../../services/users'
 import { useUsersContext } from '../../../context/users'
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
@@ -45,7 +44,7 @@ const EditUser: FC<EditUserProps> = ({ user }) => {
       name: full_name,
       isAdmin,
     }
-    updateUser(user.id, newUser)
+    window.updateUser(user.id, newUser)
       .then(response => {
         if (response.ok) {
           setOpen(false)

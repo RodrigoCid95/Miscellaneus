@@ -2,7 +2,6 @@ import { type FC, type ChangeEvent, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, Switch, ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, PersonAdd20Filled, PersonAdd20Regular } from "@fluentui/react-icons"
 import { useUsersContext } from "../../../context/users"
-import { createUser } from "../../../services/users"
 
 const AddPersonIcon = bundleIcon(PersonAdd20Filled, PersonAdd20Regular)
 
@@ -52,7 +51,7 @@ const NewUser: FC<NewUserProps> = () => {
       isAdmin,
       password: password,
     }
-    createUser(newUser)
+    window.createUser(newUser)
       .then(response => {
         if (response.ok) {
           setOpen(false)

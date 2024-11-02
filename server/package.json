@@ -1,11 +1,12 @@
 {
 	"name": "server",
 	"version": "1.0.0",
-	"main": "index.js",
 	"scripts": {
 		"init": "pxio",
 		"start": "pxio start",
-		"build": "pxio build && mv ./dist .."
+		"start:app": "pxio start -od ../app/dist/server -oa -sp",
+		"build": "pxio build",
+		"build:app": "pxio build -od ../app/dist/server -oa -sp"
 	},
 	"keywords": [],
 	"author": "",
@@ -16,14 +17,18 @@
 		"@types/escpos": "^2.5.5",
 		"@types/express": "^4.17.21",
 		"@types/node": "^22.5.5",
-		"px.io": "^0.16.22-beta"
+		"px.io": "^0.18.23-beta"
 	},
 	"pxio": {
-		"type": "http",
+		"type": [
+			"http",
+			"workers"
+		],
 		"boot": "auto",
 		"resources": [
 			"public",
-			"views"
+			"views",
+			"services.js"
 		],
 		"loader": {
 			".sql": "text"

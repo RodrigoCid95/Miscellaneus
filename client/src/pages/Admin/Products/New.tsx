@@ -3,7 +3,6 @@ import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, 
 import { bundleIcon, AddCircle20Filled, AddCircle20Regular } from "@fluentui/react-icons"
 import FieldProvider from "./Provider"
 import { useProductsContext } from "../../../context/products"
-import { createProduct } from "../../../services/products"
 
 const AddIcon = bundleIcon(AddCircle20Filled, AddCircle20Regular)
 
@@ -72,7 +71,7 @@ const NewProduct: FC<NewProductProps> = () => {
       minStock,
       provider: provider.id
     }
-    createProduct(newProduct)
+    window.createProduct(newProduct)
       .then(() => {
         setOpen(false)
         loadProducts()

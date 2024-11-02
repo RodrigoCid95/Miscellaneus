@@ -1,5 +1,9 @@
 import path from 'node:path'
 
-export const db = {
-  path: path.join(process.cwd(), 'data.db'),
+const baseDir = process.env.BASE_DIR ? process.env.BASE_DIR : path.resolve(__dirname, '..', '..')
+
+const db = {
+  path: path.join(baseDir, 'data.db'),
 }
+
+export { db }

@@ -9,9 +9,7 @@ const LogoutButton: FC<LogoutButtonProps> = () => {
 
   const handleOnLogout = () => {
     setLoading(true)
-    fetch(`${window.location.origin}/api/auth`, {
-      method: 'delete'
-    })
+    window.logout()
       .then(() => {
         setLoading(false)
         window.location.reload()

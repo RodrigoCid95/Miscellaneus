@@ -4,7 +4,6 @@ import { ArrowSync20Filled, ArrowSync20Regular, bundleIcon } from "@fluentui/rea
 import ToolbarPage from "../../../components/Toolbar"
 import New from './New'
 import { UsersContext, useUsersContext } from "../../../context/users"
-import { getUsers } from "../../../services/users"
 import List from "./List"
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
@@ -32,7 +31,7 @@ export default () => {
 
   const loadUsers = () => {
     setLoading(true)
-    getUsers()
+    window.getUsers()
       .then(users => {
         setItems(users)
         setLoading(false)

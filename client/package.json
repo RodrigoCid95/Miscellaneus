@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite build -w --sourcemap",
-    "build": "tsc -b && vite build --minify",
+    "start": "vite build -w --sourcemap --outDir ./../server/public",
+    "start:app": "vite build -w --sourcemap --outDir ./../app/dist/server/public",
+    "build": "tsc -b && vite build --minify --outDir ./../server/public",
+    "build:app": "tsc -b && vite build --minify --outDir ./../app/dist/server/public",
     "lint": "eslint ."
   },
   "dependencies": {

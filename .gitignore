@@ -9,6 +9,11 @@ server/public
 server/.debugger
 server/dist
 server/data.db
-server/release
+server/key.pem
 
-dist
+app/node_modules
+app/package-lock.json
+app/dist/server
+app/data.db
+app/key.pem
+app/out

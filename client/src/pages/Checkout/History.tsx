@@ -2,7 +2,6 @@ import { type FC, type ReactNode, useState } from "react"
 import { type TableColumnDefinition, makeStyles, Dialog, DialogTrigger, ToolbarButton, DialogSurface, DialogTitle, DialogBody, DialogContent, DialogActions, Button, createTableColumn, TableCellLayout, tokens, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, Spinner, Text } from "@fluentui/react-components"
 import { bundleIcon, History20Filled, History20Regular, BoxArrowLeft20Filled, BoxArrowLeft20Regular } from "@fluentui/react-icons"
 import { HistoryContext, useHistory } from "../../context/history"
-import { getHistory, restoreHistory } from "../../services/history"
 
 const HistoryIcon = bundleIcon(History20Filled, History20Regular)
 const RestoreIcon = bundleIcon(BoxArrowLeft20Filled, BoxArrowLeft20Regular)
@@ -168,12 +167,12 @@ const HistoryProvider: FC<HistoryProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false)
 
   const remove = (id: Miscellaneous.History['id']) => {
-    return restoreHistory(id)
+    return window.restoreHistory(id)
   }
   
   const loadHistory = () => {
     setLoading(true)
-    getHistory()
+    window.getHistory()
       .then(data => {
         setItems(data)
         setLoading(false)

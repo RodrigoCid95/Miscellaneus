@@ -1,6 +1,5 @@
 import { type FC, useState, useEffect } from 'react'
 import { makeStyles, Spinner, Title1 } from '@fluentui/react-components'
-import { getConfig } from '../services/config'
 
 const useStyles = makeStyles({
   title: {
@@ -16,7 +15,7 @@ const Title: FC<TitleProps> = () => {
   const [config, setConfig] = useState<Miscellaneous.Config | null>(null)
 
   useEffect(() => {
-    getConfig()
+    window.getConfig()
       .then(config => {
         setConfig(config)
         setLoading(false)

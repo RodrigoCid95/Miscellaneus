@@ -2,7 +2,6 @@ import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
 import { useProductsContext } from "../../../context/products"
-import { deleteProduct } from "../../../services/products"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -32,7 +31,7 @@ const DeleteProduct: FC<DeleteProductProps> = ({ item }) => {
 
   const handleOnDelete = () => {
     setLoading(true)
-    deleteProduct(item.id)
+    window.deleteProduct(item.id)
       .then(() => {
         setOpen(false)
         loadProducts()

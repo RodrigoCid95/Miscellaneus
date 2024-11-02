@@ -1,7 +1,6 @@
 import { type FC, useState } from "react"
 import { Button, Field, Input, makeStyles } from "@fluentui/react-components"
 import { useProfileContext } from "../../../context/profile"
-import { updateProfile } from "../../../services/profile"
 
 const useStyles = makeStyles({
   buttons: {
@@ -30,7 +29,7 @@ const DataForm: FC<DataFormProps> = () => {
       return
     }
     setLoading(true)
-    updateProfile({ name: full_name, userName: name })
+    window.updateProfile({ name: full_name, userName: name })
       .then(res => {
         setLoading(false)
         if (res.ok) {

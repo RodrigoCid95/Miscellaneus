@@ -3,7 +3,6 @@ import { Card, makeStyles, tokens } from "@fluentui/react-components"
 import { DateRangeType } from '@fluentui/react-calendar-compat'
 import ToolbarPage from "../../../components/Toolbar"
 import { HistoryContext } from './../../../context/adminHistory'
-import { getDayHistory, getMonthHistory, getWeekHistory, restoreHistory } from "../../../services/history"
 import SelectDatePicker from "./SelectDatePicker"
 import HistoryList from "./List"
 
@@ -42,7 +41,7 @@ export default () => {
       const [year, month, day] = data
       setLoading(true)
       setSelection({ type, data })
-      getDayHistory(year, month, day).then(items => {
+      window.getDayHistory(year, month, day).then(items => {
         setItems(items)
         setLoading(false)
       })
@@ -52,7 +51,7 @@ export default () => {
       const [year, week] = data
       setLoading(true)
       setSelection({ type, data })
-      getWeekHistory(year, week).then(items => {
+      window.getWeekHistory(year, week).then(items => {
         setItems(items)
         setLoading(false)
       })
@@ -62,7 +61,7 @@ export default () => {
       const [year, month] = data
       setLoading(true)
       setSelection({ type, data })
-      getMonthHistory(year, month).then(items => {
+      window.getMonthHistory(year, month).then(items => {
         setItems(items)
         setLoading(false)
       })
@@ -73,7 +72,7 @@ export default () => {
   const removeItem = (id: Miscellaneous.History['id']) => {
     if (selection) {
       const { type, data } = selection
-      restoreHistory(id).then(() => loadItems(type, data))
+      window.restoreHistory(id).then(() => loadItems(type, data))
     }
   }
 

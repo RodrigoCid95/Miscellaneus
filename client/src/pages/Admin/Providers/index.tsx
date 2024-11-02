@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, ArrowSync20Filled, ArrowSync20Regular } from "@fluentui/react-icons"
 import { ProvidersContext, useProvidersContext } from "../../../context/providers"
-import { getProviders } from "../../../services/providers"
 import ToolbarPage from "../../../components/Toolbar"
 import New from './New'
 import List from './List'
@@ -33,7 +32,7 @@ export default () => {
 
   const loadProviders = () => {
     setLoading(true)
-    getProviders()
+    window.getProviders()
       .then(providers => {
         setItems(providers)
         setLoading(false)

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { BarCodesContext, useBarCodesContext } from "../../../context/barcodes"
 import ToolbarPage from "../../../components/Toolbar"
-import { getBarCodes } from "../../../services/barcodes"
 import List from './List'
 import { ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, ArrowSync20Filled, ArrowSync20Regular } from "@fluentui/react-icons"
@@ -33,7 +32,7 @@ export default () => {
 
   const loadBarCodes = () => {
     setLoading(true)
-    getBarCodes()
+    window.getBarCodes()
       .then(barcodes => {
         setItems(barcodes)
         setLoading(false)

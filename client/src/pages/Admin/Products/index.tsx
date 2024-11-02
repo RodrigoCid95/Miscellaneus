@@ -3,7 +3,6 @@ import { ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, ArrowSync20Filled, ArrowSync20Regular } from "@fluentui/react-icons"
 import ToolbarPage from "../../../components/Toolbar"
 import { ProductsContext, useProductsContext } from "../../../context/products"
-import { getFilterProducts, getProducts } from "../../../services/products"
 import New from './New'
 import List from './List'
 import Searcher from "./Searcher"
@@ -35,7 +34,7 @@ export default () => {
 
   const loadProducts = () => {
     setLoading(true)
-    getProducts()
+    window.getProducts()
       .then(products => {
         setItems(products)
         setLoading(false)
@@ -44,7 +43,7 @@ export default () => {
 
   const filterProducts = (query: string) => {
     setLoading(true)
-    getFilterProducts(query)
+    window.getFilterProducts(query)
       .then(products => {
         setItems(products)
         setLoading(false)

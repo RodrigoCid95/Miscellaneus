@@ -1,0 +1,38 @@
+{
+  "name": "Miscellaneous",
+  "description": "Sistema de ventas.",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "set IS_DEV=1&& electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "keywords": [],
+  "author": "Miscellaneous",
+  "license": "ISC",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-deb": "^7.5.0",
+    "@electron-forge/maker-rpm": "^7.5.0",
+    "@electron-forge/maker-squirrel": "^7.5.0",
+    "@electron-forge/maker-zip": "^7.5.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
+    "@electron-forge/plugin-fuses": "^7.5.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^33.0.2"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.59",
+    "compression": "^1.7.4",
+    "electron-squirrel-startup": "^1.0.1",
+    "escpos": "^3.0.0-alpha.6",
+    "escpos-network": "^3.0.0-alpha.5",
+    "escpos-usb": "^3.0.0-alpha.4",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "jsbarcode": "^3.11.6",
+    "liquidjs": "^10.18.0",
+    "sqlite3": "^5.1.7"
+  }
+}

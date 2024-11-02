@@ -1,8 +1,6 @@
+import path from 'node:path'
 import JsBarcode from 'jsbarcode'
 import { createCanvas } from '@napi-rs/canvas'
-import escpos from 'escpos'
-import escposUSB from 'escpos-usb'
-import escposNetwork from 'escpos-network'
 
 export class IndexController {
   @Model('BarCodesModel') private barCodesModel: Models<'BarCodesModel'>
@@ -44,27 +42,11 @@ export class IndexController {
     res.send(canvas.toBuffer('image/webp'))
   }
 
-  @Get('/test')
-  public test(req: PXIOHTTP.Request<Miscellaneous.Session>, res: PXIOHTTP.Response) {
-    escpos.USB = escposUSB
-    escpos.Network = escposNetwork
-    const device = new escpos.Network('0.0.0.0', 1234)
-    const printer = new escpos.Printer(device)
-    device.open(() => {
-      printer
-        .text('Miscellaneous - Point of Sale')
-        .text(`Fecha : ${new Date().toLocaleString()}`)
-        .drawLine()
-        .table(["Cantidad", "Producto", "Subtotal"])
-        .table(["2", "Coca Cola", "$45"])
-      printer.table(["2", "Coca Cola", "$45"])
-        .table(["2", "Coca Cola", "$45"])
-        .drawLine()
-        .text('Total: $15.00')
-        .cut()
-        .close()
-    })
-    res.json(true)
+  @Get('/js/services.js')
+  public services(_: PXIOHTTP.Request, res: PXIOHTTP.Response): void {
+    res.set('Content-Type', 'application/javascript')
+    const servicesPath = process.env.BASE_DIR ? path.resolve(__dirname, '..', 'services.js') : path.resolve(__dirname, '..', '..', 'services.js')
+    res.sendFile(servicesPath)
   }
 }
 

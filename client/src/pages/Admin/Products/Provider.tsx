@@ -1,6 +1,5 @@
 import { type FC, useEffect, useState } from "react"
 import { Dropdown, Option, Field, useId, Spinner, OptionOnSelectData, SelectionEvents } from "@fluentui/react-components"
-import { getProviders } from "../../../services/providers"
 
 const FieldProvider: FC<FieldProviderProps> = ({ verification, onBlur, value, onChange }) => {
   const dropdownId = useId("provider")
@@ -8,7 +7,7 @@ const FieldProvider: FC<FieldProviderProps> = ({ verification, onBlur, value, on
   const [providers, setProviders] = useState<Miscellaneous.Provider[]>([])
 
   useEffect(() => {
-    getProviders()
+    window.getProviders()
       .then(providers => {
         setProviders(providers)
         setLoading(false)

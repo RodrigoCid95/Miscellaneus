@@ -2,7 +2,6 @@ import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
 import { useProvidersContext } from "../../../context/providers"
-import { deleteProvider } from "../../../services/providers"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -32,7 +31,7 @@ const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
 
   const handleOnDelete = () => {
     setLoading(true)
-    deleteProvider(item.id)
+    window.deleteProvider(item.id)
       .then(() => {
         setOpen(false)
         loadProviders()

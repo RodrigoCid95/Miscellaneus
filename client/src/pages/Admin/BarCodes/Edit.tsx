@@ -2,7 +2,6 @@ import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Edit20Filled, Edit20Regular } from "@fluentui/react-icons"
 import { useBarCodesContext } from "../../../context/barcodes"
-import { updateBarCode } from "../../../services/barcodes"
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
 
@@ -39,7 +38,7 @@ const EditBarcode: FC<EditBarcodeProps> = ({ item }) => {
     }
     setLoading(true)
     const barCode: Miscellaneous.BarCode = { id: item.id, name, tag, value }
-    updateBarCode(barCode)
+    window.updateBarCode(barCode)
       .then(() => {
         setOpen(false)
         loadBarCodes()

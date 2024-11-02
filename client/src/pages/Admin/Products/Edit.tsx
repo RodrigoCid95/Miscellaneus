@@ -3,7 +3,6 @@ import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, 
 import { bundleIcon, Edit20Filled, Edit20Regular } from "@fluentui/react-icons"
 import FieldProvider from "./Provider"
 import { useProductsContext } from "../../../context/products"
-import { updateProduct } from "../../../services/products"
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
 
@@ -72,7 +71,7 @@ const EditProduct: FC<EditProductProps> = ({ item }) => {
       minStock,
       provider: provider.id
     }
-    updateProduct(item.id, newProduct)
+    window.updateProduct(item.id, newProduct)
       .then(() => {
         setOpen(false)
         loadProducts()

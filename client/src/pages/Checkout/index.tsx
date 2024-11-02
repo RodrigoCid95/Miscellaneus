@@ -4,7 +4,6 @@ import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from "@
 import Title from "../../components/Title"
 import Logout from './../../components/Logout'
 import { useCheckout, CheckoutContext } from '../../context/checkout'
-import { saveCheckout } from "../../services/checkout"
 
 const History = lazy(() => import('./History'))
 const UpdatePassword = lazy(() => import('./UpdatePassword'))
@@ -96,7 +95,7 @@ export default () => {
   const checkout = () => {
     if (!loading && productGroups.length > 0) {
       setLoading(true)
-      saveCheckout(productGroups)
+      window.saveCheckout(productGroups)
         .then(() => {
           setProductGroups([])
           setLoading(false)

@@ -1,7 +1,6 @@
 import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, PeopleAdd20Filled, PeopleAdd20Regular } from "@fluentui/react-icons"
-import { saveProvider } from "../../../services/providers"
 import { useProvidersContext } from "../../../context/providers"
 
 const AddIcon = bundleIcon(PeopleAdd20Filled, PeopleAdd20Regular)
@@ -38,7 +37,7 @@ const NewProvider: FC<NewProviderProps> = () => {
     }
     setLoading(true)
     const newProvider: Miscellaneous.NewProvider = { name, phone }
-    saveProvider(newProvider)
+    window.saveProvider(newProvider)
       .then(() => {
         setOpen(false)
         loadProviders()

@@ -8,7 +8,7 @@ const verifyParams = (req: PXIOHTTP.Request, res: PXIOHTTP.Response, next: Next)
       res.json({
         ok: false,
         code: 'bad-request',
-        message: 'Parametros invalidos.'
+        message: 'Parámetros inválidos.'
       })
       return
     }

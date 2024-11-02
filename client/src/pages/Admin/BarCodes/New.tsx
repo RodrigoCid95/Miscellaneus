@@ -2,7 +2,6 @@ import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, AddCircle20Filled, AddCircle20Regular } from "@fluentui/react-icons"
 import { useBarCodesContext } from "../../../context/barcodes"
-import { createBarCode } from "../../../services/barcodes"
 
 const AddIcon = bundleIcon(AddCircle20Filled, AddCircle20Regular)
 
@@ -39,7 +38,7 @@ const NewBarcode: FC<NewBarcodeProps> = () => {
     }
     setLoading(true)
     const newBarCode: Miscellaneous.NewBarCode = { name, tag, value }
-    createBarCode(newBarCode)
+    window.createBarCode(newBarCode)
       .then(() => {
         setOpen(false)
         loadBarCodes()

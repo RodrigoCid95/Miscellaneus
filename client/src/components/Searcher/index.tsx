@@ -6,7 +6,6 @@ import { Button, Input, makeStyles, Spinner, tokens } from "@fluentui/react-comp
 import { bundleIcon, BarcodeScanner20Filled, BarcodeScanner20Regular } from "@fluentui/react-icons"
 import { BrowserCodeReader } from '@zxing/browser'
 import { useCheckout } from "../../context/checkout"
-import { findProducts } from "../../services/checkout"
 import { SearcherContext, useSearcher } from './../../context/searcher'
 
 const BarCodeIcon = bundleIcon(BarcodeScanner20Filled, BarcodeScanner20Regular)
@@ -137,7 +136,7 @@ export default () => {
       return
     }
     setLoading(true)
-    findProducts(query)
+    window.findProducts(query)
       .then((results: Miscellaneous.Product[]) => {
         if (results.length > 0) {
           if (results.length === 1) {

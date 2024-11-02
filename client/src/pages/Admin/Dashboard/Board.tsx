@@ -1,7 +1,5 @@
 import { type FC, useEffect, useState } from 'react'
 import { Card, CardHeader, makeStyles, Spinner, Text, tokens } from '@fluentui/react-components'
-import { getDayHistory, getMonthHistory, getWeekHistory } from '../../../services/history'
-import { getProducts } from '../../../services/products'
 
 const useStyles = makeStyles({
   root: {
@@ -59,28 +57,28 @@ const Board: FC<BoardProps> = () => {
     const days = Math.floor((date.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000))
     const week = Math.ceil((days + startDate.getDay() + 1) / 7)
 
-    getDayHistory(year, mounth, day)
+    window.getDayHistory(year, mounth, day)
       .then(sales => {
         const { top, total } = processSales(sales)
         setDayTop(top)
         setDaySales(total)
       })
 
-    getWeekHistory(year, week)
+    window.getWeekHistory(year, week)
       .then(sales => {
         const { top, total } = processSales(sales)
         setWeekTop(top)
         setWeekSales(total)
       })
 
-    getMonthHistory(year, mounth)
+    window.getMonthHistory(year, mounth)
       .then(sales => {
         const { top, total } = processSales(sales)
         setMonthTop(top)
         setMonthSales(total)
       })
 
-    getProducts()
+    window.getProducts()
       .then(products => {
         const productList = products
           .filter(product => product.stock === 0 || product.stock < product.minStock)

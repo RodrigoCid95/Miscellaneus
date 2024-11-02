@@ -1,7 +1,6 @@
 import { type FC, type ReactNode, useState } from "react"
 import { Field, Input } from "@fluentui/react-components"
 import { PasswordFormContext, usePasswordForm } from "../context/passwordForm"
-import { updatePassword } from "../services/updatePassword"
 
 const PasswordFormProvider: FC<PasswordFormProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false)
@@ -31,7 +30,7 @@ const PasswordFormProvider: FC<PasswordFormProviderProps> = ({ children }) => {
       return
     }
     setLoading(true)
-    updatePassword(pass1, pass2)
+    window.updatePassword(pass1, pass2)
       .then(res => {
         setLoading(false)
         if (res.ok) {

@@ -7,6 +7,10 @@
     {
       "name": "Client",
       "path": "client"
+    },
+    {
+      "name": "App",
+      "path": "app"
     }
   ],
   "settings": {
@@ -47,7 +51,7 @@
         "type": "shell",
         "args": [
           "run",
-          "build"
+          "build:app"
         ],
         "options": {
           "cwd": "${workspaceFolder}/../server"
@@ -58,34 +62,15 @@
         "group": "build"
       },
       {
-        "label": "Install Server Dependencies",
+        "label": "Build App",
         "command": "npm",
         "type": "shell",
         "args": [
-          "install"
+          "run",
+          "make"
         ],
         "options": {
-          "cwd": "${workspaceFolder}/../dist"
-        },
-        "presentation": {
-          "reveal": "always"
-        },
-        "group": "build"
-      },
-      {
-        "label": "Packing Server",
-        "command": "npx",
-        "type": "shell",
-        "args": [
-          "pkg",
-          ".",
-          "--targets",
-          "node18-windows-x64,node18-linux-x64",
-          "-o",
-          "../server/release/Miscellaneous"
-        ],
-        "options": {
-          "cwd": "${workspaceFolder}/../dist"
+          "cwd": "${workspaceFolder}/../app"
         },
         "presentation": {
           "reveal": "always"
@@ -94,9 +79,9 @@
       },
       {
         "label": "Clean",
-        "command": "npx rimfar ./.debugger && npx rimfar ./../dist npx rimfar ./public",
+        "command": "npx rimfar ./dist/server",
         "options": {
-          "cwd": "${workspaceFolder}/../server"
+          "cwd": "${workspaceFolder}/../app"
         },
         "type": "shell",
       },
@@ -106,9 +91,7 @@
           "Clean",
           "Build Client",
           "Build Server",
-          "Install Server Dependencies",
-          "Packing Server",
-          "Clean"
+          "Build App"
         ],
         "dependsOrder": "sequence",
         "group": "build",

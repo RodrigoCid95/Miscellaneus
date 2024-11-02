@@ -54,19 +54,7 @@ function App() {
       return
     }
     setLoading(true)
-    const response = await fetch(
-      '/api/auth',
-      {
-        method: 'post',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          user_name: userName,
-          password
-        })
-      }
-    ).then(res => res.json())
+    const response = await window.login(userName, password)
     setLoading(false)
     if (response.ok) {
       window.location.reload()

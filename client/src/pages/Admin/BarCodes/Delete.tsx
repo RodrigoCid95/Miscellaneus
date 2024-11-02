@@ -2,7 +2,6 @@ import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
 import { useBarCodesContext } from "../../../context/barcodes"
-import { deleteBarCode } from "../../../services/barcodes"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -32,7 +31,7 @@ const DeleteBarCode: FC<DeleteBarCodeProps> = ({ item }) => {
 
   const handleOnDelete = () => {
     setLoading(true)
-    deleteBarCode(item.id)
+    window.deleteBarCode(item.id)
       .then(() => {
         setOpen(false)
         loadBarCodes()

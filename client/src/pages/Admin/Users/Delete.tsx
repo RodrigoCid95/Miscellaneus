@@ -2,7 +2,6 @@ import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
 import { useUsersContext } from "../../../context/users"
-import { deleteUser } from "../../../services/users"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -32,7 +31,7 @@ const DeleteUser: FC<DeleteUserProps> = ({ user }) => {
 
   const handleOnDelete = () => {
     setLoading(true)
-    deleteUser(user.id)
+    window.deleteUser(user.id)
       .then(() => {
         setOpen(false)
         loadUsers()

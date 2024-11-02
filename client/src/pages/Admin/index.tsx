@@ -3,8 +3,6 @@ import { Button, Caption1, Drawer, DrawerBody, DrawerFooter, DrawerHeader, Drawe
 import { BarcodeScanner20Filled, BarcodeScanner20Regular, Board20Filled, Board20Regular, BoxMultiple20Filled, BoxMultiple20Regular, bundleIcon, ContactCardGroup20Filled, ContactCardGroup20Regular, Dismiss24Regular, FluentIcon, History20Filled, History20Regular, People20Filled, People20Regular, Person20Filled, Person20Regular } from "@fluentui/react-icons"
 import { DrawerType, AdminAppContext, useAdminAppContext } from '../../context/admin'
 import { ConfigContext, useConfigContext } from "../../context/config"
-import { getConfig, saveConfig } from "../../services/config"
-import { getProfile } from "../../services/profile"
 import { ProfileContext, useProfileContext } from "../../context/profile"
 import LogoutButton from "../../components/Logout"
 
@@ -186,7 +184,7 @@ const ConfigProvider: FC<any> = ({ children }) => {
   const [config, setConfig] = useState<Miscellaneous.Config | undefined>(undefined)
 
   const loadConfig = () => {
-    getConfig()
+    window.getConfig()
       .then(c => setConfig(c))
   }
 
@@ -195,7 +193,7 @@ const ConfigProvider: FC<any> = ({ children }) => {
   }, [])
 
   const setConfiguration = async (config: Miscellaneous.Config) => {
-    await saveConfig(config)
+    await window.saveConfig(config)
     setConfig(config)
   }
 
@@ -210,7 +208,7 @@ const ProfileProvider: FC<any> = ({ children }) => {
   const [profile, setProfile] = useState<Miscellaneous.User | undefined>(undefined)
 
   useEffect(() => {
-    getProfile()
+    window.getProfile()
       .then(p => setProfile(p))
   }, [])
 
