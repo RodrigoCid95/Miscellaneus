@@ -1,4 +1,5 @@
 export * from './db'
+export const certificate = () => getConfig('HTTP').certificate 
 
 class TimeUTC implements Miscellaneous.ITimeUTC {
   public getCurrentUTC() {

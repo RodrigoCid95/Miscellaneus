@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="manifest" href="manifest.json">
   {% assign title = "iniciar sesión" %}
   {% if session.user %}
     {% if session.user.isAdmin %}
@@ -20,6 +22,7 @@
 </head>
 <body>
   <div id="root"></div>
+  <script src="/js/app.js"></script>
   <script src="/js/services.js"></script>
   {% if session.user %}
     {% if session.user.isAdmin  %}

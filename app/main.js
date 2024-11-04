@@ -2,17 +2,13 @@ const { app, BrowserWindow, ipcMain, Menu, clipboard, dialog } = require('electr
 const path = require('node:path')
 const fs = require('node:fs')
 const os = require('node:os')
+const { createCA, createCert } = require('mkcert')
 
 process.env.IS_DEV = process.env.IS_DEV !== undefined
 process.env.BASE_DIR = process.env.IS_DEV !== 'false' ? process.cwd() : path.join(app.getPath('userData'), 'server')
 if (!fs.existsSync(process.env.BASE_DIR)) {
   fs.mkdirSync(process.env.BASE_DIR, { recursive: true })
 }
-
-const { initWorkerServer, initHttpServer } = require('./dist/server/main')
-const workerServer = initWorkerServer()
-
-ipcMain.handle('worker', (_, ...args) => workerServer(...args))
 
 function getLocalIPAddress() {
   const interfaces = os.networkInterfaces()
@@ -23,8 +19,54 @@ function getLocalIPAddress() {
       }
     }
   }
+  for (const interfaceName in interfaces) {
+    for (const interfaceInfo of interfaces[interfaceName]) {
+      if (interfaceInfo.family === 'IPv4' && !interfaceInfo.internal && interfaceInfo.address.split('.')[0] === '172') {
+        return interfaceInfo.address
+      }
+    }
+  }
+  for (const interfaceName in interfaces) {
+    for (const interfaceInfo of interfaces[interfaceName]) {
+      if (interfaceInfo.family === 'IPv4' && !interfaceInfo.internal && interfaceInfo.address.split('.')[0] === '10') {
+        return interfaceInfo.address
+      }
+    }
+  }
   return 'localhost'
 }
+
+const certificatePath = path.join(process.env.BASE_DIR, 'certificate')
+if (!fs.existsSync(certificatePath)) {
+  fs.mkdirSync(certificatePath, { recursive: true })
+}
+createCA({
+  organization: "Miscellaneous",
+  countryCode: "MX",
+  state: "Puebla",
+  locality: "Chapulco",
+  validity: 365
+}).then(ca => {
+  const localIP = getLocalIPAddress()
+  const domains = ["127.0.0.1", "localhost"]
+  if (!domains.includes(localIP)) {
+    domains.unshift(localIP)
+  }
+  createCert({
+    ca: { key: ca.key, cert: ca.cert },
+    domains,
+    validity: 365
+  }).then(cert => {
+    fs.writeFileSync(path.join(certificatePath, 'key.pem'), cert.key)
+    fs.writeFileSync(path.join(certificatePath, 'cert.pem'), cert.cert)
+    fs.writeFileSync(path.join(certificatePath, 'cert.p12'), `${cert.cert}${ca.cert}`)
+  })
+})
+
+const { initWorkerServer, initHttpServer } = require('./dist/server/main')
+const workerServer = initWorkerServer()
+
+ipcMain.handle('worker', (_, ...args) => workerServer(...args))
 
 let ipAddress = null
 let mainWindow
@@ -34,6 +76,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    icon: path.join(__dirname, 'dist', 'server', 'public', 'favicon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }

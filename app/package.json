@@ -33,6 +33,7 @@
     "express-session": "^1.18.1",
     "jsbarcode": "^3.11.6",
     "liquidjs": "^10.18.0",
+    "mkcert": "^3.2.0",
     "sqlite3": "^5.1.7"
   }
 }
