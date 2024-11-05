@@ -16,7 +16,8 @@
   "settings": {
     "files.exclude": {
       "**/.debugger": true,
-      "**/key.pem": true,
+      "**/dist/server": true,
+      "**/certificate": true,
       "**/data.db": true,
       "**/declarations.d.ts": true,
       "**/*-lock.json": true,
