@@ -7,3 +7,4 @@ const Admin = lazy(() => import('./pages/Admin'))
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <App><Admin /></App>
 )
+document.title = `Miscellaneous | Administrador`

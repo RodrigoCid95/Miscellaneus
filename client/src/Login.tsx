@@ -7,3 +7,4 @@ const Login = lazy(() => import('./pages/Login'))
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <App><Login /></App>
 )
+document.title = `Miscellaneous | Iniciar sesión`

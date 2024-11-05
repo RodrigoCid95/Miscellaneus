@@ -15,8 +15,22 @@ export class IndexController {
   }
 
   @Before(['loadConfig'])
-  @View('/')
+  @View('/', { sw: process.env.BASE_DIR !== undefined })
   public index = 'index'
+
+  @Get('/sw.js')
+  public serviceWorker(_: PXIOHTTP.Request, res: PXIOHTTP.Response): void {
+    res.set('Content-Type', 'application/javascript')
+    const servicesPath = process.env.BASE_DIR ? path.resolve(__dirname, '..', 'sw.js') : path.resolve(__dirname, '..', '..', 'sw.js')
+    res.sendFile(servicesPath)
+  }
+
+  @Get('/js/services.js')
+  public services(_: PXIOHTTP.Request, res: PXIOHTTP.Response): void {
+    res.set('Content-Type', 'application/javascript')
+    const servicesPath = process.env.BASE_DIR ? path.resolve(__dirname, '..', 'services.js') : path.resolve(__dirname, '..', '..', 'services.js')
+    res.sendFile(servicesPath)
+  }
 
   @Get('/bar-code/:value')
   public async barCode(req: PXIOHTTP.Request, res: PXIOHTTP.Response): Promise<void> {
@@ -41,13 +55,6 @@ export class IndexController {
     res.set('Surrogate-Control', 'no-store')
     res.set('Content-Type', 'image/webp')
     res.send(canvas.toBuffer('image/webp'))
-  }
-
-  @Get('/js/services.js')
-  public services(_: PXIOHTTP.Request, res: PXIOHTTP.Response): void {
-    res.set('Content-Type', 'application/javascript')
-    const servicesPath = process.env.BASE_DIR ? path.resolve(__dirname, '..', 'services.js') : path.resolve(__dirname, '..', '..', 'services.js')
-    res.sendFile(servicesPath)
   }
 
   @Before(['loadConfig'])

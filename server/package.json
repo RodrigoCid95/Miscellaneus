@@ -27,7 +27,8 @@
 		"resources": [
 			"public",
 			"views",
-			"services.js"
+			"services.js",
+			"sw.js"
 		],
 		"loader": {
 			".sql": "text"

@@ -10,8 +10,6 @@ export default defineConfig({
         login:'./src/Login.tsx',
         admin: './src/Admin.tsx',
         checkout: './src/Checkout.tsx',
-        app: './src/App.ts',
-        worker: './src/worker.ts',
       },
       output: {
         entryFileNames: 'js/[name].js',

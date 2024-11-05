@@ -7,3 +7,4 @@ const Checkout = lazy(() => import('./pages/Checkout'))
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <App><Checkout /></App>
 )
+document.title = `Miscellaneous | Checkout`
