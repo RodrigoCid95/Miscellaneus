@@ -87,6 +87,20 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'))
 }
 
+function exportCertificate() {
+  const exportPath = dialog.showSaveDialogSync(mainWindow, {
+    title: 'Exportar certificado',
+    defaultPath: app.getPath('desktop'),
+    buttonLabel: 'Exportar',
+    filters: [
+      { name: 'Certificado', extensions: ['crt'] }
+    ]
+  })
+  if (exportPath) {
+    fs.copyFileSync(path.join(certificatePath, 'rootCA.crt'), exportPath)
+  }
+}
+
 function createMenu() {
   const menuTemplate = [
     {
@@ -97,17 +111,21 @@ function createMenu() {
           click: menuItem => startServer(menuItem)
         }
       ]
+    },
+    {
+      label: 'Exportar certificado',
+      click: exportCertificate
     }
-  ];
+  ]
 
-  const menu = Menu.buildFromTemplate(menuTemplate);
-  Menu.setApplicationMenu(menu);
+  const menu = Menu.buildFromTemplate(menuTemplate)
+  Menu.setApplicationMenu(menu)
 }
 
 function startServer() {
   if (server === null) {
     server = initHttpServer().http
-    ipAddress = getLocalIPAddress();
+    ipAddress = getLocalIPAddress()
     if (ipAddress) {
       clipboard.writeText(`https://${ipAddress}:3001`)
       const menuTemplate = [
@@ -130,6 +148,10 @@ function startServer() {
               click: stopServer,
             }
           ]
+        },
+        {
+          label: 'Exportar certificado',
+          click: exportCertificate
         }
       ]
       const menu = Menu.buildFromTemplate(menuTemplate)
@@ -153,6 +175,10 @@ async function stopServer() {
             click: startServer
           }
         ]
+      },
+      {
+        label: 'Exportar certificado',
+        click: exportCertificate
       }
     ]
     const menu = Menu.buildFromTemplate(menuTemplate)
