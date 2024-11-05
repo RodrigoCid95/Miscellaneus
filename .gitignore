@@ -9,11 +9,11 @@ server/public
 server/.debugger
 server/dist
 server/data.db
-server/key.pem
+server/certificate
 
 app/node_modules
 app/package-lock.json
 app/dist/server
 app/data.db
-app/key.pem
+app/certificate
 app/out

@@ -112,9 +112,9 @@ export class IndexController {
     })
   }
 
-  @Get('/certificate.p12')
+  @Get('/certificate')
   public certificate(_: PXIOHTTP.Request, res: PXIOHTTP.Response): void {
-    res.download(path.join(this.certificateModel.certificate, 'cert.p12'))
+    res.download(path.join(this.certificateModel.certificate, 'rootCA.pem'))
   }
 }
 

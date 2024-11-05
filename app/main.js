@@ -59,7 +59,7 @@ createCA({
   }).then(cert => {
     fs.writeFileSync(path.join(certificatePath, 'key.pem'), cert.key)
     fs.writeFileSync(path.join(certificatePath, 'cert.pem'), cert.cert)
-    fs.writeFileSync(path.join(certificatePath, 'cert.p12'), `${cert.cert}${ca.cert}`)
+    fs.writeFileSync(path.join(certificatePath, 'rootCA.pem'), ca.cert)
   })
 })
 
