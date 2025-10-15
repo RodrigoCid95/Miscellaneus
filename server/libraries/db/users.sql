@@ -1,1 +1,0 @@
-CREATE TABLE IF NOT EXISTS users (name TEXT, user_name TEXT, hash TEXT, is_admin INTEGER);
