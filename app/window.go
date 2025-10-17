@@ -35,25 +35,40 @@ func (a *WindowApp) GetMenu(serverRunning bool) *menu.Menu {
 	if runtime.GOOS == "darwin" {
 		AppMenu.Append(menu.AppMenu())
 	}
+
 	FileMenu := AppMenu.AddSubmenu("Archivo")
-	serverLabel := "Iniciar servidor!"
-	if serverRunning {
-		port := models.Config.LoadConfig().Port
-		serverLabel = "Servidor corriendo en http://localhost:" + port
-	}
-	FileMenu.AddCheckbox(serverLabel, serverRunning, nil, func(cd *menu.CallbackData) {
-		if cd.MenuItem.Checked {
-			go a.server.StartOfBackground()
-			rt.MenuSetApplicationMenu(*a.ctx, a.GetMenu(cd.MenuItem.Checked))
-		} else {
-			a.server.Stop()
-			rt.MenuSetApplicationMenu(*a.ctx, a.GetMenu(cd.MenuItem.Checked))
-		}
-	})
-	FileMenu.AddSeparator()
 	FileMenu.AddText("Salir", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
 		rt.Quit(*a.ctx)
 	})
+
+	ViewMenu := AppMenu.AddSubmenu("Ver")
+	ViewMenu.AddText("Pantalla completa", keys.CmdOrCtrl("f"), func(_ *menu.CallbackData) {
+		isFS := rt.WindowIsFullscreen(*a.ctx)
+		if isFS {
+			rt.WindowUnfullscreen(*a.ctx)
+		} else {
+			rt.WindowFullscreen(*a.ctx)
+		}
+	})
+
+	ServerMenu := AppMenu.AddSubmenu("Servidor")
+	if serverRunning {
+		ServerMenu.AddText("Detener", nil, func(cd *menu.CallbackData) {
+			a.server.Stop()
+			rt.MenuSetApplicationMenu(*a.ctx, a.GetMenu(false))
+		})
+		ServerMenu.AddSeparator()
+		ServerMenu.AddText("Abrir", nil, func(cd *menu.CallbackData) {
+			port := models.Config.LoadConfig().Port
+			url := "http://localhost:" + port
+			rt.BrowserOpenURL(*a.ctx, url)
+		})
+	} else {
+		ServerMenu.AddText("Iniciar", nil, func(cd *menu.CallbackData) {
+			go a.server.StartOfBackground()
+			rt.MenuSetApplicationMenu(*a.ctx, a.GetMenu(true))
+		})
+	}
 
 	if runtime.GOOS == "darwin" {
 		AppMenu.Append(menu.EditMenu())
