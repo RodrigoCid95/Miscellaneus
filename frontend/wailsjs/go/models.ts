@@ -84,6 +84,7 @@ export namespace models {
 	export class ConfigData {
 	    name: string;
 	    ipPrinter: string;
+	    port: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ConfigData(source);
@@ -93,6 +94,7 @@ export namespace models {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.name = source["name"];
 	        this.ipPrinter = source["ipPrinter"];
+	        this.port = source["port"];
 	    }
 	}
 	export class DataProduct {
@@ -121,7 +123,7 @@ export namespace models {
 	        this.idProvider = source["idProvider"];
 	    }
 	}
-	export class History {
+	export class HistoryItem {
 	    id: number;
 	    product: string;
 	    user: string;
@@ -130,7 +132,7 @@ export namespace models {
 	    total: number;
 	
 	    static createFrom(source: any = {}) {
-	        return new History(source);
+	        return new HistoryItem(source);
 	    }
 	
 	    constructor(source: any = {}) {

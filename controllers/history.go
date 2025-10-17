@@ -23,14 +23,14 @@ type DataMonth struct {
 
 type History struct{}
 
-func (h *History) GetDayHistory(data DataDay) []models.History {
+func (h *History) GetDayHistory(data DataDay) []models.HistoryItem {
 	start := time.Date(data.Year, time.Month(data.Month), data.Day, 0, 0, 0, 0, time.UTC)
 	end := time.Date(data.Year, time.Month(data.Month), data.Day, 23, 59, 59, 0, time.UTC)
 
-	return models.Hostory.GetByRange(start.UnixMilli(), end.UnixMilli())
+	return models.History.GetByRange(start.UnixMilli(), end.UnixMilli())
 }
 
-func (h *History) GetWeekHistory(data DataWeek) []models.History {
+func (h *History) GetWeekHistory(data DataWeek) []models.HistoryItem {
 	jan4 := time.Date(data.Year, time.January, 5, 0, 0, 0, 0, time.UTC)
 	isoYear, isoWeek := jan4.ISOWeek()
 	for isoYear != data.Year || isoWeek != 1 {
@@ -41,13 +41,13 @@ func (h *History) GetWeekHistory(data DataWeek) []models.History {
 	start := jan4.AddDate(0, 0, offsetDays)
 	end := start.AddDate(0, 0, 6).Add(time.Hour*23 + time.Minute*59 + time.Second*59 + time.Millisecond*999)
 
-	return models.Hostory.GetByRange(start.UnixMilli(), end.UnixMilli())
+	return models.History.GetByRange(start.UnixMilli(), end.UnixMilli())
 }
 
-func (h *History) GetMonthHistory(data DataMonth) []models.History {
+func (h *History) GetMonthHistory(data DataMonth) []models.HistoryItem {
 	firstDay := time.Date(data.Year, time.Month(data.Month), 1, 0, 0, 0, 0, time.UTC)
 	lastDay := firstDay.AddDate(0, 1, -1)
 	lastDay = time.Date(lastDay.Year(), lastDay.Month(), lastDay.Day(), 23, 59, 59, 0, lastDay.Location())
 
-	return models.Hostory.GetByRange(firstDay.UnixMilli(), lastDay.UnixMilli())
+	return models.History.GetByRange(firstDay.UnixMilli(), lastDay.UnixMilli())
 }

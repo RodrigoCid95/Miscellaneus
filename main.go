@@ -1,20 +1,24 @@
 package main
 
 import (
+	"Miscellaneous/app"
 	"Miscellaneous/controllers"
 	"Miscellaneous/libs"
+	"Miscellaneous/server"
 	"embed"
+	"os"
+	"slices"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
 //go:embed all:frontend/dist
-var assets embed.FS
+var appAssets embed.FS
 
 func main() {
-	controllers.Window = controllers.App{}
 	profile := &controllers.Profile{}
 	auth := &controllers.Auth{}
 	config := &controllers.Config{}
@@ -24,23 +28,35 @@ func main() {
 	products := &controllers.Products{}
 	history := &controllers.History{}
 	checkout := &controllers.Checkout{}
+	server := server.NewServer(appAssets)
 
-	name := config.GetConfig().Name
-
-	err := wails.Run(&options.App{
-		Title:  "Miscellaneous - " + name,
-		Width:  500,
-		Height: 768,
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
-		BackgroundColour: &options.RGBA{R: 31, G: 31, B: 31, A: 1},
-		OnStartup:        controllers.Window.OnStartup,
-		Bind:             []any{profile, auth, config, users, providers, barcodes, products, history, checkout},
-	})
-
-	if err != nil {
-		println("Error:", err.Error())
+	argsWithoutProg := os.Args[1:]
+	var onlyServer bool = false
+	if slices.Contains(argsWithoutProg, "onlyServer") {
+		onlyServer = true
 	}
-	libs.DB.Close()
+
+	if onlyServer {
+		server.Start()
+	} else {
+		name := config.GetConfig().Name
+		app.Window.SetServer(server)
+
+		err := wails.Run(&options.App{
+			Title:       "Miscellaneous - " + name,
+			Width:       500,
+			Height:      768,
+			AssetServer: &assetserver.Options{Assets: appAssets},
+			Windows:     &windows.Options{Theme: windows.SystemDefault},
+			OnStartup:   app.Window.OnStartup,
+			Bind:        []any{profile, auth, config, users, providers, barcodes, products, history, checkout},
+		})
+
+		if err != nil {
+			println("Error:", err.Error())
+		}
+
+		server.Stop()
+		libs.DB.Close()
+	}
 }

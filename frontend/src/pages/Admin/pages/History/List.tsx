@@ -158,12 +158,12 @@ export default () => {
   )
 }
 
-interface HistoryListItem extends models.History {
+interface HistoryListItem extends models.HistoryItem {
   start: number
   end: number
 }
 interface HistoryListProps {
   loading: boolean
-  items: models.History[]
+  items: models.HistoryItem[]
 
 }

@@ -11,4 +11,14 @@ body {
   padding: 0;
   box-sizing: border-box;
   position: relative;
+  background-color: #fff;
+}
+
+
+@media (prefers-color-scheme: dark) {
+
+  html,
+  body {
+    background-color: #292929;
+  }
 }

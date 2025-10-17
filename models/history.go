@@ -2,7 +2,7 @@ package models
 
 import "Miscellaneous/libs"
 
-type History struct {
+type HistoryItem struct {
 	Id      int     `json:"id"`
 	Product string  `json:"product"`
 	User    string  `json:"user"`
@@ -43,8 +43,8 @@ func (hm *HistoryModel) FindByID(id int) *SaleResult {
 	return &result
 }
 
-func (hm *HistoryModel) GetByRange(start int64, end int64) []History {
-	results := []History{}
+func (hm *HistoryModel) GetByRange(start int64, end int64) []HistoryItem {
+	results := []HistoryItem{}
 
 	rows, err := libs.DB.Query(
 		"SELECT sales.ROWID as id, products.name as product, users.user_name as user, sales.date as date, sales.count as count, sales.total as total FROM sales INNER JOIN users ON users.ROWID = sales.id_user INNER JOIN products ON products.ROWID = sales.id_product WHERE sales.date > ? AND sales.date < ?",
@@ -55,7 +55,7 @@ func (hm *HistoryModel) GetByRange(start int64, end int64) []History {
 	}
 
 	for rows.Next() {
-		result := History{}
+		result := HistoryItem{}
 		err := rows.Scan(&result.Id, &result.Product, &result.User, &result.Date, &result.Count, &result.Total)
 		if err != nil {
 			continue

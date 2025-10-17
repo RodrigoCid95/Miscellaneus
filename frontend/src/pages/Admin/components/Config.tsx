@@ -23,8 +23,10 @@ const Config: FC<ConfigProps> = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [name, setName] = useState<models.ConfigData['name']>(config?.name || '')
   const [nameVerification, setNameVerification] = useState<Verification>({})
-  const [ipPrinter, setIpPrinter] = useState<models.ConfigData['name']>(config?.ipPrinter || '')
+  const [ipPrinter, setIpPrinter] = useState<models.ConfigData['ipPrinter']>(config?.ipPrinter || '')
   const [ipPrinterVerification, setIpPrinterVerification] = useState<Verification>({})
+  const [port, setPort] = useState<models.ConfigData['port']>(config?.port || '')
+  const [portVerification, setPortVerification] = useState<Verification>({})
 
   const handleOnUpdate = () => {
     if (!name) {
@@ -35,8 +37,12 @@ const Config: FC<ConfigProps> = () => {
       setIpPrinterVerification({ message: 'Campo requerido.', state: 'warning' })
       return
     }
+    if (!port) {
+      setPortVerification({ message: 'Campo requerido.', state: 'warning' })
+      return
+    }
     setLoading(true)
-    setConfig({ name, ipPrinter })
+    setConfig({ name, ipPrinter, port })
       .then(() => {
         setLoading(false)
         setOpen(false)
@@ -78,6 +84,14 @@ const Config: FC<ConfigProps> = () => {
               validationMessage={ipPrinterVerification.message}
             >
               <Input type="text" value={ipPrinter} onChange={(e) => setIpPrinter(e.target.value)} onBlur={() => setIpPrinterVerification({})} />
+            </Field>
+
+            <Field
+              label="Puerto del servidor web"
+              validationState={portVerification.state}
+              validationMessage={portVerification.message}
+            >
+              <Input type="number" min={1000} max={9999} value={port} onChange={(e) => setPort(e.target.value)} onBlur={() => setPortVerification({})} />
             </Field>
           </DialogContent>
           <DialogActions>

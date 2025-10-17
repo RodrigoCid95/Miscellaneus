@@ -6,10 +6,6 @@ export function GetConfig() {
   return window['go']['controllers']['Config']['GetConfig']();
 }
 
-export function OnStartup(arg1) {
-  return window['go']['controllers']['Config']['OnStartup'](arg1);
-}
-
 export function SaveConfig(arg1) {
   return window['go']['controllers']['Config']['SaveConfig'](arg1);
 }

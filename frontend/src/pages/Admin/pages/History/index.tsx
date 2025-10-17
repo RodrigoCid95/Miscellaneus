@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { Card, makeStyles, tokens } from "@fluentui/react-components"
 import { DateRangeType } from '@fluentui/react-calendar-compat'
 import ToolbarPage from "../../components/Toolbar"
 import { HistoryContext } from '../../context/history'
@@ -20,7 +19,7 @@ const History = () => (
 
 export default () => {
   const [loading, setLoading] = useState(false)
-  const [items, setItems] = useState<models.History[]>([])
+  const [items, setItems] = useState<models.HistoryItem[]>([])
   const [selection, setSelection] = useState<{
     type: DateRangeType
     data: number[]
@@ -69,7 +68,7 @@ export default () => {
     }
   }
 
-  const removeItem = (id: models.History['id']) => {
+  const removeItem = (id: models.HistoryItem['id']) => {
     if (selection) {
       const { type, data } = selection
       RestoreHistory(id).then(() => loadItems(type, data))

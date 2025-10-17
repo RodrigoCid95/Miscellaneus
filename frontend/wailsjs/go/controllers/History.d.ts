@@ -3,8 +3,8 @@
 import {controllers} from '../models';
 import {models} from '../models';
 
-export function GetDayHistory(arg1:controllers.DataDay):Promise<Array<models.History>>;
+export function GetDayHistory(arg1:controllers.DataDay):Promise<Array<models.HistoryItem>>;
 
-export function GetMonthHistory(arg1:controllers.DataMonth):Promise<Array<models.History>>;
+export function GetMonthHistory(arg1:controllers.DataMonth):Promise<Array<models.HistoryItem>>;
 
-export function GetWeekHistory(arg1:controllers.DataWeek):Promise<Array<models.History>>;
+export function GetWeekHistory(arg1:controllers.DataWeek):Promise<Array<models.HistoryItem>>;

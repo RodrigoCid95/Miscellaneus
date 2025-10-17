@@ -4,9 +4,9 @@ import { models } from '../../../../wailsjs/go/models'
 
 const HistoryContext = createContext<{
   loading: boolean
-  items: models.History[]
+  items: models.HistoryItem[]
   loadItems: (type: DateRangeType, data: number[]) => void
-  removeItem: (id: models.History['id']) => void
+  removeItem: (id: models.HistoryItem['id']) => void
 }>({
   loading: false,
   items: [],

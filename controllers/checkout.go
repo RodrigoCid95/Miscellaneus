@@ -42,7 +42,7 @@ func (c *Checkout) GetHistory() []models.Sale {
 }
 
 func (c *Checkout) RestoreHistory(id int) {
-	saleResult := models.Hostory.FindByID(id)
+	saleResult := models.History.FindByID(id)
 	if saleResult == nil {
 		return
 	}

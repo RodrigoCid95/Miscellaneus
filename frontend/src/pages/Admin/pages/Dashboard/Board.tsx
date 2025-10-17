@@ -36,7 +36,7 @@ const Board: FC<BoardProps> = () => {
   const [products, setProducts] = useState<models.Product[] | null>(null)
 
   useEffect(() => {
-    const processSales = (sales: models.History[]) => {
+    const processSales = (sales: models.HistoryItem[]) => {
       const topList: TopList = []
       let total = 0
       for (const sale of sales) {
