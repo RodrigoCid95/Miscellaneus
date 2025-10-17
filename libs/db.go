@@ -1,7 +1,9 @@
 package libs
 
 import (
+	"Miscellaneous/utils"
 	"database/sql"
+	"path/filepath"
 
 	_ "modernc.org/sqlite"
 )
@@ -9,7 +11,12 @@ import (
 var DB *sql.DB
 
 func init() {
-	db, err := sql.Open("sqlite", "system.db")
+	dataPath := filepath.Join(".", "data")
+	if !utils.DirExists(dataPath) {
+		utils.Mkdir(dataPath)
+	}
+	dbPath := filepath.Join(".", "data", "system.db")
+	db, err := sql.Open("sqlite", dbPath)
 	DB = db
 	if err != nil {
 		panic(err)

@@ -3,8 +3,4 @@ build/windows/installer
 node_modules
 frontend/dist
 frontend/package.json.md5
-miscellaneous.conf
-system.db
-system.db-shm
-system.db-wal
-sessions
+data

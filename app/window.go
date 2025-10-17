@@ -1,7 +1,6 @@
 package app
 
 import (
-	"Miscellaneous/models"
 	"Miscellaneous/server"
 	"context"
 	"runtime"
@@ -59,8 +58,7 @@ func (a *WindowApp) GetMenu(serverRunning bool) *menu.Menu {
 		})
 		ServerMenu.AddSeparator()
 		ServerMenu.AddText("Abrir", nil, func(cd *menu.CallbackData) {
-			port := models.Config.LoadConfig().Port
-			url := "http://localhost:" + port
+			url := "https://localhost"
 			rt.BrowserOpenURL(*a.ctx, url)
 		})
 	} else {

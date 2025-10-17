@@ -5,8 +5,10 @@ import (
 	"Miscellaneous/controllers"
 	"Miscellaneous/libs"
 	"Miscellaneous/server"
+	"Miscellaneous/utils"
 	"embed"
 	"os"
+	"path/filepath"
 	"slices"
 
 	"github.com/wailsapp/wails/v2"
@@ -19,6 +21,11 @@ import (
 var appAssets embed.FS
 
 func main() {
+	dataDir := filepath.Join(".", "data")
+	if !utils.DirExists(dataDir) {
+		utils.Mkdir(dataDir)
+	}
+
 	profile := &controllers.Profile{}
 	auth := &controllers.Auth{}
 	config := &controllers.Config{}

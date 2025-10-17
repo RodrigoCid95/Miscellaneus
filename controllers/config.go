@@ -13,7 +13,7 @@ func (c *Config) GetConfig() models.ConfigData {
 }
 
 func (c *Config) SaveConfig(config models.ConfigData) error {
-	if config.Name == "" || config.IpPrinter == "" || config.Port == "" {
+	if config.Name == "" || config.IpPrinter == "" {
 		return utils.NewError("fields-required", "Faltan parámetros.")
 	}
 

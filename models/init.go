@@ -1,7 +1,8 @@
 package models
 
 import (
-	"os"
+	"Miscellaneous/utils"
+	"path/filepath"
 
 	"gopkg.in/ini.v1"
 )
@@ -14,9 +15,8 @@ var BarCodes *BarCodesModel
 var Products *ProductsModel
 var Checkout *CheckoutModel
 var History *HistoryModel
-
-const configPath = "./miscellaneous.conf"
-const configSectionName = "System"
+var configPath string
+var configSectionName string
 
 func init() {
 	Users = &UsersModel{}
@@ -28,17 +28,10 @@ func init() {
 	Checkout = &CheckoutModel{}
 	History = &HistoryModel{}
 
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		file, err := os.Create(configPath)
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
-		file.WriteString("")
-		err = os.Chmod(configPath, 0600)
-		if err != nil {
-			panic(err)
-		}
+	configSectionName = "System"
+	configPath = filepath.Join(".", "data", "miscellaneous.conf")
+	if !utils.DirExists(configPath) {
+		utils.WriteFile(configPath, "")
 	}
 
 	cfg, err := ini.Load(configPath)
@@ -55,7 +48,6 @@ func init() {
 
 		systemSection.NewKey("name", "Mi tienda")
 		systemSection.NewKey("ip printer", "0.0.0.0")
-		systemSection.NewKey("port", "3000")
 
 		err = cfg.SaveTo(configPath)
 		if err != nil {

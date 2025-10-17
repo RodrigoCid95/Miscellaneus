@@ -23,7 +23,7 @@ func (co *ConfigAPI) SaveConfig(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-credentials", "Credenciales requeridas."))
 	}
 
-	if config.Name == "" || config.IpPrinter == "" || config.Port == "" {
+	if config.Name == "" || config.IpPrinter == "" {
 		return c.JSON(utils.APIBadRequest("fields-required", "Faltan parámetros."))
 	}
 

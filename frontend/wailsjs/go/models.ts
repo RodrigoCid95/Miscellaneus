@@ -84,7 +84,6 @@ export namespace models {
 	export class ConfigData {
 	    name: string;
 	    ipPrinter: string;
-	    port: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ConfigData(source);
@@ -94,7 +93,6 @@ export namespace models {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.name = source["name"];
 	        this.ipPrinter = source["ipPrinter"];
-	        this.port = source["port"];
 	    }
 	}
 	export class DataProduct {

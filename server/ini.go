@@ -3,11 +3,11 @@ package server
 import (
 	"Miscellaneous/models"
 	"Miscellaneous/server/api"
+	"Miscellaneous/utils"
 	"context"
 	"encoding/gob"
 	"io/fs"
 	"net/http"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -19,18 +19,44 @@ import (
 )
 
 type Server struct {
+	re        *echo.Echo
 	e         *echo.Echo
 	cancel    context.CancelFunc
 	isRunning bool
 }
 
+func init() {
+	certsDirPath := filepath.Join(".", "data", "certs")
+	if !utils.DirExists(certsDirPath) {
+		utils.Mkdir(certsDirPath)
+		err := generateSelfSignedCert()
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func redirectToHTTPS() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			req := c.Request()
+			host := req.Host
+			target := "https://" + host + req.RequestURI
+			return c.Redirect(http.StatusMovedPermanently, target)
+		}
+	}
+}
+
 func NewServer(assets fs.FS) *Server {
 	gob.Register(models.User{})
+	re := echo.New()
+	re.Pre(redirectToHTTPS())
+
 	e := echo.New()
 
-	sessionPath := filepath.Join(".", "sessions")
-	if err := os.MkdirAll(sessionPath, 0755); err != nil {
-		panic(err)
+	sessionPath := filepath.Join(".", "data", "sessions")
+	if !utils.DirExists(sessionPath) {
+		utils.Mkdir(sessionPath)
 	}
 	cookieStore := sessions.NewFilesystemStore(sessionPath, []byte("secret"))
 	e.Use(session.Middleware(cookieStore))
@@ -53,29 +79,32 @@ func NewServer(assets fs.FS) *Server {
 	api.RegisterHistoryAPI(e)
 	api.RegisterConfigAPI(e)
 
-	return &Server{e: e}
+	return &Server{e: e, re: re}
 }
 
 func (s *Server) Start() {
-	port := ":" + models.Config.LoadConfig().Port
-	if err := s.e.Start(port); err != nil {
+	go func() {
+		if err := s.re.Start(":80"); err != nil && err != http.ErrServerClosed {
+			s.re.Logger.Fatal("error iniciando el servidor: ", err)
+			s.isRunning = false
+		}
+	}()
+
+	certPath := filepath.Join(".", "data", "certs", "misc.crt")
+	keyPath := filepath.Join(".", "data", "certs", "misc.key")
+	if err := s.e.StartTLS(":443", certPath, keyPath); err != nil && err != http.ErrServerClosed {
 		s.e.Logger.Fatal("error iniciando el servidor: ", err)
+		s.isRunning = false
 	}
 }
 
 func (s *Server) StartOfBackground() {
 	ctx, cancel := context.WithCancel(context.Background())
 	s.cancel = cancel
-	port := ":" + models.Config.LoadConfig().Port
 
-	go func() {
-		if err := s.e.Start(port); err != nil && err != http.ErrServerClosed {
-			s.e.Logger.Fatal("error iniciando el servidor: ", err)
-			s.isRunning = false
-		}
-	}()
+	go s.Start()
 
-	s.e.Logger.Info("Servidor iniciado en http://localhost" + port)
+	s.e.Logger.Info("Servidor iniciado en http://localhost")
 	s.isRunning = true
 	<-ctx.Done()
 }
@@ -88,6 +117,14 @@ func (s *Server) Stop() {
 	defer cancel()
 
 	s.e.Logger.Info("Deteniendo servidor...")
+
+	if err := s.re.Shutdown(ctx); err != nil {
+		s.re.Logger.Error("error al apagar el servidor: ", err)
+		s.isRunning = true
+	} else {
+		s.re.Logger.Info("Servidor detenido correctamente ✅")
+		s.isRunning = false
+	}
 
 	if err := s.e.Shutdown(ctx); err != nil {
 		s.e.Logger.Error("error al apagar el servidor: ", err)
