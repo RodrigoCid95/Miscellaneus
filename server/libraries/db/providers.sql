@@ -1,1 +1,0 @@
-CREATE TABLE IF NOT EXISTS providers (name TEXT, phone TEXT);
