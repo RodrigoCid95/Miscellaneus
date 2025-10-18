@@ -19,14 +19,14 @@ import (
 )
 
 type Server struct {
-	re        *echo.Echo
-	e         *echo.Echo
-	cancel    context.CancelFunc
-	isRunning bool
+	httpServer  *echo.Echo
+	httpsServer *echo.Echo
+	cancel      context.CancelFunc
+	isRunning   bool
 }
 
 func init() {
-	certsDirPath := filepath.Join(".", "data", "certs")
+	certsDirPath := filepath.Join(".", ".data", "certs")
 	if !utils.DirExists(certsDirPath) {
 		utils.Mkdir(certsDirPath)
 		err := generateSelfSignedCert()
@@ -48,52 +48,57 @@ func redirectToHTTPS() echo.MiddlewareFunc {
 }
 
 func NewServer(assets fs.FS) *Server {
-	gob.Register(models.User{})
-	re := echo.New()
-	re.Pre(redirectToHTTPS())
-
-	e := echo.New()
-
-	sessionPath := filepath.Join(".", "data", "sessions")
+	sessionPath := filepath.Join(".", ".data", "sessions")
 	if !utils.DirExists(sessionPath) {
 		utils.Mkdir(sessionPath)
 	}
-	cookieStore := sessions.NewFilesystemStore(sessionPath, []byte("secret"))
-	e.Use(session.Middleware(cookieStore))
+	key := utils.ReadFile(filepath.Join(".", ".data", "certs", "misc.key"))
+	cookieStore := sessions.NewFilesystemStore(sessionPath, key)
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Logger.SetLevel(log.INFO)
+	gob.Register(models.User{})
+
+	httpServer := echo.New()
+	httpServer.Pre(redirectToHTTPS())
+	httpServer.Use(middleware.Logger())
+	httpServer.Use(middleware.Recover())
+	httpServer.Logger.SetLevel(log.INFO)
+
+	httpsServer := echo.New()
+	httpsServer.Use(session.Middleware(cookieStore))
+	httpsServer.Use(middleware.Logger())
+	httpsServer.Use(middleware.Recover())
+	httpsServer.Logger.SetLevel(log.INFO)
 
 	www := echo.MustSubFS(assets, "frontend/dist")
 
-	e.StaticFS("/", www)
-	e.FileFS("/", "index-server.html", www)
+	httpsServer.StaticFS("/", www)
+	httpsServer.FileFS("/", "index-server.html", www)
 
-	api.RegisterAuthAPI(e)
-	api.RegisterProfileAPI(e)
-	api.RegisterUsersAPI(e)
-	api.RegisterProvidersAPI(e)
-	api.RegisterBarcodesAPI(e)
-	api.RegisterProductsAPI(e)
-	api.RegisterHistoryAPI(e)
-	api.RegisterConfigAPI(e)
+	api.RegisterAuthAPI(httpsServer)
+	api.RegisterProfileAPI(httpsServer)
+	api.RegisterUsersAPI(httpsServer)
+	api.RegisterProvidersAPI(httpsServer)
+	api.RegisterBarcodesAPI(httpsServer)
+	api.RegisterProductsAPI(httpsServer)
+	api.RegisterHistoryAPI(httpsServer)
+	api.RegisterConfigAPI(httpsServer)
+	api.RegisterCheckoutAPI(httpsServer)
 
-	return &Server{e: e, re: re}
+	return &Server{httpsServer: httpsServer, httpServer: httpServer}
 }
 
 func (s *Server) Start() {
 	go func() {
-		if err := s.re.Start(":80"); err != nil && err != http.ErrServerClosed {
-			s.re.Logger.Fatal("error iniciando el servidor: ", err)
+		if err := s.httpServer.Start(":80"); err != nil && err != http.ErrServerClosed {
+			s.httpServer.Logger.Fatal("error iniciando el servidor: ", err)
 			s.isRunning = false
 		}
 	}()
 
-	certPath := filepath.Join(".", "data", "certs", "misc.crt")
-	keyPath := filepath.Join(".", "data", "certs", "misc.key")
-	if err := s.e.StartTLS(":443", certPath, keyPath); err != nil && err != http.ErrServerClosed {
-		s.e.Logger.Fatal("error iniciando el servidor: ", err)
+	certPath := filepath.Join(".", ".data", "certs", "misc.crt")
+	keyPath := filepath.Join(".", ".data", "certs", "misc.key")
+	if err := s.httpsServer.StartTLS(":443", certPath, keyPath); err != nil && err != http.ErrServerClosed {
+		s.httpsServer.Logger.Fatal("error iniciando el servidor: ", err)
 		s.isRunning = false
 	}
 }
@@ -104,7 +109,7 @@ func (s *Server) StartOfBackground() {
 
 	go s.Start()
 
-	s.e.Logger.Info("Servidor iniciado en http://localhost")
+	s.httpsServer.Logger.Info("Servidor iniciado")
 	s.isRunning = true
 	<-ctx.Done()
 }
@@ -116,21 +121,21 @@ func (s *Server) Stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	s.e.Logger.Info("Deteniendo servidor...")
+	s.httpsServer.Logger.Info("Deteniendo servidor...")
 
-	if err := s.re.Shutdown(ctx); err != nil {
-		s.re.Logger.Error("error al apagar el servidor: ", err)
+	if err := s.httpServer.Shutdown(ctx); err != nil {
+		s.httpServer.Logger.Error("error al apagar el servidor: ", err)
 		s.isRunning = true
 	} else {
-		s.re.Logger.Info("Servidor detenido correctamente ✅")
+		s.httpServer.Logger.Info("Servidor detenido correctamente ✅")
 		s.isRunning = false
 	}
 
-	if err := s.e.Shutdown(ctx); err != nil {
-		s.e.Logger.Error("error al apagar el servidor: ", err)
+	if err := s.httpsServer.Shutdown(ctx); err != nil {
+		s.httpsServer.Logger.Error("error al apagar el servidor: ", err)
 		s.isRunning = true
 	} else {
-		s.e.Logger.Info("Servidor detenido correctamente ✅")
+		s.httpsServer.Logger.Info("Servidor seguro detenido correctamente ✅")
 		s.isRunning = false
 	}
 }

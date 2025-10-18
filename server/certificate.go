@@ -15,8 +15,8 @@ import (
 )
 
 func generateSelfSignedCert() error {
-	certPath := filepath.Join(".", "data", "certs", "misc.crt")
-	keyPath := filepath.Join(".", "data", "certs", "misc.key")
+	certPath := filepath.Join(".", ".data", "certs", "misc.crt")
+	keyPath := filepath.Join(".", ".data", "certs", "misc.key")
 
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {

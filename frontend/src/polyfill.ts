@@ -8,6 +8,7 @@ type BarCodesController = typeof import('./../wailsjs/go/controllers/BarCodes')
 type ProductsController = typeof import('./../wailsjs/go/controllers/Products')
 type HistoryController = typeof import('./../wailsjs/go/controllers/History')
 type ConfigController = typeof import('./../wailsjs/go/controllers/Config')
+type CheckoutController = typeof import('./../wailsjs/go/controllers/Checkout')
 
 const processResponse = async <R>(response: Response): Promise<R> => {
   if (response.status === 500) {
@@ -240,16 +241,32 @@ const Config: ConfigController = {
   },
 }
 
+const Checkout: CheckoutController = {
+  async GetHistory() {
+    const resp = await fetch(`${window.location.origin}/api/sales`)
+    const response = await processResponse<Array<models.Sale>>(resp)
+    return response
+  },
+  async RestoreHistory(id) {
+    const resp = await fetch(`${window.location.origin}/api/sales/${id}`, { method: 'post' })
+    const response = await processResponse<void>(resp)
+    return response
+  },
+  async SaveCheckout(data) {
+    const resp = await fetch(`${window.location.origin}/api/sales`, { method: 'delete', body: JSON.stringify(data) })
+    const response = await processResponse<void>(resp)
+    return response
+  },
+}
+
 const controllers = {
-  Auth, Profile, Users,
-  Providers, BarCodes,
-  Products, History, Config,
+  Auth, Profile, Users, Providers,
+  BarCodes, Products, History,
+  Config, Checkout
 }
 
 Object.defineProperty(window, 'go', { value: { controllers } })
 
 Config
   .GetConfig()
-  .then(config => {
-    document.title = `Miscellaneous - ${config.name}`
-  })
+  .then(config => document.title = `Miscellaneous - ${config.name}`)

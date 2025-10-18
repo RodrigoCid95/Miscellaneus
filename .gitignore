@@ -3,4 +3,4 @@ build/windows/installer
 node_modules
 frontend/dist
 frontend/package.json.md5
-data
+.data

@@ -21,7 +21,7 @@ import (
 var appAssets embed.FS
 
 func main() {
-	dataDir := filepath.Join(".", "data")
+	dataDir := filepath.Join(".", ".data")
 	if !utils.DirExists(dataDir) {
 		utils.Mkdir(dataDir)
 	}

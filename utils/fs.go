@@ -35,3 +35,11 @@ func WriteFile(path string, data string) {
 		panic(err)
 	}
 }
+
+func ReadFile(path string) []byte {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	return content
+}

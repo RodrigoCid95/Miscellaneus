@@ -29,7 +29,7 @@ func init() {
 	History = &HistoryModel{}
 
 	configSectionName = "System"
-	configPath = filepath.Join(".", "data", "miscellaneous.conf")
+	configPath = filepath.Join(".", ".data", "miscellaneous.conf")
 	if !utils.DirExists(configPath) {
 		utils.WriteFile(configPath, "")
 	}

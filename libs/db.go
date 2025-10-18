@@ -11,11 +11,11 @@ import (
 var DB *sql.DB
 
 func init() {
-	dataPath := filepath.Join(".", "data")
+	dataPath := filepath.Join(".", ".data")
 	if !utils.DirExists(dataPath) {
 		utils.Mkdir(dataPath)
 	}
-	dbPath := filepath.Join(".", "data", "system.db")
+	dbPath := filepath.Join(".", ".data", "system.db")
 	db, err := sql.Open("sqlite", dbPath)
 	DB = db
 	if err != nil {

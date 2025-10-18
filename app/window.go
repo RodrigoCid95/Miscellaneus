@@ -3,6 +3,7 @@ package app
 import (
 	"Miscellaneous/server"
 	"context"
+	"net"
 	"runtime"
 
 	"github.com/wailsapp/wails/v2/pkg/menu"
@@ -52,14 +53,23 @@ func (a *WindowApp) GetMenu(serverRunning bool) *menu.Menu {
 
 	ServerMenu := AppMenu.AddSubmenu("Servidor")
 	if serverRunning {
-		ServerMenu.AddText("Detener", nil, func(cd *menu.CallbackData) {
-			a.server.Stop()
-			rt.MenuSetApplicationMenu(*a.ctx, a.GetMenu(false))
-		})
-		ServerMenu.AddSeparator()
 		ServerMenu.AddText("Abrir", nil, func(cd *menu.CallbackData) {
 			url := "https://localhost"
 			rt.BrowserOpenURL(*a.ctx, url)
+		})
+		ips := getAllLocalIPs()
+		if len(ips) > 0 {
+			ShareMenu := ServerMenu.AddSubmenu("Compartir")
+			for _, ip := range ips {
+				ShareMenu.AddText(ip, nil, func(cd *menu.CallbackData) {
+					script := "navigator.share({ title: 'Miscellaneous', text: 'Miscellaneous - Server', url: 'https://" + ip + "', })"
+					rt.WindowExecJS(*a.ctx, script)
+				})
+			}
+		}
+		ServerMenu.AddText("Detener", nil, func(cd *menu.CallbackData) {
+			a.server.Stop()
+			rt.MenuSetApplicationMenu(*a.ctx, a.GetMenu(false))
 		})
 	} else {
 		ServerMenu.AddText("Iniciar", nil, func(cd *menu.CallbackData) {
@@ -81,4 +91,19 @@ func (a *WindowApp) SetTheme(isDark bool) {
 	} else {
 		rt.WindowSetBackgroundColour(*a.ctx, 255, 255, 255, 1)
 	}
+}
+
+func getAllLocalIPs() []string {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return []string{}
+	}
+
+	var ips []string
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
+			ips = append(ips, ipnet.IP.String())
+		}
+	}
+	return ips
 }
