@@ -5,7 +5,6 @@ import (
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/api"
 	"Miscellaneous/server/certificate"
-	"context"
 	"embed"
 	"encoding/gob"
 	"net/http"
@@ -17,13 +16,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 )
-
-type Server struct {
-	httpServer  *echo.Echo
-	httpsServer *echo.Echo
-	cancel      context.CancelFunc
-	isRunning   bool
-}
 
 //go:embed all:www
 var assets embed.FS
@@ -76,6 +68,10 @@ func main() {
 	go func() {
 		httpServer.Logger.Fatal(httpServer.Start(":80"))
 	}()
+
+	if !utils.FileExists(certificate.CertPath) || !utils.FileExists(certificate.KeyPath) {
+		certificate.Generate()
+	}
 
 	httpsServer.Logger.Fatal(httpsServer.StartTLS(":443", certificate.CertPath, certificate.KeyPath))
 }

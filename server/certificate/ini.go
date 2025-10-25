@@ -1,7 +1,6 @@
 package certificate
 
 import (
-	"Miscellaneous/core/utils"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -18,13 +17,7 @@ import (
 var CertPath string = filepath.Join(".", ".data", "server", "certs", "misc.crt")
 var KeyPath string = filepath.Join(".", ".data", "server", "certs", "misc.key")
 
-func init() {
-	if !utils.FileExists(CertPath) || !utils.FileExists(KeyPath) {
-		generateSelfSignedCert()
-	}
-}
-
-func generateSelfSignedCert() error {
+func Generate() error {
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return err
