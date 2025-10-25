@@ -107,6 +107,24 @@
         "-o",
         "build/bin/Miscellaneous.exe"
       ]
+    },
+    {
+      "label": "Build server",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/server",
+      },
+      "command": "go",
+      "args": ["build", "-o", "${workspaceFolder}/app/server.exe"]
+    },
+    {
+      "label": "Build server to build app",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/server",
+      },
+      "command": "go",
+      "args": ["build", "-o", "${workspaceFolder}/app/build/bin/server.exe"]
     }
   ]
 }

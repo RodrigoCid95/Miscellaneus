@@ -1,7 +1,7 @@
 package api
 
 import (
-	"Miscellaneous/models"
+	"Miscellaneous/core/models"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 	"strconv"

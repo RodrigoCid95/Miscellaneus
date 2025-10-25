@@ -1,9 +1,9 @@
 package api
 
 import (
-	"Miscellaneous/models"
+	"Miscellaneous/core/models"
+	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
-	"Miscellaneous/utils"
 	"net/http"
 
 	"github.com/labstack/echo-contrib/session"

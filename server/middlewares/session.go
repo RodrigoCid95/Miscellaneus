@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"Miscellaneous/models"
+	"Miscellaneous/core/models"
 	"net/http"
 
 	"github.com/gorilla/sessions"
