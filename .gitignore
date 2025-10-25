@@ -1,0 +1,13 @@
+client/package-lock.json
+client/package.json.md5
+client/node_modules
+client/wailsjs
+
+app/server.exe
+app/build/bin
+app/server
+app/.data
+app/www
+
+server/.data
+server/www
