@@ -42,6 +42,7 @@ func main() {
 		AssetServer: &assetserver.Options{Assets: appAssets},
 		Windows:     &windows.Options{Theme: windows.SystemDefault},
 		OnStartup:   app.Window.OnStartup,
+		OnShutdown:  app.Window.OnShutdown,
 		Bind:        []any{profile, auth, config, users, providers, barcodes, products, history, checkout},
 	})
 

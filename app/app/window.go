@@ -10,20 +10,28 @@ import (
 )
 
 type WindowApp struct {
-	ctx *context.Context
+	ctx    *context.Context
+	server *Server
 }
 
 func (a *WindowApp) OnStartup(ctx context.Context) {
 	a.ctx = &ctx
+	a.server = &Server{}
 	rt.WindowCenter(ctx)
-	rt.MenuSetApplicationMenu(ctx, a.GetMenu(false))
+	rt.MenuSetApplicationMenu(ctx, a.GetMenu())
+}
+
+func (a *WindowApp) OnShutdown(ctx context.Context) {
+	if a.server.IsEnabled() {
+		a.server.Stop()
+	}
 }
 
 func (a *WindowApp) SetTitle(title string) {
 	rt.WindowSetTitle(*a.ctx, title)
 }
 
-func (a *WindowApp) GetMenu(serverRunning bool) *menu.Menu {
+func (a *WindowApp) GetMenu() *menu.Menu {
 	AppMenu := menu.NewMenu()
 	if runtime.GOOS == "darwin" {
 		AppMenu.Append(menu.AppMenu())
@@ -43,6 +51,21 @@ func (a *WindowApp) GetMenu(serverRunning bool) *menu.Menu {
 			rt.WindowFullscreen(*a.ctx)
 		}
 	})
+
+	if a.server.IsEnabled() {
+		ServerMenu := AppMenu.AddSubmenu("Servidor")
+		if a.server.IsRunning() {
+			ServerMenu.AddText("Detener", nil, func(cd *menu.CallbackData) {
+				a.server.Stop()
+				rt.MenuSetApplicationMenu(*a.ctx, a.GetMenu())
+			})
+		} else {
+			ServerMenu.AddText("Iniciar", nil, func(cd *menu.CallbackData) {
+				a.server.Start()
+				rt.MenuSetApplicationMenu(*a.ctx, a.GetMenu())
+			})
+		}
+	}
 
 	if runtime.GOOS == "darwin" {
 		AppMenu.Append(menu.EditMenu())
