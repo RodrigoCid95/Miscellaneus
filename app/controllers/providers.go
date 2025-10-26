@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 )
@@ -15,13 +16,13 @@ func (p *Providers) SaveProvider(newProvider models.NewProvider) error {
 		return utils.NewError("missing-phone", "Falta el número de teléfono.")
 	}
 
-	models.Providers.Create(newProvider)
+	core.Providers.Create(newProvider)
 
 	return nil
 }
 
 func (p *Providers) GetProviders() *[]models.Provider {
-	return models.Providers.GetAll()
+	return core.Providers.GetAll()
 }
 
 func (p *Providers) UpdateProvider(data models.Provider) error {
@@ -32,11 +33,11 @@ func (p *Providers) UpdateProvider(data models.Provider) error {
 		return utils.NewError("missing-phone", "Falta el número de teléfono.")
 	}
 
-	models.Providers.Update(data)
+	core.Providers.Update(data)
 
 	return nil
 }
 
 func (p *Providers) DeleteProvider(id int) {
-	models.Providers.Delete(id)
+	core.Providers.Delete(id)
 }

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"Miscellaneous/core/models"
+	"Miscellaneous/core"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 	"strconv"
@@ -33,7 +33,7 @@ func (h *HistoryAPI) GetDayHistory(c echo.Context) error {
 
 	start := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 	end := time.Date(year, time.Month(month), day, 23, 59, 59, 0, time.UTC)
-	results := models.History.GetByRange(start.UnixMilli(), end.UnixMilli())
+	results := core.History.GetByRange(start.UnixMilli(), end.UnixMilli())
 
 	return c.JSON(http.StatusOK, results)
 }
@@ -60,7 +60,7 @@ func (h *HistoryAPI) GetWeekHistory(c echo.Context) error {
 	offsetDays := (week - 1) * 7
 	start := jan4.AddDate(0, 0, offsetDays)
 	end := start.AddDate(0, 0, 6).Add(time.Hour*23 + time.Minute*59 + time.Second*59 + time.Millisecond*999)
-	results := models.History.GetByRange(start.UnixMilli(), end.UnixMilli())
+	results := core.History.GetByRange(start.UnixMilli(), end.UnixMilli())
 
 	return c.JSON(http.StatusOK, results)
 }
@@ -81,7 +81,7 @@ func (h *HistoryAPI) GetMonthHistory(c echo.Context) error {
 	firstDay := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 	lastDay := firstDay.AddDate(0, 1, -1)
 	lastDay = time.Date(lastDay.Year(), lastDay.Month(), lastDay.Day(), 23, 59, 59, 0, lastDay.Location())
-	results := models.History.GetByRange(firstDay.UnixMilli(), lastDay.UnixMilli())
+	results := core.History.GetByRange(firstDay.UnixMilli(), lastDay.UnixMilli())
 
 	return c.JSON(http.StatusOK, results)
 }

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
@@ -24,12 +25,12 @@ func (u *UsersAPI) CreateUser(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("name-not-found", "Falta el nombre completo."))
 	}
 
-	user := models.Users.Get(data.UserName)
+	user := core.Users.Get(data.UserName)
 	if user != nil {
 		return c.JSON(utils.APIBadRequest("user-already", "El usuario "+data.UserName+" ya existe."))
 	}
 
-	models.Users.Create(data)
+	core.Users.Create(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
@@ -42,7 +43,7 @@ func (u *UsersAPI) GetUsers(c echo.Context) error {
 
 	results := []models.User{}
 
-	userList := models.Users.GetAll()
+	userList := core.Users.GetAll()
 	for _, user := range *userList {
 		if user.Id != profile.Id {
 			results = append(results, user)
@@ -65,12 +66,12 @@ func (u *UsersAPI) UpdateUser(c echo.Context) error {
 		return utils.NewError("name-not-found", "Falta el nombre completo.")
 	}
 
-	result := models.Users.Get(data.UserName)
+	result := core.Users.Get(data.UserName)
 	if result != nil && result.Id != data.Id {
 		return utils.NewError("user-already", "El usuario "+data.UserName+" ya existe.")
 	}
 
-	models.Users.Update(data)
+	core.Users.Update(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
@@ -82,7 +83,7 @@ func (u *UsersAPI) DeleteUser(c echo.Context) error {
 		return c.NoContent(http.StatusAccepted)
 	}
 
-	models.Users.Delete(id)
+	core.Users.Delete(id)
 	return c.NoContent(http.StatusAccepted)
 }
 

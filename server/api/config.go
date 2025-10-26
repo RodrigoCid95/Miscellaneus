@@ -1,7 +1,7 @@
 package api
 
 import (
-	"Miscellaneous/core/models"
+	"Miscellaneous/core/config"
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
 	"net/http"
@@ -12,22 +12,23 @@ import (
 type ConfigAPI struct{}
 
 func (co *ConfigAPI) GetConfig(c echo.Context) error {
-	config := models.Config.LoadConfig()
+	data := config.ConfigData{}
+	config.Driver.GetData(config.SystemConfigName, &data)
 
-	return c.JSON(http.StatusOK, config)
+	return c.JSON(http.StatusOK, data)
 }
 
 func (co *ConfigAPI) SaveConfig(c echo.Context) error {
-	var config models.ConfigData
-	if err := c.Bind(&config); err != nil {
+	var data config.ConfigData
+	if err := c.Bind(&data); err != nil {
 		return c.JSON(utils.APIBadRequest("missing-credentials", "Credenciales requeridas."))
 	}
 
-	if config.Name == "" || config.IpPrinter == "" {
+	if data.Name == "" || data.IpPrinter == "" {
 		return c.JSON(utils.APIBadRequest("fields-required", "Faltan parámetros."))
 	}
 
-	models.Config.UpdateConfig(config)
+	config.Driver.PutData(config.SystemConfigName, &data)
 	return c.JSON(http.StatusOK, true)
 }
 

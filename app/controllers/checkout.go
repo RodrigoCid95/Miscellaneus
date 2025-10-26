@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"fmt"
 	"strconv"
@@ -15,12 +16,12 @@ func (c *Checkout) SaveCheckout(products []models.ProductGroup) {
 	UTC := time.Now().UnixMilli()
 	for _, v := range products {
 		subTotal := v.Price * v.Count
-		models.Checkout.CreateSale(models.NewSale{
+		core.Checkout.CreateSale(models.NewSale{
 			Product: v.Id,
 			Count:   v.Count,
 			Total:   subTotal,
 		}, profile.Id, UTC)
-		models.Products.Update(models.DataProduct{
+		core.Products.Update(models.DataProduct{
 			Id:          v.Id,
 			Name:        v.Name,
 			Description: v.Description,
@@ -38,11 +39,11 @@ func (c *Checkout) SaveCheckout(products []models.ProductGroup) {
 }
 
 func (c *Checkout) GetHistory() []models.Sale {
-	return models.Checkout.GetHistory(profile.Id)
+	return core.Checkout.GetHistory(profile.Id)
 }
 
 func (c *Checkout) RestoreHistory(id int) {
-	saleResult := models.History.FindByID(id)
+	saleResult := core.History.FindByID(id)
 	if saleResult == nil {
 		return
 	}
@@ -51,12 +52,12 @@ func (c *Checkout) RestoreHistory(id int) {
 		return
 	}
 
-	product := models.Products.Get(saleResult.IdProduct)
+	product := core.Products.Get(saleResult.IdProduct)
 	if product == nil {
 		return
 	}
 
-	models.Products.Update(models.DataProduct{
+	core.Products.Update(models.DataProduct{
 		Id:          product.Id,
 		Name:        product.Name,
 		Description: product.Description,
@@ -66,5 +67,5 @@ func (c *Checkout) RestoreHistory(id int) {
 		MinStock:    product.MinStock,
 		IdProvider:  product.Provider.Id,
 	})
-	models.Checkout.DeleteSale(id)
+	core.Checkout.DeleteSale(id)
 }

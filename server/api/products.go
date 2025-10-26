@@ -1,6 +1,7 @@
 package api
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
@@ -46,20 +47,20 @@ func (p *ProductsAPI) CreateProduct(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-provider", "Falta un proveedor."))
 	}
 
-	models.Products.Create(data)
+	core.Products.Create(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (p *ProductsAPI) GetProducts(c echo.Context) error {
-	results := models.Products.GetAll()
+	results := core.Products.GetAll()
 
 	return c.JSON(http.StatusOK, results)
 }
 
 func (p *ProductsAPI) GetFilterProducts(c echo.Context) error {
 	query := c.Param("query")
-	results := models.Products.Find(query)
+	results := core.Products.Find(query)
 
 	return c.JSON(http.StatusOK, results)
 }
@@ -98,7 +99,7 @@ func (p *ProductsAPI) UpdateProduct(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-provider", "Falta un proveedor."))
 	}
 
-	models.Products.Update(data)
+	core.Products.Update(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
@@ -110,7 +111,7 @@ func (p *ProductsAPI) DeleteProduct(c echo.Context) error {
 		return c.NoContent(http.StatusAccepted)
 	}
 
-	models.Products.Delete(id)
+	core.Products.Delete(id)
 
 	return c.NoContent(http.StatusAccepted)
 }

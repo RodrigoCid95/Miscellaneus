@@ -1,6 +1,7 @@
 package api
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
@@ -30,7 +31,7 @@ func (a *AuthAPI) Login(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-password", "La contraseña es requerida."))
 	}
 
-	result := models.Users.Get(credentials.UserName)
+	result := core.Users.Get(credentials.UserName)
 	if result == nil {
 		return c.JSON(utils.APIBadRequest("user-not-found", "Usuario no encontrado."))
 	}

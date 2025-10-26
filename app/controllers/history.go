@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"time"
 )
@@ -27,7 +28,7 @@ func (h *History) GetDayHistory(data DataDay) []models.HistoryItem {
 	start := time.Date(data.Year, time.Month(data.Month), data.Day, 0, 0, 0, 0, time.UTC)
 	end := time.Date(data.Year, time.Month(data.Month), data.Day, 23, 59, 59, 0, time.UTC)
 
-	return models.History.GetByRange(start.UnixMilli(), end.UnixMilli())
+	return core.History.GetByRange(start.UnixMilli(), end.UnixMilli())
 }
 
 func (h *History) GetWeekHistory(data DataWeek) []models.HistoryItem {
@@ -41,7 +42,7 @@ func (h *History) GetWeekHistory(data DataWeek) []models.HistoryItem {
 	start := jan4.AddDate(0, 0, offsetDays)
 	end := start.AddDate(0, 0, 6).Add(time.Hour*23 + time.Minute*59 + time.Second*59 + time.Millisecond*999)
 
-	return models.History.GetByRange(start.UnixMilli(), end.UnixMilli())
+	return core.History.GetByRange(start.UnixMilli(), end.UnixMilli())
 }
 
 func (h *History) GetMonthHistory(data DataMonth) []models.HistoryItem {
@@ -49,5 +50,5 @@ func (h *History) GetMonthHistory(data DataMonth) []models.HistoryItem {
 	lastDay := firstDay.AddDate(0, 1, -1)
 	lastDay = time.Date(lastDay.Year(), lastDay.Month(), lastDay.Day(), 23, 59, 59, 0, lastDay.Location())
 
-	return models.History.GetByRange(firstDay.UnixMilli(), lastDay.UnixMilli())
+	return core.History.GetByRange(firstDay.UnixMilli(), lastDay.UnixMilli())
 }

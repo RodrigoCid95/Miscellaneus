@@ -1,6 +1,7 @@
 package api
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
@@ -29,12 +30,12 @@ func (ch *Checkout) SaveCheckout(c echo.Context) error {
 	UTC := time.Now().UnixMilli()
 	for _, v := range products {
 		subTotal := v.Price * v.Count
-		models.Checkout.CreateSale(models.NewSale{
+		core.Checkout.CreateSale(models.NewSale{
 			Product: v.Id,
 			Count:   v.Count,
 			Total:   subTotal,
 		}, profile.Id, UTC)
-		models.Products.Update(models.DataProduct{
+		core.Products.Update(models.DataProduct{
 			Id:          v.Id,
 			Name:        v.Name,
 			Description: v.Description,
@@ -59,7 +60,7 @@ func (ch *Checkout) GetHistory(c echo.Context) error {
 		return c.JSON(http.StatusOK, []any{})
 	}
 
-	results := models.Checkout.GetHistory(profile.Id)
+	results := core.Checkout.GetHistory(profile.Id)
 
 	return c.JSON(http.StatusOK, results)
 }
@@ -76,7 +77,7 @@ func (ch *Checkout) RestoreHistory(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	}
 
-	saleResult := models.History.FindByID(id)
+	saleResult := core.History.FindByID(id)
 	if saleResult == nil {
 		return c.NoContent(http.StatusOK)
 	}
@@ -85,12 +86,12 @@ func (ch *Checkout) RestoreHistory(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	}
 
-	product := models.Products.Get(saleResult.IdProduct)
+	product := core.Products.Get(saleResult.IdProduct)
 	if product == nil {
 		return c.NoContent(http.StatusOK)
 	}
 
-	models.Products.Update(models.DataProduct{
+	core.Products.Update(models.DataProduct{
 		Id:          product.Id,
 		Name:        product.Name,
 		Description: product.Description,
@@ -101,7 +102,7 @@ func (ch *Checkout) RestoreHistory(c echo.Context) error {
 		IdProvider:  product.Provider.Id,
 	})
 
-	models.Checkout.DeleteSale(id)
+	core.Checkout.DeleteSale(id)
 
 	return c.NoContent(http.StatusOK)
 }

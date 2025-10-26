@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 )
@@ -15,13 +16,13 @@ func (bc *BarCodes) CreateBarCode(data models.NewBarCode) error {
 		return utils.NewError("missing-value", "Falta el valor del Código de barras.")
 	}
 
-	models.BarCodes.Create(data)
+	core.BarCodes.Create(data)
 
 	return nil
 }
 
 func (bc *BarCodes) GetBarCodes() []models.BarCode {
-	return models.BarCodes.GetAll()
+	return core.BarCodes.GetAll()
 }
 
 func (bc *BarCodes) UpdateBarCode(data models.BarCode) error {
@@ -32,17 +33,17 @@ func (bc *BarCodes) UpdateBarCode(data models.BarCode) error {
 		return utils.NewError("missing-value", "Falta el valor del Código de barras.")
 	}
 
-	models.BarCodes.Update(data)
+	core.BarCodes.Update(data)
 
 	return nil
 }
 
 func (bc *BarCodes) DeleteBarCode(id int) {
-	models.BarCodes.Delete(id)
+	core.BarCodes.Delete(id)
 }
 
 func (bc *BarCodes) GetBarCodeSrc(id int) string {
-	barcode := models.BarCodes.Get(id)
+	barcode := core.BarCodes.Get(id)
 	if bc == nil {
 		return ""
 	}

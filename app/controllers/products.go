@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 )
@@ -36,17 +37,17 @@ func (p *Products) CreateProduct(data models.NewProduct) error {
 		return utils.NewError("missing-provider", "Falta un proveedor.")
 	}
 
-	models.Products.Create(data)
+	core.Products.Create(data)
 
 	return nil
 }
 
 func (p *Products) GetProducts() []models.Product {
-	return models.Products.GetAll()
+	return core.Products.GetAll()
 }
 
 func (p *Products) GetFilterProducts(query string) []models.Product {
-	return models.Products.Find(query)
+	return core.Products.Find(query)
 }
 
 func (p *Products) UpdateProduct(data models.DataProduct) error {
@@ -78,11 +79,11 @@ func (p *Products) UpdateProduct(data models.DataProduct) error {
 		return utils.NewError("missing-provider", "Falta un proveedor.")
 	}
 
-	models.Products.Update(data)
+	core.Products.Update(data)
 
 	return nil
 }
 
 func (p *Products) DeleteProduct(id int) {
-	models.Products.Delete(id)
+	core.Products.Delete(id)
 }

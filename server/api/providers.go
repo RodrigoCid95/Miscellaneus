@@ -1,6 +1,7 @@
 package api
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
@@ -25,13 +26,13 @@ func (p *ProvidersAPI) SaveProvider(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-phone", "Falta el número de teléfono."))
 	}
 
-	models.Providers.Create(data)
+	core.Providers.Create(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (p *ProvidersAPI) GetProviders(c echo.Context) error {
-	results := models.Providers.GetAll()
+	results := core.Providers.GetAll()
 	return c.JSON(http.StatusOK, results)
 }
 
@@ -48,7 +49,7 @@ func (p *ProvidersAPI) UpdateProvider(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-phone", "Falta el número de teléfono."))
 	}
 
-	models.Providers.Update(data)
+	core.Providers.Update(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
@@ -60,7 +61,7 @@ func (p *ProvidersAPI) DeleteProvider(c echo.Context) error {
 		return c.NoContent(http.StatusAccepted)
 	}
 
-	models.Providers.Delete(id)
+	core.Providers.Delete(id)
 	return c.NoContent(http.StatusAccepted)
 }
 

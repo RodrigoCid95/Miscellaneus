@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 )
@@ -23,12 +24,12 @@ func (p *Profile) UpdateProfile(data models.ProfileData) error {
 		return nil
 	}
 
-	result := models.Users.Get(data.UserName)
+	result := core.Users.Get(data.UserName)
 	if result != nil && result.Id != profile.Id {
 		return utils.NewError("user-already-exists", "El usuario "+data.UserName+" ya existe.")
 	}
 
-	models.Profile.UpdateProfile(data, profile.Id)
+	core.Profile.UpdateProfile(data, profile.Id)
 
 	return nil
 }
@@ -42,14 +43,14 @@ func (p *Profile) UpdatePassword(data models.PasswordProfileData) error {
 		return nil
 	}
 
-	result := models.Users.Get(profile.UserName)
+	result := core.Users.Get(profile.UserName)
 	hash := utils.GenerateHash(data.CurrentPassword)
 
 	if result.Hash != hash {
 		return utils.NewError("password-invalid", "La contraseña es incorrecta.")
 	}
 
-	models.Profile.UpdatePassword(data.NewPassword, profile.Id)
+	core.Profile.UpdatePassword(data.NewPassword, profile.Id)
 
 	return nil
 }

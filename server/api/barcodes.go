@@ -1,6 +1,7 @@
 package api
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
@@ -25,13 +26,13 @@ func (bc *BarCodesAPI) CreateBarCode(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-value", "Falta el valor del Código de barras."))
 	}
 
-	models.BarCodes.Create(data)
+	core.BarCodes.Create(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (bc *BarCodesAPI) GetBarCodes(c echo.Context) error {
-	results := models.BarCodes.GetAll()
+	results := core.BarCodes.GetAll()
 	return c.JSON(http.StatusOK, results)
 }
 
@@ -48,7 +49,7 @@ func (bc *BarCodesAPI) UpdateBarCode(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-value", "Falta el valor del Código de barras."))
 	}
 
-	models.BarCodes.Update(data)
+	core.BarCodes.Update(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
@@ -60,7 +61,7 @@ func (bc *BarCodesAPI) DeleteBarCode(c echo.Context) error {
 		return c.NoContent(http.StatusAccepted)
 	}
 
-	models.BarCodes.Delete(id)
+	core.BarCodes.Delete(id)
 	return c.NoContent(http.StatusAccepted)
 }
 
@@ -71,7 +72,7 @@ func (bc *BarCodesAPI) GetBarCodeSrc(c echo.Context) error {
 		return c.NoContent(http.StatusAccepted)
 	}
 
-	barcode := models.BarCodes.Get(id)
+	barcode := core.BarCodes.Get(id)
 	if bc == nil {
 		return c.String(http.StatusOK, "")
 	}

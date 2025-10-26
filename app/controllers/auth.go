@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"Miscellaneous/core"
 	"Miscellaneous/core/models"
 	"Miscellaneous/core/utils"
 )
@@ -19,7 +20,7 @@ func (a *Auth) Login(c Credentials) (bool, error) {
 	if c.Password == "" {
 		return false, utils.NewError("missing-password", "La contraseña es requerida.")
 	}
-	result := models.Users.Get(c.UserName)
+	result := core.Users.Get(c.UserName)
 	if result == nil {
 		return false, utils.NewError("user-not-found", "Usuario no encontrado.")
 	}
