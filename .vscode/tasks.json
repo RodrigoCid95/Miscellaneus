@@ -80,7 +80,11 @@
         "cwd": "${workspaceFolder}/server",
       },
       "command": "go",
-      "args": ["build", "-o", "${workspaceFolder}/app/server.exe"]
+      "args": [
+        "build",
+        "-o",
+        "${workspaceFolder}/app/server.exe"
+      ]
     },
     {
       "label": "Build: Server 2 App",
@@ -89,8 +93,26 @@
         "cwd": "${workspaceFolder}/server",
       },
       "command": "go",
-      "args": ["build", "-o", "${workspaceFolder}/app/build/bin/server.exe"]
+      "args": [
+        "build",
+        "-o",
+        "${workspaceFolder}/app/build/windows/installer/server.exe"
+      ]
+    },
+    {
+      "label": "Build: All",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/app",
+      },
+      "command": "wails",
+      "args": [
+        "build",
+        "-nsis"
+      ],
+      "dependsOn": [
+        "Build: Server 2 App"
+      ]
     }
   ]
 }
-  

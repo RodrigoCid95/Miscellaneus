@@ -5,6 +5,9 @@ client/wailsjs
 
 app/server.exe
 app/build/bin
+app/build/windows/installer/tmp
+app/build/windows/installer/server.exe
+app/build/windows/installer/wails_tools.nsh
 app/server
 app/.data
 app/www
