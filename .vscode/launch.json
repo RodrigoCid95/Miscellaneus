@@ -2,25 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Wails: Production app",
-      "type": "go",
-      "request": "launch",
-      "mode": "exec",
-      "program": "${workspaceFolder}/app/build/bin/Miscellaneous.exe",
-      "preLaunchTask": "build",
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "name": "Wails: Debug app",
-      "type": "go",
-      "request": "launch",
-      "mode": "exec",
-      "program": "${workspaceFolder}/app/build/bin/Miscellaneous.exe",
-      "preLaunchTask": "build debug",
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "name": "Wails: Dev app",
+      "name": "Debug: App",
       "type": "go",
       "request": "launch",
       "mode": "exec",
@@ -29,7 +11,7 @@
       "cwd": "${workspaceFolder}"
     },
     {
-      "name": "Debug Server",
+      "name": "Debug: Server",
       "type": "go",
       "request": "launch",
       "mode": "auto",
