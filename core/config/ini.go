@@ -2,7 +2,6 @@ package config
 
 import (
 	"Miscellaneous/core/utils"
-	"path/filepath"
 )
 
 var configPath string
@@ -11,8 +10,8 @@ var Driver *ConfigDriver
 
 func init() {
 	SystemConfigName = "System"
-	configPath = filepath.Join(".", ".data", "miscellaneous.conf")
-	if !utils.DirExists(configPath) {
+	configPath = utils.ResolvePath("miscellaneous.conf")
+	if !utils.FileExists(configPath) {
 		utils.WriteFile(configPath, "")
 	}
 

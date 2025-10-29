@@ -1,6 +1,6 @@
 import { type FC, useRef } from "react"
 import { Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions, DialogTrigger, Button, SpinButton } from "@fluentui/react-components"
-import { models } from "../../../../wailsjs/go/models"
+import { ProductGroup } from "../context/checkout"
 
 const ProductDetails: FC<ProductDetailsProps> = ({ product, onClose, onQuit }) => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -40,7 +40,7 @@ const ProductDetails: FC<ProductDetailsProps> = ({ product, onClose, onQuit }) =
 export default ProductDetails
 
 interface ProductDetailsProps {
-  product: models.ProductGroup | null
-  onClose: (count: models.ProductGroup['count']) => void
+  product: ProductGroup | null
+  onClose: (count: ProductGroup['count']) => void
   onQuit: () => void
 }

@@ -6,7 +6,6 @@ import (
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -43,7 +42,7 @@ func (p *ProductsAPI) CreateProduct(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-min-stock", "Falta un stock mínimo."))
 	}
 
-	if data.IdProvider == 0 {
+	if data.IdProvider == "" {
 		return c.JSON(utils.APIBadRequest("missing-provider", "Falta un proveedor."))
 	}
 
@@ -54,14 +53,15 @@ func (p *ProductsAPI) CreateProduct(c echo.Context) error {
 
 func (p *ProductsAPI) GetProducts(c echo.Context) error {
 	results := core.Products.GetAll()
-
+	if results == nil {
+		return c.JSON(http.StatusOK, []any{})
+	}
 	return c.JSON(http.StatusOK, results)
 }
 
 func (p *ProductsAPI) GetFilterProducts(c echo.Context) error {
 	query := c.Param("query")
 	results := core.Products.Find(query)
-
 	return c.JSON(http.StatusOK, results)
 }
 
@@ -95,7 +95,7 @@ func (p *ProductsAPI) UpdateProduct(c echo.Context) error {
 		return c.JSON(utils.APIBadRequest("missing-min-stock", "Falta un stock mínimo."))
 	}
 
-	if data.IdProvider == 0 {
+	if data.IdProvider == "" {
 		return c.JSON(utils.APIBadRequest("missing-provider", "Falta un proveedor."))
 	}
 
@@ -105,14 +105,8 @@ func (p *ProductsAPI) UpdateProduct(c echo.Context) error {
 }
 
 func (p *ProductsAPI) DeleteProduct(c echo.Context) error {
-	strId := c.Param("id")
-	id, err := strconv.Atoi(strId)
-	if err != nil {
-		return c.NoContent(http.StatusAccepted)
-	}
-
+	id := c.Param("id")
 	core.Products.Delete(id)
-
 	return c.NoContent(http.StatusAccepted)
 }
 

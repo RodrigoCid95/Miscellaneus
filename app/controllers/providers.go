@@ -21,7 +21,7 @@ func (p *Providers) SaveProvider(newProvider models.NewProvider) error {
 	return nil
 }
 
-func (p *Providers) GetProviders() *[]models.Provider {
+func (p *Providers) GetProviders() []models.Provider {
 	return core.Providers.GetAll()
 }
 
@@ -38,6 +38,6 @@ func (p *Providers) UpdateProvider(data models.Provider) error {
 	return nil
 }
 
-func (p *Providers) DeleteProvider(id int) {
+func (p *Providers) DeleteProvider(id string) {
 	core.Providers.Delete(id)
 }

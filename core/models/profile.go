@@ -11,6 +11,6 @@ type PasswordProfileData struct {
 }
 
 type ProfileModel interface {
-	UpdateProfile(data ProfileData, id int)
-	UpdatePassword(password string, id int)
+	UpdateProfile(data ProfileData, id string)
+	UpdatePassword(password string, id string)
 }

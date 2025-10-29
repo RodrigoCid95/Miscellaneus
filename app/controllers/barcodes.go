@@ -38,11 +38,11 @@ func (bc *BarCodes) UpdateBarCode(data models.BarCode) error {
 	return nil
 }
 
-func (bc *BarCodes) DeleteBarCode(id int) {
+func (bc *BarCodes) DeleteBarCode(id string) {
 	core.BarCodes.Delete(id)
 }
 
-func (bc *BarCodes) GetBarCodeSrc(id int) string {
+func (bc *BarCodes) GetBarCodeSrc(id string) string {
 	barcode := core.BarCodes.Get(id)
 	if bc == nil {
 		return ""

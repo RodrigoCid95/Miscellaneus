@@ -1,4 +1,4 @@
-import { models } from '../wailsjs/go/models'
+import { config, models } from '../wailsjs/go/models'
 
 type AuthController = typeof import('./../wailsjs/go/controllers/Auth')
 type ProfileController = typeof import('./../wailsjs/go/controllers/Profile')
@@ -25,11 +25,14 @@ const processResponse = async <R>(response: Response): Promise<R> => {
   throw data
 }
 
+const headers = new Headers()
+headers.append('Content-Type', 'application/json')
+
 const Auth: AuthController = {
   async Login(credentials) {
     const resp = await fetch(`${window.location.origin}/api/auth`, {
       method: 'post',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(credentials),
     })
     const result = await processResponse<boolean>(resp)
@@ -51,7 +54,7 @@ const Profile: ProfileController = {
   async UpdatePassword(arg1) {
     const resp = await fetch(`${window.location.origin}/api/profile`, {
       method: 'post',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(arg1)
     })
     const result = await processResponse<void>(resp)
@@ -60,7 +63,7 @@ const Profile: ProfileController = {
   async UpdateProfile(arg1) {
     const resp = await fetch(`${window.location.origin}/api/profile`, {
       method: 'put',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(arg1)
     })
     const result = await processResponse<void>(resp)
@@ -72,7 +75,7 @@ const Users: UsersController = {
   async CreateUser(data) {
     const resp = await fetch('/api/users', {
       method: 'post',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
     const response = await processResponse<void>(resp)
@@ -86,7 +89,7 @@ const Users: UsersController = {
   async UpdateUser(data) {
     const resp = await fetch('/api/users', {
       method: 'put',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
     const response = await processResponse<void>(resp)
@@ -103,7 +106,7 @@ const Providers: ProvidersController = {
   async SaveProvider(data) {
     const resp = await fetch('/api/providers', {
       method: 'post',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
     const response = await processResponse<void>(resp)
@@ -112,12 +115,12 @@ const Providers: ProvidersController = {
   async GetProviders() {
     const resp = await fetch('api/providers')
     const response = await processResponse<models.Provider[]>(resp)
-    return response
+    return response || []
   },
   async UpdateProvider(data) {
     const resp = await fetch('/api/providers', {
       method: 'put',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
     const response = await processResponse<void>(resp)
@@ -134,22 +137,21 @@ const BarCodes: BarCodesController = {
   async CreateBarCode(data) {
     const resp = await fetch('/api/bar-codes', {
       method: 'post',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
-    debugger
     const response = await processResponse<void>(resp)
     return response
   },
   async GetBarCodes() {
     const resp = await fetch('/api/bar-codes')
     const response = await processResponse<models.BarCode[]>(resp)
-    return response
+    return response || []
   },
   async UpdateBarCode(data) {
     const resp = await fetch('api/bar-codes', {
       method: 'put',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
     const response = await processResponse<void>(resp)
@@ -173,7 +175,7 @@ const Products: ProductsController = {
   async CreateProduct(data) {
     const resp = await fetch(`${window.location.origin}/api/products`, {
       method: 'post',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
     const response = await processResponse<void>(resp)
@@ -182,17 +184,21 @@ const Products: ProductsController = {
   async GetProducts() {
     const resp = await fetch(`${window.location.origin}/api/products`)
     const response = await processResponse<models.Product[]>(resp)
-    return response
+    return response || []
   },
   async GetFilterProducts(data) {
-    const resp = await fetch(`${window.location.origin}/api/products/${data}`)
+    let url = `${window.location.origin}/api/products`
+    if (data !== "") {
+      url = `${window.location.origin}/api/products/${data}`
+    }
+    const resp = await fetch(url)
     const response = await processResponse<models.Product[]>(resp)
-    return response
+    return response || []
   },
   async UpdateProduct(data) {
     const resp = await fetch(`${window.location.origin}/api/products`, {
       method: 'put',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
     const response = await processResponse<void>(resp)
@@ -209,30 +215,30 @@ const History: HistoryController = {
   async GetDayHistory(data) {
     const resp = await fetch(`${window.location.origin}/api/history/day/${data.year}/${data.month}/${data.day}`)
     const response = await processResponse<Array<models.HistoryItem>>(resp)
-    return response
+    return response || []
   },
   async GetWeekHistory(data) {
     const resp = await fetch(`${window.location.origin}/api/history/week/${data.year}/${data.week}`)
     const response = await processResponse<Array<models.HistoryItem>>(resp)
-    return response
+    return response || []
   },
   async GetMonthHistory(data) {
     const resp = await fetch(`${window.location.origin}/api/history/month/${data.year}/${data.month}`)
     const response = await processResponse<Array<models.HistoryItem>>(resp)
-    return response
+    return response || []
   },
 }
 
 const Config: ConfigController = {
   async GetConfig() {
     const resp = await fetch(`${window.location.origin}/api/config`)
-    const response = await processResponse<models.ConfigData>(resp)
-    return response
+    const response = await processResponse<config.ConfigData>(resp)
+    return response || {}
   },
   async SaveConfig(data) {
     const resp = await fetch(`${window.location.origin}/api/config`, {
       method: 'put',
-      headers: { 'Content-type': 'application/json' },
+      headers,
       body: JSON.stringify(data)
     })
     const response = await processResponse<void>(resp)
@@ -245,15 +251,15 @@ const Checkout: CheckoutController = {
   async GetHistory() {
     const resp = await fetch(`${window.location.origin}/api/sales`)
     const response = await processResponse<Array<models.Sale>>(resp)
-    return response
+    return response || []
   },
   async RestoreHistory(id) {
-    const resp = await fetch(`${window.location.origin}/api/sales/${id}`, { method: 'post' })
+    const resp = await fetch(`${window.location.origin}/api/sales/${id}`, { headers, method: 'delete' })
     const response = await processResponse<void>(resp)
     return response
   },
   async SaveCheckout(data) {
-    const resp = await fetch(`${window.location.origin}/api/sales`, { method: 'delete', body: JSON.stringify(data) })
+    const resp = await fetch(`${window.location.origin}/api/sales`, { headers, method: 'put', body: JSON.stringify(data) })
     const response = await processResponse<void>(resp)
     return response
   },

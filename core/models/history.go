@@ -1,7 +1,7 @@
 package models
 
 type HistoryItem struct {
-	Id      int     `json:"id"`
+	Id      string  `json:"id"`
 	Product string  `json:"product"`
 	User    string  `json:"user"`
 	Date    int64   `json:"date"`
@@ -10,15 +10,15 @@ type HistoryItem struct {
 }
 
 type SaleResult struct {
-	Id        int   `json:"id"`
-	IdProduct int   `json:"idProduct"`
-	IdUser    int   `json:"idUser"`
-	Date      int64 `json:"date"`
-	Count     int   `json:"count"`
-	Total     int   `json:"total"`
+	Id        string  `json:"id"`
+	IdProduct string  `json:"idProduct"`
+	IdUser    string  `json:"idUser"`
+	Date      int64   `json:"date"`
+	Count     int     `json:"count"`
+	Total     float64 `json:"total"`
 }
 
 type HistoryModel interface {
-	FindByID(id int) *SaleResult
+	FindByID(id string) *SaleResult
 	GetByRange(start int64, end int64) []HistoryItem
 }

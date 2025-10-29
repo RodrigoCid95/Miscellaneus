@@ -3,7 +3,7 @@ import { Button, Card, makeStyles, Spinner, Title2, Toolbar, ToolbarDivider } fr
 import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from "@fluentui/react-icons"
 import Title from "./components/Title"
 import Logout from './../../components/Logout'
-import { useCheckout, CheckoutContext } from './context/checkout'
+import { useCheckout, CheckoutContext, ProductGroup } from './context/checkout'
 import { models } from "../../../wailsjs/go/models"
 import { SaveCheckout } from '../../../wailsjs/go/controllers/Checkout'
 
@@ -91,13 +91,13 @@ const Checkout = () => {
 }
 
 export default () => {
-  const [productGroups, setProductGroups] = useState<models.ProductGroup[]>([])
+  const [productGroups, setProductGroups] = useState<ProductGroup[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
   const checkout = () => {
     if (!loading && productGroups.length > 0) {
       setLoading(true)
-      SaveCheckout(productGroups)
+      SaveCheckout(productGroups.map(i => ({ id: i.id, count: i.count })))
         .then(() => {
           setProductGroups([])
           setLoading(false)
@@ -123,10 +123,7 @@ export default () => {
       if (index === -1) {
         pGroups.push({
           ...product,
-          count: 1,
-          convertValues: function (a: any, classs: any, asMap?: boolean) {
-            throw new Error("Function not implemented.")
-          }
+          count: 1
         })
       } else {
         if (pGroups[index].count < pGroups[index].stock) {

@@ -54,7 +54,7 @@ const columns: TableColumnDefinition<models.Sale>[] = [
     compare: (a, b) => {
       return a.total.toString().localeCompare(b.total.toString())
     },
-    renderHeaderCell: () => 'Cantidad',
+    renderHeaderCell: () => 'Total',
     renderCell: (item) => (
       <TableCellLayout truncate>
         ${item.total}

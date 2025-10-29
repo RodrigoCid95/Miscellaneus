@@ -1,9 +1,9 @@
 package models
 
 type Provider struct {
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
+	Id    string `json:"id" bson:"_id"`
+	Name  string `json:"name" bson:"name"`
+	Phone string `json:"phone" bson:"phone"`
 }
 
 type NewProvider struct {
@@ -12,9 +12,9 @@ type NewProvider struct {
 }
 
 type ProvidersModel interface {
-	GetAll() *[]Provider
-	Get(id int) *Provider
+	GetAll() []Provider
+	Get(id string) *Provider
 	Create(data NewProvider)
 	Update(data Provider)
-	Delete(id int)
+	Delete(id string)
 }

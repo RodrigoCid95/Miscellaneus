@@ -9,7 +9,6 @@ import (
 	"encoding/gob"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -22,10 +21,9 @@ import (
 var assets embed.FS
 
 var mainDirs []string = []string{
-	filepath.Join(".", ".data"),
-	filepath.Join(".", ".data", "server"),
-	filepath.Join(".", ".data", "server", "certs"),
-	filepath.Join(".", ".data", "server", "sessions"),
+	utils.ResolvePath("server"),
+	utils.ResolvePath("server", "certs"),
+	utils.ResolvePath("server", "sessions"),
 }
 
 func main() {
@@ -38,6 +36,10 @@ func main() {
 	gob.Register(models.User{})
 
 	port := os.Getenv("PORT")
+
+	if !utils.FileExists(certificate.CertPath) || !utils.FileExists(certificate.KeyPath) {
+		certificate.Generate()
+	}
 
 	if port == "" {
 		httpServer := echo.New()
@@ -52,10 +54,6 @@ func main() {
 		go func() {
 			httpServer.Logger.Fatal(httpServer.Start(":80"))
 		}()
-
-		if !utils.FileExists(certificate.CertPath) || !utils.FileExists(certificate.KeyPath) {
-			certificate.Generate()
-		}
 
 		httpsServer.Logger.Fatal(httpsServer.StartTLS(":443", certificate.CertPath, certificate.KeyPath))
 	} else {

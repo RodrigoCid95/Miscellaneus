@@ -150,7 +150,7 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
       return (
         <div className={styles.actions}>
           <BarCodeViewer barCode={{
-            id: item.sku as unknown as number,
+            id: item.sku as unknown as string,
             name: item.name,
             value: item.sku,
             tag: item.name
@@ -210,7 +210,7 @@ const mobileColumns: TableColumnDefinition<models.Product>[] = [
       return (
         <div className={styles.actions}>
           <BarCodeViewer barCode={{
-            id: item.sku as unknown as number,
+            id: item.sku as unknown as string,
             name: item.name,
             value: item.sku,
             tag: item.name

@@ -6,7 +6,6 @@ import (
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -44,7 +43,10 @@ func (u *UsersAPI) GetUsers(c echo.Context) error {
 	results := []models.User{}
 
 	userList := core.Users.GetAll()
-	for _, user := range *userList {
+	if userList == nil {
+		return c.JSON(http.StatusOK, []any{})
+	}
+	for _, user := range userList {
 		if user.Id != profile.Id {
 			results = append(results, user)
 		}
@@ -77,12 +79,7 @@ func (u *UsersAPI) UpdateUser(c echo.Context) error {
 }
 
 func (u *UsersAPI) DeleteUser(c echo.Context) error {
-	strId := c.Param("id")
-	id, err := strconv.Atoi(strId)
-	if err != nil {
-		return c.NoContent(http.StatusAccepted)
-	}
-
+	id := c.Param("id")
 	core.Users.Delete(id)
 	return c.NoContent(http.StatusAccepted)
 }

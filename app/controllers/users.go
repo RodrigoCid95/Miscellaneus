@@ -30,7 +30,7 @@ func (u *Users) GetUsers() []models.User {
 	results := []models.User{}
 
 	userList := core.Users.GetAll()
-	for _, user := range *userList {
+	for _, user := range userList {
 		if user.Id != profile.Id {
 			results = append(results, user)
 		}
@@ -57,6 +57,6 @@ func (u *Users) UpdateUser(user models.User) error {
 	return nil
 }
 
-func (u *Users) DeleteUser(id int) {
+func (u *Users) DeleteUser(id string) {
 	core.Users.Delete(id)
 }

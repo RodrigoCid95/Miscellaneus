@@ -17,7 +17,7 @@ const FieldProvider: FC<FieldProviderProps> = ({ verification, onBlur, value, on
   }, [setLoading])
 
   const handleChange = (_: SelectionEvents, data: OptionOnSelectData) => {
-    const providerId = Number(data.optionValue)
+    const providerId = data.optionValue
     const provider = providers.find(provider => provider.id === providerId)
     if (provider) {
       onChange(provider)

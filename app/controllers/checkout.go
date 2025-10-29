@@ -10,28 +10,23 @@ import (
 
 type Checkout struct{}
 
-func (c *Checkout) SaveCheckout(products []models.ProductGroup) {
+func (c *Checkout) SaveCheckout(products []models.CheckoutItem) {
 	report := [][]string{}
-	total := 0
+	total := 0.0
 	UTC := time.Now().UnixMilli()
 	for _, v := range products {
-		subTotal := v.Price * v.Count
+		product := core.Products.Get(v.Id)
+		if product == nil {
+			continue
+		}
+		subTotal := product.Price * float64(v.Count)
 		core.Checkout.CreateSale(models.NewSale{
 			Product: v.Id,
 			Count:   v.Count,
 			Total:   subTotal,
 		}, profile.Id, UTC)
-		core.Products.Update(models.DataProduct{
-			Id:          v.Id,
-			Name:        v.Name,
-			Description: v.Description,
-			Sku:         v.Sku,
-			Price:       v.Price,
-			Stock:       v.Stock - v.Count,
-			MinStock:    v.MinStock,
-			IdProvider:  v.Provider.Id,
-		})
-		reportItem := []string{strconv.Itoa(v.Count), v.Name, strconv.Itoa(subTotal)}
+		core.Products.UpdateStock(v.Id, v.Count)
+		reportItem := []string{strconv.Itoa(v.Count), product.Name, strconv.FormatFloat(subTotal, 'f', 5, 64)}
 		report = append(report, reportItem)
 		total += subTotal
 	}
@@ -42,7 +37,7 @@ func (c *Checkout) GetHistory() []models.Sale {
 	return core.Checkout.GetHistory(profile.Id)
 }
 
-func (c *Checkout) RestoreHistory(id int) {
+func (c *Checkout) RestoreHistory(id string) {
 	saleResult := core.History.FindByID(id)
 	if saleResult == nil {
 		return

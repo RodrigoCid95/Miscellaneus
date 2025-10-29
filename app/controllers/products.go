@@ -33,7 +33,7 @@ func (p *Products) CreateProduct(data models.NewProduct) error {
 		return utils.NewError("missing-min-stock", "Falta un stock mínimo.")
 	}
 
-	if data.IdProvider == 0 {
+	if data.IdProvider == "" {
 		return utils.NewError("missing-provider", "Falta un proveedor.")
 	}
 
@@ -75,7 +75,7 @@ func (p *Products) UpdateProduct(data models.DataProduct) error {
 		return utils.NewError("missing-min-stock", "Falta un stock mínimo.")
 	}
 
-	if data.IdProvider == 0 {
+	if data.IdProvider == "" {
 		return utils.NewError("missing-provider", "Falta un proveedor.")
 	}
 
@@ -84,6 +84,6 @@ func (p *Products) UpdateProduct(data models.DataProduct) error {
 	return nil
 }
 
-func (p *Products) DeleteProduct(id int) {
+func (p *Products) DeleteProduct(id string) {
 	core.Products.Delete(id)
 }

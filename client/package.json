@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "dev:app": "vite",
     "build:app": "tsc && vite build",
-    "build:server": "tsc && vite build",
+    "build:server": "tsc && vite build --sourcemap",
     "preview": "vite preview"
   },
   "dependencies": {

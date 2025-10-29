@@ -7,7 +7,7 @@
       "request": "launch",
       "mode": "exec",
       "program": "${workspaceFolder}/app/build/bin/Miscellaneous.exe",
-      "preLaunchTask": "build dev",
+      "preLaunchTask": "Build: App dev",
       "cwd": "${workspaceFolder}"
     },
     {

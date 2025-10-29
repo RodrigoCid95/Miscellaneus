@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react'
-import { models } from '../../../../wailsjs/go/models'
+import { config } from '../../../../wailsjs/go/models'
 
 const ConfigContext = createContext<{
-  config?: models.ConfigData
+  config?: config.ConfigData
   loadConfig: () => void
-  setConfig: (config: models.ConfigData) => Promise<void>
+  setConfig: (config: config.ConfigData) => Promise<void>
 }>({
   loadConfig: () => { },
   setConfig: () => new Promise(resolve => resolve())

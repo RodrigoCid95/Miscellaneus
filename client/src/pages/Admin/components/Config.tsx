@@ -2,7 +2,7 @@ import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner } from "@fluentui/react-components"
 import { bundleIcon, Settings20Filled, Settings20Regular } from "@fluentui/react-icons"
 import { useConfigContext } from "./../context/config"
-import { models } from "../../../../wailsjs/go/models"
+import { config } from "../../../../wailsjs/go/models"
 
 const SettingsIcon = bundleIcon(Settings20Filled, Settings20Regular)
 const useStyles = makeStyles({
@@ -21,9 +21,9 @@ const Config: FC<ConfigProps> = () => {
   const { config, setConfig } = useConfigContext()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [name, setName] = useState<models.ConfigData['name']>(config?.name || '')
+  const [name, setName] = useState<config.ConfigData['name']>(config?.name || '')
   const [nameVerification, setNameVerification] = useState<Verification>({})
-  const [ipPrinter, setIpPrinter] = useState<models.ConfigData['ipPrinter']>(config?.ipPrinter || '')
+  const [ipPrinter, setIpPrinter] = useState<config.ConfigData['ipPrinter']>(config?.ipPrinter || '')
   const [ipPrinterVerification, setIpPrinterVerification] = useState<Verification>({})
 
   const handleOnUpdate = () => {

@@ -1,6 +1,7 @@
 package certificate
 
 import (
+	"Miscellaneous/core/utils"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -10,12 +11,11 @@ import (
 	"math/big"
 	"net"
 	"os"
-	"path/filepath"
 	"time"
 )
 
-var CertPath string = filepath.Join(".", ".data", "server", "certs", "misc.crt")
-var KeyPath string = filepath.Join(".", ".data", "server", "certs", "misc.key")
+var CertPath string = utils.ResolvePath("server", "certs", "misc.crt")
+var KeyPath string = utils.ResolvePath("server", "certs", "misc.key")
 
 func Generate() error {
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)

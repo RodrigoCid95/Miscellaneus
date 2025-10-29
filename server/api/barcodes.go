@@ -6,7 +6,6 @@ import (
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -55,23 +54,13 @@ func (bc *BarCodesAPI) UpdateBarCode(c echo.Context) error {
 }
 
 func (bc *BarCodesAPI) DeleteBarCode(c echo.Context) error {
-	strId := c.Param("id")
-	id, err := strconv.Atoi(strId)
-	if err != nil {
-		return c.NoContent(http.StatusAccepted)
-	}
-
+	id := c.Param("id")
 	core.BarCodes.Delete(id)
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (bc *BarCodesAPI) GetBarCodeSrc(c echo.Context) error {
-	strId := c.Param("id")
-	id, err := strconv.Atoi(strId)
-	if err != nil {
-		return c.NoContent(http.StatusAccepted)
-	}
-
+	id := c.Param("id")
 	barcode := core.BarCodes.Get(id)
 	if bc == nil {
 		return c.String(http.StatusOK, "")

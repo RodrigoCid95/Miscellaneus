@@ -6,7 +6,6 @@ import (
 	"Miscellaneous/core/utils"
 	"Miscellaneous/server/middlewares"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -55,12 +54,7 @@ func (p *ProvidersAPI) UpdateProvider(c echo.Context) error {
 }
 
 func (p *ProvidersAPI) DeleteProvider(c echo.Context) error {
-	strId := c.Param("id")
-	id, err := strconv.Atoi(strId)
-	if err != nil {
-		return c.NoContent(http.StatusAccepted)
-	}
-
+	id := c.Param("id")
 	core.Providers.Delete(id)
 	return c.NoContent(http.StatusAccepted)
 }
@@ -71,5 +65,5 @@ func RegisterProvidersAPI(e *echo.Echo) {
 	e.POST("/api/providers", p.SaveProvider, middlewares.SM.VerifySession)
 	e.GET("/api/providers", p.GetProviders, middlewares.SM.VerifySession)
 	e.PUT("/api/providers", p.UpdateProvider, middlewares.SM.VerifySession)
-	e.DELETE("/api/providers", p.DeleteProvider, middlewares.SM.VerifySession)
+	e.DELETE("/api/providers/:id", p.DeleteProvider, middlewares.SM.VerifySession)
 }

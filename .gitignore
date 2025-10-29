@@ -14,3 +14,4 @@ app/www
 
 server/.data
 server/www
+server/__debug_bin.exe
