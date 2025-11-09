@@ -1,12 +1,12 @@
 import { createContext, useContext } from 'react'
 import { DateRangeType } from '@fluentui/react-calendar-compat'
-import { models } from '../../../../wailsjs/go/models'
+import { structs } from '../../../../wailsjs/go/models'
 
 const HistoryContext = createContext<{
   loading: boolean
-  items: models.HistoryItem[]
+  items: structs.HistoryItem[]
   loadItems: (type: DateRangeType, data: number[]) => void
-  removeItem: (id: models.HistoryItem['id']) => void
+  removeItem: (id: structs.HistoryItem['id']) => void
 }>({
   loading: false,
   items: [],

@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense, lazy } from "react"
 import { makeStyles, Spinner } from "@fluentui/react-components"
 import { GetProfile } from "../wailsjs/go/controllers/Profile"
-import { models } from "../wailsjs/go/models"
+import { structs } from "../wailsjs/go/models"
 
 const Login = lazy(() => import('./pages/login'))
 const Admin = lazy(() => import('./pages/Admin'))
@@ -56,4 +56,4 @@ export default () => {
   )
 }
 
-type Profile = models.User | null
+type Profile = structs.User | null

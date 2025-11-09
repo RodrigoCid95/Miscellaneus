@@ -1,10 +1,13 @@
 package main
 
 import (
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/driver"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/models/structs"
 	"Miscellaneous/server/api"
 	"Miscellaneous/server/certificate"
+	"Miscellaneous/utils/fs"
+	"Miscellaneous/utils/paths"
 	"embed"
 	"encoding/gob"
 	"net/http"
@@ -21,23 +24,39 @@ import (
 var assets embed.FS
 
 var mainDirs []string = []string{
-	utils.ResolvePath("server"),
-	utils.ResolvePath("server", "certs"),
-	utils.ResolvePath("server", "sessions"),
+	paths.ResolvePath("server"),
+	paths.ResolvePath("server", "certs"),
+	paths.ResolvePath("server", "sessions"),
 }
 
 func main() {
 	for _, d := range mainDirs {
-		if !utils.DirExists(d) {
-			utils.Mkdir(d)
+		if !fs.DirExists(d) {
+			fs.Mkdir(d)
 		}
 	}
+	driver.Start()
+	modules.Wire(driver.Connection)
+	defer driver.Kill()
 
-	gob.Register(models.User{})
+	userList, err := modules.Users.GetAll(nil)
+	if err != nil {
+		panic(err)
+	}
+	if len(userList) == 0 {
+		modules.Users.Create(structs.NewUser{
+			UserName: "admin",
+			FullName: "Administrador",
+			IsAdmin:  true,
+			Password: "password",
+		})
+	}
+
+	gob.Register(structs.User{})
 
 	port := os.Getenv("PORT")
 
-	if !utils.FileExists(certificate.CertPath) || !utils.FileExists(certificate.KeyPath) {
+	if !fs.FileExists(certificate.CertPath) || !fs.FileExists(certificate.KeyPath) {
 		certificate.Generate()
 	}
 
@@ -65,7 +84,7 @@ func main() {
 }
 
 func setRoutes(e *echo.Echo) {
-	key := utils.ReadFile(certificate.KeyPath)
+	key := fs.ReadFile(certificate.KeyPath)
 	cookieStore := sessions.NewFilesystemStore(mainDirs[2], key)
 	e.Use(session.Middleware(cookieStore))
 

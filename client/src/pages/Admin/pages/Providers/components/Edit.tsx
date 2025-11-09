@@ -2,7 +2,7 @@ import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, tokens } from "@fluentui/react-components"
 import { bundleIcon, Edit20Filled, Edit20Regular } from "@fluentui/react-icons"
 import { useProvidersContext } from "../../../context/providers"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { UpdateProvider } from "../../../../../../wailsjs/go/controllers/Providers"
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
@@ -29,10 +29,10 @@ const EditProvider: FC<EditBarcodeProps> = ({ item }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const [name, setName] = useState<models.Provider['name']>(item.name)
+  const [name, setName] = useState<structs.Provider['name']>(item.name)
   const [msgNameValidation, setMsgNameValidation] = useState<string>('')
 
-  const [phone, setPhone] = useState<models.Provider['phone']>(item.phone)
+  const [phone, setPhone] = useState<structs.Provider['phone']>(item.phone)
   const [msgPhoneValidation, setMsgPhoneValidation] = useState<string>('')
 
   const handleOnUpdate = () => {
@@ -45,7 +45,7 @@ const EditProvider: FC<EditBarcodeProps> = ({ item }) => {
       return
     }
     setLoading(true)
-    const newProvider: models.Provider = { id: item.id, name, phone }
+    const newProvider: structs.Provider = { id: item.id, name, phone }
     UpdateProvider(newProvider)
       .then(() => {
         setOpen(false)
@@ -119,5 +119,5 @@ const EditProvider: FC<EditBarcodeProps> = ({ item }) => {
 export default EditProvider
 
 interface EditBarcodeProps {
-  item: models.Provider
+  item: structs.Provider
 }

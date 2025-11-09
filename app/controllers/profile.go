@@ -1,56 +1,46 @@
 package controllers
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/errors"
+	"Miscellaneous/models/interfaces"
+	"Miscellaneous/models/structs"
 )
 
 type Profile struct{}
 
-func (p *Profile) GetProfile() *models.User {
+func (p *Profile) GetProfile() *structs.User {
 	return profile
 }
 
-func (p *Profile) UpdateProfile(data models.ProfileData) error {
-	if data.UserName == "" {
-		return utils.NewError("user-name-not-found", "Falta el nombre de usuario.")
-	}
-	if data.FullName == "" {
-		return utils.NewError("name-not-found", "Falta el nombre completo.")
-	}
-
+func (p *Profile) UpdateProfile(data structs.ProfileData) error {
 	if profile == nil {
 		return nil
 	}
 
-	result := core.Users.Get(data.UserName)
-	if result != nil && result.Id != profile.Id {
-		return utils.NewError("user-already-exists", "El usuario "+data.UserName+" ya existe.")
+	err := modules.Profile.UpdateProfile(interfaces.UpdateProfileArgs{
+		Data: data,
+		Id:   profile.Id,
+	})
+	if err != nil {
+		return errors.ProcessError(err)
 	}
-
-	core.Profile.UpdateProfile(data, profile.Id)
 
 	return nil
 }
 
-func (p *Profile) UpdatePassword(data models.PasswordProfileData) error {
-	if data.CurrentPassword == "" || data.NewPassword == "" {
-		return utils.NewError("fields-required", "Faltan parámetros.")
-	}
-
+func (p *Profile) UpdatePassword(data structs.PasswordProfileData) error {
 	if profile == nil {
 		return nil
 	}
 
-	result := core.Users.Get(profile.UserName)
-	hash := utils.GenerateHash(data.CurrentPassword)
-
-	if result.Hash != hash {
-		return utils.NewError("password-invalid", "La contraseña es incorrecta.")
+	err := modules.Profile.UpdatePassword(interfaces.UpdatePasswordArgs{
+		Profile: profile,
+		Data:    data,
+	})
+	if err != nil {
+		return errors.ProcessError(err)
 	}
-
-	core.Profile.UpdatePassword(data.NewPassword, profile.Id)
 
 	return nil
 }

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package grpcs;
+
+import "common.proto";
+
+option go_package = "Miscellaneous/models/protos;grpcs";
+
+message NewSale {
+  string product = 1;
+  int32 count = 2;
+  double total = 3;
+}
+
+message CreateSaleArgs {
+  NewSale sale = 1;
+  string id_user = 2;
+  int64 date = 3;
+}
+
+message Sale {
+  string id = 1;
+  string product = 2;
+  string user = 3;
+  int64 date = 4;
+  int32 count = 5;
+  double total = 6;
+}
+
+message SalesList {
+  repeated Sale sales = 1;
+}
+
+service Checkout {
+  rpc CreateSale (CreateSaleArgs) returns (Empty);
+  rpc GetHistory (IdRequest) returns (SalesList);
+  rpc DeleteSale (IdRequest) returns (Empty);
+}

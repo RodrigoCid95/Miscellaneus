@@ -1,26 +1,29 @@
 package app
 
 import (
-	"Miscellaneous/core/utils"
+	"Miscellaneous/utils/fs"
+	"Miscellaneous/utils/paths"
 	"os"
 	"os/exec"
 	"runtime"
 )
 
+var serverExecPath string
+
+func init() {
+	nameExec := "server"
+	if runtime.GOOS == "windows" {
+		nameExec = "server.exe"
+	}
+	serverExecPath = paths.ResolvePath(nameExec)
+}
+
 type Server struct {
 	cmd *exec.Cmd
 }
 
-func (sc *Server) getExecutablePath() string {
-	if runtime.GOOS == "windows" {
-		return ".\\server.exe"
-	}
-	return "./server"
-}
-
 func (sc *Server) IsEnabled() bool {
-	exePath := sc.getExecutablePath()
-	return utils.FileExists(exePath)
+	return fs.FileExists(serverExecPath)
 }
 
 func (sc *Server) IsRunning() bool {
@@ -35,7 +38,7 @@ func (sc *Server) Start() error {
 		return nil
 	}
 
-	sc.cmd = exec.Command(sc.getExecutablePath())
+	sc.cmd = exec.Command(serverExecPath)
 	sc.cmd.Stdout = os.Stdout
 	sc.cmd.Stderr = os.Stderr
 

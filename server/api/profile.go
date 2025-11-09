@@ -1,9 +1,10 @@
 package api
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/models/interfaces"
+	"Miscellaneous/models/structs"
+	"Miscellaneous/server/errors"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 
@@ -17,16 +18,13 @@ func (p *Profile) GetProfile(c echo.Context) error {
 }
 
 func (p *Profile) UpdateProfile(c echo.Context) error {
-	var data models.ProfileData
+	var data structs.ProfileData
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
-	}
-
-	if data.UserName == "" {
-		return c.JSON(utils.APIBadRequest("user-name-not-found", "Falta el nombre de usuario."))
-	}
-	if data.FullName == "" {
-		return c.JSON(utils.APIBadRequest("name-not-found", "Falta el nombre completo."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "Datos requeridos.",
+		}, c)
 	}
 
 	profile := middlewares.SM.GetUserSession(c)
@@ -34,20 +32,26 @@ func (p *Profile) UpdateProfile(c echo.Context) error {
 		return c.NoContent(http.StatusAccepted)
 	}
 
-	result := core.Users.Get(data.UserName)
-	if result != nil && result.Id != profile.Id {
-		return c.JSON(utils.APIBadRequest("user-already-exist", "El usuario "+data.UserName+" ya existe."))
+	err := modules.Profile.UpdateProfile(interfaces.UpdateProfileArgs{
+		Data: data,
+		Id:   profile.Id,
+	})
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
 
-	core.Profile.UpdateProfile(data, profile.Id)
-
+	middlewares.SM.UpdateSession(c, profile)
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (p *Profile) UpdatePassword(c echo.Context) error {
-	var data models.PasswordProfileData
+	var data structs.PasswordProfileData
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "No hay datos."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "No hay datos.",
+		}, c)
 	}
 
 	profile := middlewares.SM.GetUserSession(c)
@@ -55,14 +59,13 @@ func (p *Profile) UpdatePassword(c echo.Context) error {
 		return c.NoContent(http.StatusAccepted)
 	}
 
-	result := core.Users.Get(profile.UserName)
-	hash := utils.GenerateHash(data.CurrentPassword)
-
-	if result.Hash != hash {
-		return c.JSON(utils.APIBadRequest("password-invalida", "La contraseña es incorrecta."))
+	err := modules.Profile.UpdatePassword(interfaces.UpdatePasswordArgs{
+		Profile: profile,
+		Data:    data,
+	})
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
-
-	core.Profile.UpdatePassword(data.NewPassword, profile.Id)
 
 	return c.NoContent(http.StatusAccepted)
 }
@@ -72,4 +75,5 @@ func RegisterProfileAPI(e *echo.Echo) {
 
 	e.GET("/api/profile", p.GetProfile)
 	e.PUT("/api/profile", p.UpdateProfile, middlewares.SM.VerifySession)
+	e.POST("/api/profile", p.UpdatePassword, middlewares.SM.VerifySession)
 }

@@ -7,7 +7,6 @@
       "request": "launch",
       "mode": "exec",
       "program": "${workspaceFolder}/app/build/bin/Miscellaneous.exe",
-      "preLaunchTask": "Build: App dev",
       "cwd": "${workspaceFolder}"
     },
     {
@@ -19,6 +18,33 @@
         "PORT": "3000"
       },
       "program": "${workspaceFolder}/server/main.go"
-    }
+    },
+    {
+      "name": "Debug: Core",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/core/main.go"
+    },
+    {
+      "name": "Debug: MongoDB",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/drivers/mongodb/main.go"
+    },
+    {
+      "name": "Debug: SQLite",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/drivers/sqlite/main.go"
+    },
+    {
+      "name": "Adjuntar a proceso Go",
+      "type": "go",
+      "request": "attach",
+      "processId": "${command:pickProcess}"
+    },
   ]
 }

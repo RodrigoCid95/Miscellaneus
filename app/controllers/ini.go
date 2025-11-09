@@ -1,5 +1,5 @@
 package controllers
 
-import "Miscellaneous/core/models"
+import "Miscellaneous/models/structs"
 
-var profile *models.User = nil
+var profile *structs.User = nil

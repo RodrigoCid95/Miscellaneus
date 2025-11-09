@@ -3,7 +3,7 @@ import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, Dialog
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
 import { useBarCodesContext } from "../../../context/barcodes"
 import { DeleteBarCode as dBarCode } from "../../../../../../wailsjs/go/controllers/BarCodes"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -125,5 +125,5 @@ const DeleteBarCode: FC<DeleteBarCodeProps> = ({ item }) => {
 export default DeleteBarCode
 
 interface DeleteBarCodeProps {
-  item: models.BarCode
+  item: structs.BarCode
 }

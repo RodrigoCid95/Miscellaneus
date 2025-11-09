@@ -1,11 +1,12 @@
 package api
 
 import (
-	"Miscellaneous/core"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/models/structs"
+	"Miscellaneous/server/errors"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -31,9 +32,14 @@ func (h *HistoryAPI) GetDayHistory(c echo.Context) error {
 		return c.JSON(http.StatusOK, []any{})
 	}
 
-	start := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-	end := time.Date(year, time.Month(month), day, 23, 59, 59, 0, time.UTC)
-	results := core.History.GetByRange(start.UnixMilli(), end.UnixMilli())
+	results, getError := modules.History.GetDayHistory(structs.DataDay{
+		Day:   day,
+		Month: month,
+		Year:  year,
+	})
+	if getError != nil {
+		return errors.ProcessError(getError, c)
+	}
 
 	return c.JSON(http.StatusOK, results)
 }
@@ -51,16 +57,13 @@ func (h *HistoryAPI) GetWeekHistory(c echo.Context) error {
 		return c.JSON(http.StatusOK, []any{})
 	}
 
-	jan4 := time.Date(year, time.January, 5, 0, 0, 0, 0, time.UTC)
-	isoYear, isoWeek := jan4.ISOWeek()
-	for isoYear != year || isoWeek != 1 {
-		jan4 = jan4.AddDate(0, 0, -1)
-		isoYear, isoWeek = jan4.ISOWeek()
+	results, getError := modules.History.GetWeekHistory(structs.DataWeek{
+		Week: week,
+		Year: year,
+	})
+	if getError != nil {
+		return errors.ProcessError(getError, c)
 	}
-	offsetDays := (week - 1) * 7
-	start := jan4.AddDate(0, 0, offsetDays)
-	end := start.AddDate(0, 0, 6).Add(time.Hour*23 + time.Minute*59 + time.Second*59 + time.Millisecond*999)
-	results := core.History.GetByRange(start.UnixMilli(), end.UnixMilli())
 
 	return c.JSON(http.StatusOK, results)
 }
@@ -78,10 +81,13 @@ func (h *HistoryAPI) GetMonthHistory(c echo.Context) error {
 		return c.JSON(http.StatusOK, []any{})
 	}
 
-	firstDay := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
-	lastDay := firstDay.AddDate(0, 1, -1)
-	lastDay = time.Date(lastDay.Year(), lastDay.Month(), lastDay.Day(), 23, 59, 59, 0, lastDay.Location())
-	results := core.History.GetByRange(firstDay.UnixMilli(), lastDay.UnixMilli())
+	results, getError := modules.History.GetMonthHistory(structs.DataMonth{
+		Month: month,
+		Year:  year,
+	})
+	if getError != nil {
+		return errors.ProcessError(getError, c)
+	}
 
 	return c.JSON(http.StatusOK, results)
 }

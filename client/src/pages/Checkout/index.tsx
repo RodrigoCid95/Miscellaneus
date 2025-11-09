@@ -4,7 +4,7 @@ import { bundleIcon, CheckmarkSquare20Filled, CheckmarkSquare20Regular } from "@
 import Title from "./components/Title"
 import Logout from './../../components/Logout'
 import { useCheckout, CheckoutContext, ProductGroup } from './context/checkout'
-import { models } from "../../../wailsjs/go/models"
+import { structs } from "../../../wailsjs/go/models"
 import { SaveCheckout } from '../../../wailsjs/go/controllers/Checkout'
 
 const History = lazy(() => import('./History'))
@@ -116,7 +116,7 @@ export default () => {
     return () => window.removeEventListener('keydown', handleOnKeydown)
   })
 
-  const push = (products: models.Product[]) => {
+  const push = (products: structs.Product[]) => {
     const pGroups = [...productGroups]
     for (const product of products) {
       const index = pGroups.findIndex((p) => p.id === product.id)

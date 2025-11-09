@@ -1,7 +1,7 @@
 import { type FC, useState } from "react"
 import { Button, Field, Input, makeStyles } from "@fluentui/react-components"
 import { useProfileContext } from "../../../context/profile"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { api, APIError } from "../../../../../utils/api"
 import { UpdateProfile } from "../../../../../../wailsjs/go/controllers/Profile"
 
@@ -17,8 +17,8 @@ const DataForm: FC<DataFormProps> = () => {
   const styles = useStyles()
   const { profile, setProfile } = useProfileContext()
   const [loading, setLoading] = useState<boolean>(false)
-  const [userName, setUserName] = useState<models.NewUser['userName']>(profile?.userName || '')
-  const [fullName, setFullName] = useState<models.NewUser['fullName']>(profile?.fullName || '')
+  const [userName, setUserName] = useState<structs.NewUser['userName']>(profile?.userName || '')
+  const [fullName, setFullName] = useState<structs.NewUser['fullName']>(profile?.fullName || '')
   const [nameVerification, setNameVerification] = useState<Verification>({})
   const [fullNameVerification, setFullNameVerification] = useState<Verification>({})
 
@@ -32,13 +32,13 @@ const DataForm: FC<DataFormProps> = () => {
       return
     }
     setLoading(true)
-    const data = new models.ProfileData()
+    const data = new structs.ProfileData()
     data.fullName = fullName
     data.userName = userName
     api(UpdateProfile, data)
       .then(() => {
         setProfile({
-          ...(profile as models.User),
+          ...(profile as structs.User),
           userName,
           fullName
         })

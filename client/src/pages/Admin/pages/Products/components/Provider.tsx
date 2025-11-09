@@ -1,12 +1,12 @@
 import { type FC, useEffect, useState } from "react"
 import { Dropdown, Option, Field, useId, Spinner, OptionOnSelectData, SelectionEvents } from "@fluentui/react-components"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { GetProviders } from "../../../../../../wailsjs/go/controllers/Providers"
 
 const FieldProvider: FC<FieldProviderProps> = ({ verification, onBlur, value, onChange }) => {
   const dropdownId = useId("provider")
   const [loading, setLoading] = useState<boolean>(true)
-  const [providers, setProviders] = useState<models.Provider[]>([])
+  const [providers, setProviders] = useState<structs.Provider[]>([])
 
   useEffect(() => {
     GetProviders()
@@ -53,6 +53,6 @@ export default FieldProvider
 interface FieldProviderProps {
   verification: Verification
   onBlur: () => void
-  value: models.Product['provider'] | null
-  onChange: (value: models.Product['provider']) => void
+  value: structs.Product['provider'] | null
+  onChange: (value: structs.Product['provider']) => void
 }

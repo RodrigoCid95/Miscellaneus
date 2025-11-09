@@ -3,7 +3,7 @@ import { useBarCodesContext } from "../../../context/barcodes"
 import BarCodeViewer from "./Viewer"
 import EditBarcode from "./Edit"
 import DeleteBarCode from "./Delete"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 
 const useStyles = makeStyles({
   root: {
@@ -31,8 +31,8 @@ const useStyles = makeStyles({
   },
 })
 
-const columns: TableColumnDefinition<models.BarCode>[] = [
-  createTableColumn<models.BarCode>({
+const columns: TableColumnDefinition<structs.BarCode>[] = [
+  createTableColumn<structs.BarCode>({
     columnId: 'name',
     compare: (a, b) => {
       return a.name.localeCompare(b.name)
@@ -48,7 +48,7 @@ const columns: TableColumnDefinition<models.BarCode>[] = [
       )
     },
   }),
-  createTableColumn<models.BarCode>({
+  createTableColumn<structs.BarCode>({
     columnId: 'tag',
     renderHeaderCell: () => {
       return 'Etiqueta'
@@ -61,7 +61,7 @@ const columns: TableColumnDefinition<models.BarCode>[] = [
       )
     },
   }),
-  createTableColumn<models.BarCode>({
+  createTableColumn<structs.BarCode>({
     columnId: 'value',
     renderHeaderCell: () => {
       return 'Valor'
@@ -74,7 +74,7 @@ const columns: TableColumnDefinition<models.BarCode>[] = [
       )
     },
   }),
-  createTableColumn<models.BarCode>({
+  createTableColumn<structs.BarCode>({
     columnId: 'actions',
     renderHeaderCell: () => {
       return 'Opciones'
@@ -110,7 +110,7 @@ const Content = ({ loading, items }: ContentProps) => {
       items={items}
       columns={columns}
       sortable
-      getRowId={(item: models.BarCode) => item.id}
+      getRowId={(item: structs.BarCode) => item.id}
     >
       <DataGridHeader>
         <DataGridRow>
@@ -119,9 +119,9 @@ const Content = ({ loading, items }: ContentProps) => {
           )}
         </DataGridRow>
       </DataGridHeader>
-      <DataGridBody<models.BarCode>>
+      <DataGridBody<structs.BarCode>>
         {({ item, rowId }) => (
-          <DataGridRow<models.BarCode> key={rowId}>
+          <DataGridRow<structs.BarCode> key={rowId}>
             {({ renderCell }) => (
               <DataGridCell>{renderCell(item)}</DataGridCell>
             )}
@@ -145,5 +145,5 @@ export default () => {
 
 interface ContentProps {
   loading: boolean
-  items: models.BarCode[]
+  items: structs.BarCode[]
 }

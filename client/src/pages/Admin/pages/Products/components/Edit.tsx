@@ -3,7 +3,7 @@ import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, 
 import { bundleIcon, Edit20Filled, Edit20Regular } from "@fluentui/react-icons"
 import FieldProvider from "./Provider"
 import { useProductsContext } from "../../../context/products"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { UpdateProduct } from "../../../../../../wailsjs/go/controllers/Products"
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
@@ -24,18 +24,18 @@ const EditProduct: FC<EditProductProps> = ({ item }) => {
   const { loadProducts } = useProductsContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [name, setName] = useState<models.Product['name']>(item.name)
+  const [name, setName] = useState<structs.Product['name']>(item.name)
   const [nameVerification, setNameVerification] = useState<Verification>({})
-  const [description, setDescription] = useState<models.Product['description']>(item.description)
-  const [sku, setSku] = useState<models.Product['sku']>(item.sku)
+  const [description, setDescription] = useState<structs.Product['description']>(item.description)
+  const [sku, setSku] = useState<structs.Product['sku']>(item.sku)
   const [skuVerification, setSkuVerification] = useState<Verification>({})
-  const [price, setPrice] = useState<models.Product['price']>(item.price)
+  const [price, setPrice] = useState<structs.Product['price']>(item.price)
   const [priceVerification, setPriceVerification] = useState<Verification>({})
-  const [stock, setStock] = useState<models.Product['price']>(item.stock)
+  const [stock, setStock] = useState<structs.Product['price']>(item.stock)
   const [stockVerification, setStockVerification] = useState<Verification>({})
-  const [minStock, setMinStock] = useState<models.Product['minStock']>(item.minStock)
+  const [minStock, setMinStock] = useState<structs.Product['minStock']>(item.minStock)
   const [minStockVerification, setMinStockVerification] = useState<Verification>({})
-  const [provider, setProvider] = useState<models.Product['provider'] | null>(item.provider)
+  const [provider, setProvider] = useState<structs.Product['provider'] | null>(item.provider)
   const [providerVerification, setProviderVerification] = useState<Verification>({})
 
   const handleOnUpdate = () => {
@@ -64,7 +64,7 @@ const EditProduct: FC<EditProductProps> = ({ item }) => {
       return
     }
     setLoading(true)
-    const data = new models.DataProduct()
+    const data = new structs.DataProduct()
     data.id = item.id
     data.name = name
     data.description = description
@@ -206,5 +206,5 @@ const EditProduct: FC<EditProductProps> = ({ item }) => {
 export default EditProduct
 
 interface EditProductProps {
-  item: models.Product
+  item: structs.Product
 }

@@ -2,7 +2,7 @@ import { type FC, type ChangeEvent, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, Switch, tokens, ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, PersonAdd20Filled, PersonAdd20Regular } from "@fluentui/react-icons"
 import { useUsersContext } from "../../../context/users"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { CreateUser } from "../../../../../../wailsjs/go/controllers/Users"
 
 const AddPersonIcon = bundleIcon(PersonAdd20Filled, PersonAdd20Regular)
@@ -29,17 +29,17 @@ const NewUser: FC<NewUserProps> = () => {
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const [name, setName] = useState<models.NewUser['userName']>('')
+  const [name, setName] = useState<structs.NewUser['userName']>('')
   const [msgNameValidation, setMsgNameValidation] = useState<string>('')
 
 
-  const [full_name, setFullName] = useState<models.NewUser['fullName']>('')
+  const [full_name, setFullName] = useState<structs.NewUser['fullName']>('')
   const [msgFullNameValidation, setMsgFullNameValidation] = useState<string>('')
 
   const [password, setPassword] = useState<string>('')
   const [msgPasswordNameValidation, setMsgPasswordNameValidation] = useState<string>('')
 
-  const [isAdmin, setIsAdmin] = useState<models.NewUser['isAdmin']>(false)
+  const [isAdmin, setIsAdmin] = useState<structs.NewUser['isAdmin']>(false)
 
   const handleOnIsAdminChange = (ev: ChangeEvent<HTMLInputElement>) => setIsAdmin(ev.currentTarget.checked)
 
@@ -57,7 +57,7 @@ const NewUser: FC<NewUserProps> = () => {
       return
     }
     setLoading(true)
-    const data = new models.NewUser()
+    const data = new structs.NewUser()
     data.userName = name
     data.fullName = full_name
     data.isAdmin = isAdmin

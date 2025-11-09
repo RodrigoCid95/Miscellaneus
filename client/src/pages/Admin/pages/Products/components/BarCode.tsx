@@ -1,7 +1,7 @@
 import { type FC, useState } from "react"
 import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, makeStyles, DialogActions } from "@fluentui/react-components"
 import { bundleIcon, BarcodeScanner20Filled, BarcodeScanner20Regular } from "@fluentui/react-icons"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 
 const BarcodeScannerIcon = bundleIcon(BarcodeScanner20Filled, BarcodeScanner20Regular)
 const useStyles = makeStyles({
@@ -64,5 +64,5 @@ const BarCodeViewer: FC<BarCodeViewerProps> = ({ barCode }) => {
 export default BarCodeViewer
 
 interface BarCodeViewerProps {
-  barCode: models.BarCode
+  barCode: structs.BarCode
 }

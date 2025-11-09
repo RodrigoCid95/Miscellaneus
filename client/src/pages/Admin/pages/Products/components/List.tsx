@@ -4,7 +4,7 @@ import { useProductsContext } from "../../../context/products"
 import BarCodeViewer from "./BarCode"
 import Edit from "./Edit"
 import Delete from "./Delete"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 
 const useStyles = makeStyles({
   root: {
@@ -31,8 +31,8 @@ const useStyles = makeStyles({
     }
   },
 })
-const desktopColumns: TableColumnDefinition<models.Product>[] = [
-  createTableColumn<models.Product>({
+const desktopColumns: TableColumnDefinition<structs.Product>[] = [
+  createTableColumn<structs.Product>({
     columnId: 'name',
     compare: (a, b) => {
       return a.name.localeCompare(b.name)
@@ -48,7 +48,7 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'description',
     renderHeaderCell: () => {
       return 'Descripción'
@@ -61,7 +61,7 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'provider',
     compare: (a, b) => {
       return a.provider.name.localeCompare(b.provider.name)
@@ -77,7 +77,7 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'sku',
     renderHeaderCell: () => {
       return 'SKU'
@@ -90,7 +90,7 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'price',
     renderHeaderCell: () => {
       return 'Precio'
@@ -103,7 +103,7 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'stock',
     compare: (a, b) => {
       return a.stock.toString().localeCompare(b.stock.toString())
@@ -119,7 +119,7 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'status',
     compare: (a, b) => {
       const statusA = a.stock > 0 ? a.stock < a.minStock ? 'Por agotarse' : 'Disponible' : 'Agotado'
@@ -139,7 +139,7 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'actions',
     renderHeaderCell: () => {
       return 'Opciones'
@@ -162,8 +162,8 @@ const desktopColumns: TableColumnDefinition<models.Product>[] = [
     },
   }),
 ]
-const mobileColumns: TableColumnDefinition<models.Product>[] = [
-  createTableColumn<models.Product>({
+const mobileColumns: TableColumnDefinition<structs.Product>[] = [
+  createTableColumn<structs.Product>({
     columnId: 'name',
     compare: (a, b) => {
       return a.name.localeCompare(b.name)
@@ -179,7 +179,7 @@ const mobileColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'status',
     compare: (a, b) => {
       const statusA = a.stock > 0 ? a.stock < a.minStock ? 'Por agotarse' : 'Disponible' : 'Agotado'
@@ -199,7 +199,7 @@ const mobileColumns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'actions',
     renderHeaderCell: () => {
       return 'Opciones'
@@ -248,7 +248,7 @@ const List = ({ loading, items }: ContentProps) => {
       items={items}
       columns={isDesktop ? desktopColumns : mobileColumns}
       sortable
-      getRowId={(item: models.Product) => item.id}
+      getRowId={(item: structs.Product) => item.id}
     >
       <DataGridHeader>
         <DataGridRow>
@@ -257,9 +257,9 @@ const List = ({ loading, items }: ContentProps) => {
           )}
         </DataGridRow>
       </DataGridHeader>
-      <DataGridBody<models.Product>>
+      <DataGridBody<structs.Product>>
         {({ item, rowId }) => (
-          <DataGridRow<models.Product> key={rowId} style={{ backgroundColor: item.stock === 0 ? tokens.colorPaletteDarkRedBackground2 : item.stock < item.minStock ? tokens.colorPaletteDarkOrangeBackground2 : undefined }}>
+          <DataGridRow<structs.Product> key={rowId} style={{ backgroundColor: item.stock === 0 ? tokens.colorPaletteDarkRedBackground2 : item.stock < item.minStock ? tokens.colorPaletteDarkOrangeBackground2 : undefined }}>
             {({ renderCell }) => (
               <DataGridCell>{renderCell(item)}</DataGridCell>
             )}
@@ -283,5 +283,5 @@ export default () => {
 
 interface ContentProps {
   loading: boolean
-  items: models.Product[]
+  items: structs.Product[]
 }

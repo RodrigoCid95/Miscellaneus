@@ -4,7 +4,7 @@ import ToolbarPage from "../../components/Toolbar"
 import { HistoryContext } from '../../context/history'
 import SelectDatePicker from "./SelectDatePicker"
 import HistoryList from "./List"
-import { controllers, models } from "../../../../../wailsjs/go/models"
+import { controllers, structs } from "../../../../../wailsjs/go/models"
 import { RestoreHistory } from "../../../../../wailsjs/go/controllers/Checkout"
 import { GetDayHistory, GetWeekHistory, GetMonthHistory } from '../../../../../wailsjs/go/controllers/History'
 
@@ -19,7 +19,7 @@ const History = () => (
 
 export default () => {
   const [loading, setLoading] = useState(false)
-  const [items, setItems] = useState<models.HistoryItem[]>([])
+  const [items, setItems] = useState<structs.HistoryItem[]>([])
   const [selection, setSelection] = useState<{
     type: DateRangeType
     data: number[]
@@ -30,7 +30,7 @@ export default () => {
       const [year, month, day] = data
       setLoading(true)
       setSelection({ type, data })
-      const arg = new controllers.DataDay()
+      const arg = new structs.DataDay()
       arg.year = year
       arg.month = month
       arg.day = day
@@ -44,7 +44,7 @@ export default () => {
       const [year, week] = data
       setLoading(true)
       setSelection({ type, data })
-      const arg = new controllers.DataWeek()
+      const arg = new structs.DataWeek()
       arg.year = year
       arg.week = week
       GetWeekHistory(arg).then(items => {
@@ -57,7 +57,7 @@ export default () => {
       const [year, month] = data
       setLoading(true)
       setSelection({ type, data })
-      const arg = new controllers.DataMonth()
+      const arg = new structs.DataMonth()
       arg.year = year
       arg.month = month
       GetMonthHistory(arg).then(items => {
@@ -68,7 +68,7 @@ export default () => {
     }
   }
 
-  const removeItem = (id: models.HistoryItem['id']) => {
+  const removeItem = (id: structs.HistoryItem['id']) => {
     if (selection) {
       const { type, data } = selection
       RestoreHistory(id).then(() => loadItems(type, data))

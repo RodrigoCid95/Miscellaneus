@@ -1,54 +1,36 @@
 package controllers
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"time"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/errors"
+	"Miscellaneous/models/structs"
 )
-
-type DataDay struct {
-	Year  int `json:"year"`
-	Month int `json:"month"`
-	Day   int `json:"day"`
-}
-
-type DataWeek struct {
-	Year int `json:"year"`
-	Week int `json:"week"`
-}
-
-type DataMonth struct {
-	Year  int `json:"year"`
-	Month int `json:"month"`
-}
 
 type History struct{}
 
-func (h *History) GetDayHistory(data DataDay) []models.HistoryItem {
-	start := time.Date(data.Year, time.Month(data.Month), data.Day, 0, 0, 0, 0, time.UTC)
-	end := time.Date(data.Year, time.Month(data.Month), data.Day, 23, 59, 59, 0, time.UTC)
-
-	return core.History.GetByRange(start.UnixMilli(), end.UnixMilli())
-}
-
-func (h *History) GetWeekHistory(data DataWeek) []models.HistoryItem {
-	jan4 := time.Date(data.Year, time.January, 5, 0, 0, 0, 0, time.UTC)
-	isoYear, isoWeek := jan4.ISOWeek()
-	for isoYear != data.Year || isoWeek != 1 {
-		jan4 = jan4.AddDate(0, 0, -1)
-		isoYear, isoWeek = jan4.ISOWeek()
+func (h *History) GetDayHistory(data structs.DataDay) ([]structs.HistoryItem, error) {
+	results, err := modules.History.GetDayHistory(data)
+	if err != nil {
+		return results, errors.ProcessError(err)
 	}
-	offsetDays := (data.Week - 1) * 7
-	start := jan4.AddDate(0, 0, offsetDays)
-	end := start.AddDate(0, 0, 6).Add(time.Hour*23 + time.Minute*59 + time.Second*59 + time.Millisecond*999)
 
-	return core.History.GetByRange(start.UnixMilli(), end.UnixMilli())
+	return results, nil
 }
 
-func (h *History) GetMonthHistory(data DataMonth) []models.HistoryItem {
-	firstDay := time.Date(data.Year, time.Month(data.Month), 1, 0, 0, 0, 0, time.UTC)
-	lastDay := firstDay.AddDate(0, 1, -1)
-	lastDay = time.Date(lastDay.Year(), lastDay.Month(), lastDay.Day(), 23, 59, 59, 0, lastDay.Location())
+func (h *History) GetWeekHistory(data structs.DataWeek) ([]structs.HistoryItem, error) {
+	results, err := modules.History.GetWeekHistory(data)
+	if err != nil {
+		return results, errors.ProcessError(err)
+	}
 
-	return core.History.GetByRange(firstDay.UnixMilli(), lastDay.UnixMilli())
+	return results, nil
+}
+
+func (h *History) GetMonthHistory(data structs.DataMonth) ([]structs.HistoryItem, error) {
+	results, err := modules.History.GetMonthHistory(data)
+	if err != nil {
+		return results, errors.ProcessError(err)
+	}
+
+	return results, nil
 }

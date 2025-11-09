@@ -2,7 +2,7 @@ import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, tokens } from "@fluentui/react-components"
 import { bundleIcon, Edit20Filled, Edit20Regular } from "@fluentui/react-icons"
 import { useBarCodesContext } from "../../../context/barcodes"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { UpdateBarCode } from "../../../../../../wailsjs/go/controllers/BarCodes"
 
 const EditIcon = bundleIcon(Edit20Filled, Edit20Regular)
@@ -29,12 +29,12 @@ const EditBarcode: FC<EditBarcodeProps> = ({ item }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const [name, setName] = useState<models.BarCode['name']>(item.name)
+  const [name, setName] = useState<structs.BarCode['name']>(item.name)
   const [msgNameValidation, setMsgNameValidation] = useState<string>('')
 
-  const [tag, setTag] = useState<models.BarCode['tag']>(item.tag || '')
+  const [tag, setTag] = useState<structs.BarCode['tag']>(item.tag || '')
 
-  const [value, setValue] = useState<models.BarCode['value']>(item.value)
+  const [value, setValue] = useState<structs.BarCode['value']>(item.value)
   const [msgValueValidarion, setMsgValueValidation] = useState<string>('')
 
   const handleOnUpdate = () => {
@@ -47,7 +47,7 @@ const EditBarcode: FC<EditBarcodeProps> = ({ item }) => {
       return
     }
     setLoading(true)
-    const barCode: models.BarCode = { id: item.id, name, tag, value }
+    const barCode: structs.BarCode = { id: item.id, name, tag, value }
     UpdateBarCode(barCode)
       .then(() => {
         setOpen(false)
@@ -124,5 +124,5 @@ const EditBarcode: FC<EditBarcodeProps> = ({ item }) => {
 export default EditBarcode
 
 interface EditBarcodeProps {
-  item: models.BarCode
+  item: structs.BarCode
 }

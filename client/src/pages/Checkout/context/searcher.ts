@@ -1,14 +1,14 @@
 import { type Dispatch, type SetStateAction, createContext, useContext } from "react"
-import { models } from "../../../../wailsjs/go/models"
+import { structs } from "../../../../wailsjs/go/models"
 
 const SearcherContext = createContext<{
   loading: boolean
   value: string
-  productsToSelection: models.Product[] | null
-  productOutOfStock: models.Product | null
+  productsToSelection: structs.Product[] | null
+  productOutOfStock: structs.Product | null
   openNotFound: boolean
-  setProductsToSelection: Dispatch<SetStateAction<models.Product[] | null>>
-  setProductOutOfStock: Dispatch<SetStateAction<models.Product | null>>
+  setProductsToSelection: Dispatch<SetStateAction<structs.Product[] | null>>
+  setProductOutOfStock: Dispatch<SetStateAction<structs.Product | null>>
   setValue: Dispatch<SetStateAction<string>>
   loadProducts: (query: string) => void
   setOpenNotFound: Dispatch<SetStateAction<boolean>>

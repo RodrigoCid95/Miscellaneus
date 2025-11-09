@@ -2,7 +2,7 @@ import { Card, createTableColumn, DataGrid, DataGridBody, DataGridCell, DataGrid
 import { useProvidersContext } from "../../../context/providers"
 import EditProvider from "./Edit"
 import DeleteProvider from "./Delete"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 
 const useStyles = makeStyles({
   root: {
@@ -30,8 +30,8 @@ const useStyles = makeStyles({
   },
 })
 
-const columns: TableColumnDefinition<models.Provider>[] = [
-  createTableColumn<models.Provider>({
+const columns: TableColumnDefinition<structs.Provider>[] = [
+  createTableColumn<structs.Provider>({
     columnId: 'name',
     compare: (a, b) => {
       return a.name.localeCompare(b.name)
@@ -47,7 +47,7 @@ const columns: TableColumnDefinition<models.Provider>[] = [
       )
     },
   }),
-  createTableColumn<models.Provider>({
+  createTableColumn<structs.Provider>({
     columnId: 'phone',
     renderHeaderCell: () => {
       return 'Teléfono'
@@ -60,7 +60,7 @@ const columns: TableColumnDefinition<models.Provider>[] = [
       )
     },
   }),
-  createTableColumn<models.Provider>({
+  createTableColumn<structs.Provider>({
     columnId: 'actions',
     renderHeaderCell: () => {
       return 'Opciones'
@@ -95,7 +95,7 @@ const Content = ({ loading, items }: ContentProps) => {
       items={items}
       columns={columns}
       sortable
-      getRowId={(item: models.Provider) => item.id}
+      getRowId={(item: structs.Provider) => item.id}
     >
       <DataGridHeader>
         <DataGridRow>
@@ -104,9 +104,9 @@ const Content = ({ loading, items }: ContentProps) => {
           )}
         </DataGridRow>
       </DataGridHeader>
-      <DataGridBody<models.Provider>>
+      <DataGridBody<structs.Provider>>
         {({ item, rowId }) => (
-          <DataGridRow<models.Provider> key={rowId}>
+          <DataGridRow<structs.Provider> key={rowId}>
             {({ renderCell }) => (
               <DataGridCell>{renderCell(item)}</DataGridCell>
             )}
@@ -130,5 +130,5 @@ export default () => {
 
 interface ContentProps {
   loading: boolean
-  items: models.Provider[]
+  items: structs.Provider[]
 }

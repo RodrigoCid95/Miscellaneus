@@ -5,7 +5,7 @@ import ToolbarPage from "../../components/Toolbar"
 import New from './components/New'
 import { UsersContext, useUsersContext } from "../../context/users"
 import List from "./components/List"
-import { models } from "../../../../../wailsjs/go/models"
+import { structs } from "../../../../../wailsjs/go/models"
 import { GetUsers } from "../../../../../wailsjs/go/controllers/Users"
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
@@ -29,7 +29,7 @@ const Users = () => {
 
 export default () => {
   const [loading, setLoading] = useState<boolean>(false)
-  const [items, setItems] = useState<models.User[]>([])
+  const [items, setItems] = useState<structs.User[]>([])
 
   const loadUsers = () => {
     setLoading(true)

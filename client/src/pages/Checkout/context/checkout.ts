@@ -1,10 +1,10 @@
 import { type Dispatch, type SetStateAction, createContext, useContext } from 'react'
-import { models } from '../../../../wailsjs/go/models'
+import { structs } from '../../../../wailsjs/go/models'
 
 const CheckoutContext = createContext<{
   productGroups: ProductGroup[]
   setProductGroups: Dispatch<SetStateAction<ProductGroup[]>>
-  push: (products: models.Product[]) => void
+  push: (products: structs.Product[]) => void
   checkout: () => void
   loading: boolean
 }>({

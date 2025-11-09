@@ -1,9 +1,9 @@
 package api
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/models/structs"
+	"Miscellaneous/server/errors"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 
@@ -13,100 +13,65 @@ import (
 type ProductsAPI struct{}
 
 func (p *ProductsAPI) CreateProduct(c echo.Context) error {
-	var data models.NewProduct
+	var data structs.NewProduct
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "Datos requeridos.",
+		}, c)
 	}
 
-	if data.Name == "" {
-		return c.JSON(utils.APIBadRequest("missing-name", "Falta un nombre."))
+	err := modules.Products.Create(data)
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
-
-	if data.Description == "" {
-		return c.JSON(utils.APIBadRequest("missing-description", "Falta una descripción."))
-	}
-
-	if data.Sku == "" {
-		return c.JSON(utils.APIBadRequest("missing-sku", "Falta un SKU."))
-	}
-
-	if data.Price == 0 {
-		return c.JSON(utils.APIBadRequest("missing-price", "Falta un precio."))
-	}
-
-	if data.Stock == 0 {
-		return c.JSON(utils.APIBadRequest("missing-stock", "Falta un stock inicial."))
-	}
-
-	if data.MinStock == 0 {
-		return c.JSON(utils.APIBadRequest("missing-min-stock", "Falta un stock mínimo."))
-	}
-
-	if data.IdProvider == "" {
-		return c.JSON(utils.APIBadRequest("missing-provider", "Falta un proveedor."))
-	}
-
-	core.Products.Create(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (p *ProductsAPI) GetProducts(c echo.Context) error {
-	results := core.Products.GetAll()
-	if results == nil {
-		return c.JSON(http.StatusOK, []any{})
+	results, err := modules.Products.GetAll()
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
+
 	return c.JSON(http.StatusOK, results)
 }
 
 func (p *ProductsAPI) GetFilterProducts(c echo.Context) error {
 	query := c.Param("query")
-	results := core.Products.Find(query)
+	results, err := modules.Products.Find(query)
+	if err != nil {
+		return errors.ProcessError(err, c)
+	}
+
 	return c.JSON(http.StatusOK, results)
 }
 
 func (p *ProductsAPI) UpdateProduct(c echo.Context) error {
-	var data models.DataProduct
+	var data structs.DataProduct
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "Datos requeridos.",
+		}, c)
 	}
 
-	if data.Name == "" {
-		return c.JSON(utils.APIBadRequest("missing-name", "Falta un nombre."))
+	if err := modules.Products.Update(data); err != nil {
+		return errors.ProcessError(err, c)
 	}
-
-	if data.Description == "" {
-		return c.JSON(utils.APIBadRequest("missing-description", "Falta una descripción."))
-	}
-
-	if data.Sku == "" {
-		return c.JSON(utils.APIBadRequest("missing-sku", "Falta un SKU."))
-	}
-
-	if data.Price == 0 {
-		return c.JSON(utils.APIBadRequest("missing-price", "Falta un precio."))
-	}
-
-	if data.Stock == 0 {
-		return c.JSON(utils.APIBadRequest("missing-stock", "Falta un stock inicial."))
-	}
-
-	if data.MinStock == 0 {
-		return c.JSON(utils.APIBadRequest("missing-min-stock", "Falta un stock mínimo."))
-	}
-
-	if data.IdProvider == "" {
-		return c.JSON(utils.APIBadRequest("missing-provider", "Falta un proveedor."))
-	}
-
-	core.Products.Update(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (p *ProductsAPI) DeleteProduct(c echo.Context) error {
 	id := c.Param("id")
-	core.Products.Delete(id)
+	if err := modules.Products.Delete(id); err != nil {
+		return errors.ProcessError(err, c)
+	}
+
 	return c.NoContent(http.StatusAccepted)
 }
 

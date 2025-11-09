@@ -1,4 +1,4 @@
-import { config, models } from '../wailsjs/go/models'
+import { structs } from '../wailsjs/go/models'
 
 type AuthController = typeof import('./../wailsjs/go/controllers/Auth')
 type ProfileController = typeof import('./../wailsjs/go/controllers/Profile')
@@ -48,7 +48,7 @@ const Auth: AuthController = {
 const Profile: ProfileController = {
   async GetProfile() {
     const resp = await fetch('/api/profile')
-    const result = await processResponse<models.User>(resp)
+    const result = await processResponse<structs.User>(resp)
     return result
   },
   async UpdatePassword(arg1) {
@@ -83,8 +83,8 @@ const Users: UsersController = {
   },
   async GetUsers() {
     const resp = await fetch('/api/users')
-    const response = await processResponse<models.User[]>(resp)
-    return response
+    const response = await processResponse<structs.User[]>(resp)
+    return response || []
   },
   async UpdateUser(data) {
     const resp = await fetch('/api/users', {
@@ -114,7 +114,7 @@ const Providers: ProvidersController = {
   },
   async GetProviders() {
     const resp = await fetch('api/providers')
-    const response = await processResponse<models.Provider[]>(resp)
+    const response = await processResponse<structs.Provider[]>(resp)
     return response || []
   },
   async UpdateProvider(data) {
@@ -145,7 +145,7 @@ const BarCodes: BarCodesController = {
   },
   async GetBarCodes() {
     const resp = await fetch('/api/bar-codes')
-    const response = await processResponse<models.BarCode[]>(resp)
+    const response = await processResponse<structs.BarCode[]>(resp)
     return response || []
   },
   async UpdateBarCode(data) {
@@ -183,7 +183,7 @@ const Products: ProductsController = {
   },
   async GetProducts() {
     const resp = await fetch(`${window.location.origin}/api/products`)
-    const response = await processResponse<models.Product[]>(resp)
+    const response = await processResponse<structs.Product[]>(resp)
     return response || []
   },
   async GetFilterProducts(data) {
@@ -192,7 +192,7 @@ const Products: ProductsController = {
       url = `${window.location.origin}/api/products/${data}`
     }
     const resp = await fetch(url)
-    const response = await processResponse<models.Product[]>(resp)
+    const response = await processResponse<structs.Product[]>(resp)
     return response || []
   },
   async UpdateProduct(data) {
@@ -214,17 +214,17 @@ const Products: ProductsController = {
 const History: HistoryController = {
   async GetDayHistory(data) {
     const resp = await fetch(`${window.location.origin}/api/history/day/${data.year}/${data.month}/${data.day}`)
-    const response = await processResponse<Array<models.HistoryItem>>(resp)
+    const response = await processResponse<Array<structs.HistoryItem>>(resp)
     return response || []
   },
   async GetWeekHistory(data) {
     const resp = await fetch(`${window.location.origin}/api/history/week/${data.year}/${data.week}`)
-    const response = await processResponse<Array<models.HistoryItem>>(resp)
+    const response = await processResponse<Array<structs.HistoryItem>>(resp)
     return response || []
   },
   async GetMonthHistory(data) {
     const resp = await fetch(`${window.location.origin}/api/history/month/${data.year}/${data.month}`)
-    const response = await processResponse<Array<models.HistoryItem>>(resp)
+    const response = await processResponse<Array<structs.HistoryItem>>(resp)
     return response || []
   },
 }
@@ -232,7 +232,7 @@ const History: HistoryController = {
 const Config: ConfigController = {
   async GetConfig() {
     const resp = await fetch(`${window.location.origin}/api/config`)
-    const response = await processResponse<config.ConfigData>(resp)
+    const response = await processResponse<structs.ConfigData>(resp)
     return response || {}
   },
   async SaveConfig(data) {
@@ -250,7 +250,7 @@ const Config: ConfigController = {
 const Checkout: CheckoutController = {
   async GetHistory() {
     const resp = await fetch(`${window.location.origin}/api/sales`)
-    const response = await processResponse<Array<models.Sale>>(resp)
+    const response = await processResponse<Array<structs.Sale>>(resp)
     return response || []
   },
   async RestoreHistory(id) {

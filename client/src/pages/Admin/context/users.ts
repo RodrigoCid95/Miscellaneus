@@ -1,9 +1,9 @@
 import { createContext, useContext } from 'react'
-import { models } from '../../../../wailsjs/go/models'
+import { structs } from '../../../../wailsjs/go/models'
 
 const UsersContext = createContext<{
   loading: boolean
-  items: models.User[]
+  items: structs.User[]
   loadUsers: () => void
 }>({
   loading: false,

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package grpcs;
+
+import "common.proto";
+
+option go_package = "Miscellaneous/models/protos;grpcs";
+
+message HistoryItem {
+  string id = 1;
+  string product = 2;
+  string user = 3;
+  int64 date = 4;
+  int32 count = 5;
+  float total = 6;
+}
+
+message SaleResult {
+  string id = 1;
+  string id_product = 2;
+  string id_user = 3;
+  int64 date = 4;
+  int32 count = 5;
+  double total = 6;
+}
+
+message GetByRangeArgs {
+  int64 start = 1;
+  int64 end = 2;
+}
+
+message HistoryList {
+  repeated HistoryItem items = 1;
+}
+
+service History {
+  rpc FindByID (IdRequest) returns (SaleResult);
+  rpc GetByRange (GetByRangeArgs) returns (HistoryList);
+}

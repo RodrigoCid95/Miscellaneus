@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"Miscellaneous/core/models"
+	"Miscellaneous/models/structs"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -37,7 +37,7 @@ func (s *SessionManager) VerifySession(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func (s *SessionManager) GetUserSession(c echo.Context) *models.User {
+func (s *SessionManager) GetUserSession(c echo.Context) *structs.User {
 	sess, err := session.Get("session", c)
 	if err != nil {
 		return nil
@@ -48,14 +48,14 @@ func (s *SessionManager) GetUserSession(c echo.Context) *models.User {
 		return nil
 	}
 
-	if u, ok := userVal.(models.User); ok {
+	if u, ok := userVal.(structs.User); ok {
 		return &u
 	}
 
 	return nil
 }
 
-func (s *SessionManager) RegisterSession(c echo.Context, user *models.User) bool {
+func (s *SessionManager) RegisterSession(c echo.Context, user *structs.User) bool {
 	sess, sessError := session.Get("session", c)
 	if sessError != nil {
 		return false
@@ -65,6 +65,20 @@ func (s *SessionManager) RegisterSession(c echo.Context, user *models.User) bool
 		Path:     "/",
 		MaxAge:   86400 * 7,
 		HttpOnly: true,
+	}
+
+	sess.Values["user"] = user
+
+	if err := sess.Save(c.Request(), c.Response()); err != nil {
+		panic(err)
+	}
+	return true
+}
+
+func (s *SessionManager) UpdateSession(c echo.Context, user *structs.User) bool {
+	sess, sessError := session.Get("session", c)
+	if sessError != nil {
+		return false
 	}
 
 	sess.Values["user"] = user

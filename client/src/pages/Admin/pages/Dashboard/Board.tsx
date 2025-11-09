@@ -1,6 +1,6 @@
 import { type FC, useEffect, useState } from 'react'
 import { Card, CardHeader, makeStyles, Spinner, Text, tokens } from '@fluentui/react-components'
-import { controllers, models } from '../../../../../wailsjs/go/models'
+import { controllers, structs } from '../../../../../wailsjs/go/models'
 import { GetDayHistory, GetWeekHistory, GetMonthHistory } from '../../../../../wailsjs/go/controllers/History'
 import { GetProducts } from '../../../../../wailsjs/go/controllers/Products'
 
@@ -33,10 +33,10 @@ const Board: FC<BoardProps> = () => {
   const [weekTop, setWeekTop] = useState<TopList>([])
   const [monthSales, setMonthSales] = useState<number>(NaN)
   const [monthTop, setMonthTop] = useState<TopList>([])
-  const [products, setProducts] = useState<models.Product[] | null>(null)
+  const [products, setProducts] = useState<structs.Product[] | null>(null)
 
   useEffect(() => {
-    const processSales = (sales: models.HistoryItem[]) => {
+    const processSales = (sales: structs.HistoryItem[]) => {
       const topList: TopList = []
       let total = 0
       for (const sale of sales) {
@@ -60,7 +60,7 @@ const Board: FC<BoardProps> = () => {
     const days = Math.floor((date.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000))
     const week = Math.ceil((days + startDate.getDay() + 1) / 7)
 
-    const arg1 = new controllers.DataDay()
+    const arg1 = new structs.DataDay()
     arg1.year = year
     arg1.month = month
     arg1.day = day
@@ -71,7 +71,7 @@ const Board: FC<BoardProps> = () => {
         setDaySales(total)
       })
 
-    const arg2 = new controllers.DataWeek()
+    const arg2 = new structs.DataWeek()
     arg2.year = year
     arg2.week = week
     GetWeekHistory(arg2)
@@ -81,7 +81,7 @@ const Board: FC<BoardProps> = () => {
         setWeekSales(total)
       })
 
-    const arg3 = new controllers.DataMonth()
+    const arg3 = new structs.DataMonth()
     arg3.year = year
     arg3.month = month
     GetMonthHistory(arg3)
@@ -167,7 +167,7 @@ const Board: FC<BoardProps> = () => {
 export default Board
 
 interface TopListItem {
-  name: models.Product['name']
+  name: structs.Product['name']
   count: number
 }
 type TopList = TopListItem[]

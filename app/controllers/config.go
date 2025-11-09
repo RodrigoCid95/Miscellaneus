@@ -2,25 +2,28 @@ package controllers
 
 import (
 	"Miscellaneous/app"
-	"Miscellaneous/core/config"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/errors"
+	"Miscellaneous/models/structs"
 )
 
 type Config struct{}
 
-func (c *Config) GetConfig() config.ConfigData {
-	data := config.ConfigData{}
-	config.Driver.GetData(config.SystemConfigName, &data)
-	return data
+func (c *Config) GetConfig() (*structs.ConfigData, error) {
+	data, err := modules.Config.GetConfig()
+	if err != nil {
+		return data, errors.ProcessError(err)
+	}
+
+	return data, nil
 }
 
-func (c *Config) SaveConfig(data config.ConfigData) error {
-	if data.Name == "" || data.IpPrinter == "" {
-		return utils.NewError("fields-required", "Faltan parámetros.")
+func (c *Config) SaveConfig(data structs.ConfigData) error {
+	err := modules.Config.SaveConfig(data)
+	if err != nil {
+		return errors.ProcessError(err)
 	}
 
 	app.Window.SetTitle("Miscellaneous - " + data.Name)
-
-	config.Driver.PutData(config.SystemConfigName, &data)
 	return nil
 }

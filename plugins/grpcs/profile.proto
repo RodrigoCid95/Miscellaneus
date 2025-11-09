@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package grpcs;
+
+import "common.proto";
+
+option go_package = "Miscellaneous/models/protos;grpcs";
+
+message ProfileData {
+  string user_name = 1;
+  string full_name = 2;
+}
+
+message UpdateProfileArgs {
+  ProfileData data = 1;
+  string id = 2;
+}
+
+message UpdatePasswordArgs {
+  string password = 1;
+  string id = 2;
+}
+
+service Profile {
+  rpc UpdateProfile (UpdateProfileArgs) returns (Empty);
+  rpc UpdatePassword (UpdatePasswordArgs) returns (Empty);
+}

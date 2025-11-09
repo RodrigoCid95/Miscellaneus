@@ -3,7 +3,7 @@ import { type TableColumnDefinition, makeStyles, Dialog, DialogTrigger, ToolbarB
 import { bundleIcon, History20Filled, History20Regular, BoxArrowLeft20Filled, BoxArrowLeft20Regular } from "@fluentui/react-icons"
 import { HistoryContext, useHistory } from "./context/history"
 import { GetHistory, RestoreHistory } from "../../../wailsjs/go/controllers/Checkout"
-import { models } from "../../../wailsjs/go/models"
+import { structs } from "../../../wailsjs/go/models"
 
 const HistoryIcon = bundleIcon(History20Filled, History20Regular)
 const RestoreIcon = bundleIcon(BoxArrowLeft20Filled, BoxArrowLeft20Regular)
@@ -24,8 +24,8 @@ const useStyles = makeStyles({
   },
 })
 
-const columns: TableColumnDefinition<models.Sale>[] = [
-  createTableColumn<models.Sale>({
+const columns: TableColumnDefinition<structs.Sale>[] = [
+  createTableColumn<structs.Sale>({
     columnId: 'product',
     compare: (a, b) => {
       return a.product.localeCompare(b.product)
@@ -37,7 +37,7 @@ const columns: TableColumnDefinition<models.Sale>[] = [
       </TableCellLayout>
     ),
   }),
-  createTableColumn<models.Sale>({
+  createTableColumn<structs.Sale>({
     columnId: 'count',
     compare: (a, b) => {
       return a.count.toString().localeCompare(b.count.toString())
@@ -49,7 +49,7 @@ const columns: TableColumnDefinition<models.Sale>[] = [
       </TableCellLayout>
     ),
   }),
-  createTableColumn<models.Sale>({
+  createTableColumn<structs.Sale>({
     columnId: 'Total',
     compare: (a, b) => {
       return a.total.toString().localeCompare(b.total.toString())
@@ -61,7 +61,7 @@ const columns: TableColumnDefinition<models.Sale>[] = [
       </TableCellLayout>
     ),
   }),
-  createTableColumn<models.Sale>({
+  createTableColumn<structs.Sale>({
     columnId: 'date',
     compare: (a, b) => {
       return a.date.toString().localeCompare(b.date.toString())
@@ -73,7 +73,7 @@ const columns: TableColumnDefinition<models.Sale>[] = [
       </TableCellLayout>
     ),
   }),
-  createTableColumn<models.Sale>({
+  createTableColumn<structs.Sale>({
     columnId: 'options',
     renderHeaderCell: () => 'Devolver',
     renderCell: (item) => {
@@ -129,7 +129,7 @@ const History: FC<HistoryProps> = () => {
                 items={items}
                 columns={columns}
                 sortable
-                getRowId={(item: models.Product) => item.id}
+                getRowId={(item: structs.Product) => item.id}
                 resizableColumns
               >
                 <DataGridHeader>
@@ -139,9 +139,9 @@ const History: FC<HistoryProps> = () => {
                     )}
                   </DataGridRow>
                 </DataGridHeader>
-                <DataGridBody<models.Product>>
+                <DataGridBody<structs.Product>>
                   {({ item, rowId }) => (
-                    <DataGridRow<models.Product> key={rowId}>
+                    <DataGridRow<structs.Product> key={rowId}>
                       {({ renderCell }) => (
                         <DataGridCell>{renderCell(item)}</DataGridCell>
                       )}
@@ -165,10 +165,10 @@ const History: FC<HistoryProps> = () => {
 }
 
 const HistoryProvider: FC<HistoryProviderProps> = ({ children }) => {
-  const [items, setItems] = useState<models.Sale[]>([])
+  const [items, setItems] = useState<structs.Sale[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
-  const remove = (id: models.Sale['id']) => {
+  const remove = (id: structs.Sale['id']) => {
     RestoreHistory(id)
       .finally(loadHistory)
   }

@@ -1,62 +1,39 @@
 package controllers
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/errors"
+	"Miscellaneous/models/structs"
 )
 
 type Users struct{}
 
-func (u *Users) CreateUser(newUser models.NewUser) error {
-	if newUser.UserName == "" {
-		return utils.NewError("user-name-not-found", "Falta el nombre de usuario.")
+func (u *Users) CreateUser(newUser structs.NewUser) error {
+	if err := modules.Users.Create(newUser); err != nil {
+		return errors.ProcessError(err)
 	}
-	if newUser.FullName == "" {
-		return utils.NewError("name-not-found", "Falta el nombre completo.")
-	}
-
-	user := core.Users.Get(newUser.UserName)
-	if user != nil {
-		return utils.NewError("user-already", "El usuario "+newUser.UserName+" ya existe.")
-	}
-
-	core.Users.Create(newUser)
 
 	return nil
 }
 
-func (u *Users) GetUsers() []models.User {
-	results := []models.User{}
-
-	userList := core.Users.GetAll()
-	for _, user := range userList {
-		if user.Id != profile.Id {
-			results = append(results, user)
-		}
-	}
+func (u *Users) GetUsers() []structs.User {
+	results, _ := modules.Users.GetAll(profile)
 
 	return results
 }
 
-func (u *Users) UpdateUser(user models.User) error {
-	if user.UserName == "" {
-		return utils.NewError("user-name-not-found", "Falta el nombre de usuario.")
+func (u *Users) UpdateUser(user structs.User) error {
+	if err := modules.Users.Update(user); err != nil {
+		return errors.ProcessError(err)
 	}
-	if user.FullName == "" {
-		return utils.NewError("name-not-found", "Falta el nombre completo.")
-	}
-
-	result := core.Users.Get(user.UserName)
-	if result != nil && result.Id != user.Id {
-		return utils.NewError("user-already", "El usuario "+user.UserName+" ya existe.")
-	}
-
-	core.Users.Update(user)
 
 	return nil
 }
 
-func (u *Users) DeleteUser(id string) {
-	core.Users.Delete(id)
+func (u *Users) DeleteUser(id string) error {
+	if err := modules.Users.Delete(id); err != nil {
+		return errors.ProcessError(err)
+	}
+
+	return nil
 }

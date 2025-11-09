@@ -1,11 +1,11 @@
 import { createContext, useContext } from 'react'
-import { models } from '../../../../wailsjs/go/models'
+import { structs } from '../../../../wailsjs/go/models'
 
 const ProductsContext = createContext<{
   loading: boolean
   loadProducts: () => void
   filterProducts: (query: string) => void
-  items: models.Product[]
+  items: structs.Product[]
 }>({
   loading: false,
   loadProducts: () => { },

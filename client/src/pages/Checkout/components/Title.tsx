@@ -1,6 +1,6 @@
 import { type FC, useState, useEffect } from 'react'
 import { makeStyles, Spinner, Title1 } from '@fluentui/react-components'
-import { config } from '../../../../wailsjs/go/models'
+import { structs } from '../../../../wailsjs/go/models'
 import { GetConfig } from '../../../../wailsjs/go/controllers/Config'
 
 const useStyles = makeStyles({
@@ -14,7 +14,7 @@ const useStyles = makeStyles({
 const Title: FC<TitleProps> = () => {
   const styles = useStyles()
   const [loading, setLoading] = useState<boolean>(true)
-  const [config, setConfig] = useState<config.ConfigData | null>(null)
+  const [config, setConfig] = useState<structs.ConfigData | null>(null)
 
   useEffect(() => {
     GetConfig()

@@ -2,7 +2,7 @@ import { Card, createTableColumn, DataGrid, DataGridBody, DataGridCell, DataGrid
 import { useUsersContext } from "../../../context/users"
 import Edit from "./Edit"
 import Delete from "./Delete"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 
 const useStyles = makeStyles({
   root: {
@@ -30,8 +30,8 @@ const useStyles = makeStyles({
   },
 })
 
-const columns: TableColumnDefinition<models.User>[] = [
-  createTableColumn<models.User>({
+const columns: TableColumnDefinition<structs.User>[] = [
+  createTableColumn<structs.User>({
     columnId: 'user_name',
     compare: (a, b) => {
       return a.userName.localeCompare(b.userName)
@@ -47,7 +47,7 @@ const columns: TableColumnDefinition<models.User>[] = [
       )
     },
   }),
-  createTableColumn<models.User>({
+  createTableColumn<structs.User>({
     columnId: 'full_name',
     compare: (a, b) => {
       return a.fullName.localeCompare(b.fullName)
@@ -63,7 +63,7 @@ const columns: TableColumnDefinition<models.User>[] = [
       )
     },
   }),
-  createTableColumn<models.User>({
+  createTableColumn<structs.User>({
     columnId: 'is_admin',
     compare: (a, b) => {
       const format = (ia: boolean) => ia ? 'Administrador' : 'Vendedor'
@@ -80,7 +80,7 @@ const columns: TableColumnDefinition<models.User>[] = [
       )
     },
   }),
-  createTableColumn<models.User>({
+  createTableColumn<structs.User>({
     columnId: 'actions',
     renderHeaderCell: () => {
       return 'Opciones'
@@ -115,7 +115,7 @@ const Content = ({ loading, items }: ContentProps) => {
       items={items}
       columns={columns}
       sortable
-      getRowId={(item: models.User) => item.id}
+      getRowId={(item: structs.User) => item.id}
     >
       <DataGridHeader>
         <DataGridRow>
@@ -124,9 +124,9 @@ const Content = ({ loading, items }: ContentProps) => {
           )}
         </DataGridRow>
       </DataGridHeader>
-      <DataGridBody<models.User>>
+      <DataGridBody<structs.User>>
         {({ item, rowId }) => (
-          <DataGridRow<models.User> key={rowId}>
+          <DataGridRow<structs.User> key={rowId}>
             {({ renderCell }) => (
               <DataGridCell>{renderCell(item)}</DataGridCell>
             )}
@@ -150,5 +150,5 @@ export default () => {
 
 interface ContentProps {
   loading: boolean
-  items: models.User[]
+  items: structs.User[]
 }

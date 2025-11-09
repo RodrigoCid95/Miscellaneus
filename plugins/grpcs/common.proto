@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package grpcs;
+
+option go_package = "Miscellaneous/models/protos;grpcs";
+
+message IdRequest {
+  string id = 1;
+}
+
+message Empty {}

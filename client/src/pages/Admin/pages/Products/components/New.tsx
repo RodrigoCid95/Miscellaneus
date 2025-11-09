@@ -3,7 +3,7 @@ import { Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, 
 import { bundleIcon, AddCircle20Filled, AddCircle20Regular } from "@fluentui/react-icons"
 import FieldProvider from "./Provider"
 import { useProductsContext } from "../../../context/products"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { CreateProduct } from "../../../../../../wailsjs/go/controllers/Products"
 
 const AddIcon = bundleIcon(AddCircle20Filled, AddCircle20Regular)
@@ -24,18 +24,18 @@ const NewProduct: FC<NewProductProps> = () => {
   const { loadProducts } = useProductsContext()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [name, setName] = useState<models.NewProduct['name']>("")
+  const [name, setName] = useState<structs.NewProduct['name']>("")
   const [nameVerification, setNameVerification] = useState<Verification>({})
-  const [description, setDescription] = useState<models.NewProduct['description']>("")
-  const [sku, setSku] = useState<models.NewProduct['sku']>("")
+  const [description, setDescription] = useState<structs.NewProduct['description']>("")
+  const [sku, setSku] = useState<structs.NewProduct['sku']>("")
   const [skuVerification, setSkuVerification] = useState<Verification>({})
-  const [price, setPrice] = useState<models.NewProduct['price']>(0)
+  const [price, setPrice] = useState<structs.NewProduct['price']>(0)
   const [priceVerification, setPriceVerification] = useState<Verification>({})
-  const [stock, setStock] = useState<models.NewProduct['price']>(0)
+  const [stock, setStock] = useState<structs.NewProduct['price']>(0)
   const [stockVerification, setStockVerification] = useState<Verification>({})
-  const [minStock, setMinStock] = useState<models.NewProduct['minStock']>(1)
+  const [minStock, setMinStock] = useState<structs.NewProduct['minStock']>(1)
   const [minStockVerification, setMinStockVerification] = useState<Verification>({})
-  const [provider, setProvider] = useState<models.Provider | null>(null)
+  const [provider, setProvider] = useState<structs.Provider | null>(null)
   const [providerVerification, setProviderVerification] = useState<Verification>({})
 
   const handleOnCreate = () => {
@@ -64,7 +64,7 @@ const NewProduct: FC<NewProductProps> = () => {
       return
     }
     setLoading(true)
-    const newProduct: models.NewProduct = {
+    const newProduct: structs.NewProduct = {
       name,
       description,
       sku,

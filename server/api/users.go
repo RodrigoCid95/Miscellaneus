@@ -1,9 +1,9 @@
 package api
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/models/structs"
+	"Miscellaneous/server/errors"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 
@@ -13,23 +13,18 @@ import (
 type UsersAPI struct{}
 
 func (u *UsersAPI) CreateUser(c echo.Context) error {
-	var data models.NewUser
+	var data structs.NewUser
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
-	}
-	if data.UserName == "" {
-		return c.JSON(utils.APIBadRequest("user-name-not-found", "Falta el nombre de usuario."))
-	}
-	if data.FullName == "" {
-		return c.JSON(utils.APIBadRequest("name-not-found", "Falta el nombre completo."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "Datos requeridos.",
+		}, c)
 	}
 
-	user := core.Users.Get(data.UserName)
-	if user != nil {
-		return c.JSON(utils.APIBadRequest("user-already", "El usuario "+data.UserName+" ya existe."))
+	if err := modules.Users.Create(data); err != nil {
+		return errors.ProcessError(err, c)
 	}
-
-	core.Users.Create(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
@@ -40,47 +35,38 @@ func (u *UsersAPI) GetUsers(c echo.Context) error {
 		return c.JSON(http.StatusOK, []any{})
 	}
 
-	results := []models.User{}
-
-	userList := core.Users.GetAll()
-	if userList == nil {
-		return c.JSON(http.StatusOK, []any{})
-	}
-	for _, user := range userList {
-		if user.Id != profile.Id {
-			results = append(results, user)
-		}
+	results, err := modules.Users.GetAll(profile)
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
 
 	return c.JSON(http.StatusOK, results)
 }
 
 func (u *UsersAPI) UpdateUser(c echo.Context) error {
-	var data models.User
+	var data structs.User
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "Datos requeridos.",
+		}, c)
 	}
 
-	if data.UserName == "" {
-		return utils.NewError("user-name-not-found", "Falta el nombre de usuario.")
+	if err := modules.Users.Update(data); err != nil {
+		return errors.ProcessError(err, c)
 	}
-	if data.FullName == "" {
-		return utils.NewError("name-not-found", "Falta el nombre completo.")
-	}
-
-	result := core.Users.Get(data.UserName)
-	if result != nil && result.Id != data.Id {
-		return utils.NewError("user-already", "El usuario "+data.UserName+" ya existe.")
-	}
-
-	core.Users.Update(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (u *UsersAPI) DeleteUser(c echo.Context) error {
 	id := c.Param("id")
-	core.Users.Delete(id)
+	err := modules.Users.Delete(id)
+	if err != nil {
+		return errors.ProcessError(err, c)
+	}
+
 	return c.NoContent(http.StatusAccepted)
 }
 

@@ -5,7 +5,7 @@ import { ProvidersContext, useProvidersContext } from "../../context/providers"
 import ToolbarPage from "../../components/Toolbar"
 import New from './components/New'
 import List from './components/List'
-import { models } from "../../../../../wailsjs/go/models"
+import { structs } from "../../../../../wailsjs/go/models"
 import { GetProviders } from "../../../../../wailsjs/go/controllers/Providers"
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
@@ -30,7 +30,7 @@ const Providers = () => {
 
 export default () => {
   const [loading, setLoading] = useState(false)
-  const [items, setItems] = useState<models.Provider[]>([])
+  const [items, setItems] = useState<structs.Provider[]>([])
 
   const loadProviders = () => {
     setLoading(true)

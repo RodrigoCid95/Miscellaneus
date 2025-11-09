@@ -2,7 +2,7 @@ import { type FC, ChangeEvent, useState } from 'react'
 import { makeStyles, Dialog, DialogTrigger, DialogSurface, DialogTitle, DialogBody, DialogContent, Field, Input, Switch, DialogActions, Button, Spinner, tokens } from '@fluentui/react-components'
 import { bundleIcon, Edit20Filled, Edit20Regular } from '@fluentui/react-icons'
 import { useUsersContext } from '../../../context/users'
-import { models } from '../../../../../../wailsjs/go/models'
+import { structs } from '../../../../../../wailsjs/go/models'
 import { api } from '../../../../../utils/api'
 import { UpdateUser } from '../../../../../../wailsjs/go/controllers/Users'
 
@@ -30,14 +30,14 @@ const EditUser: FC<EditUserProps> = ({ user }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const [userName, setName] = useState<models.NewUser['userName']>(user.userName)
+  const [userName, setName] = useState<structs.NewUser['userName']>(user.userName)
   const [msgNameVerification, setMsgNameVerification] = useState<string>('')
 
-  const [fullName, setFullName] = useState<models.NewUser['fullName']>(user.fullName)
+  const [fullName, setFullName] = useState<structs.NewUser['fullName']>(user.fullName)
   const [msgFullNameVerification, setMsgFullNameVerification] = useState<string>('')
 
 
-  const [isAdmin, setIsAdmin] = useState<models.NewUser['isAdmin']>(user.isAdmin)
+  const [isAdmin, setIsAdmin] = useState<structs.NewUser['isAdmin']>(user.isAdmin)
 
   const handleOnIsAdminChange = (ev: ChangeEvent<HTMLInputElement>) => setIsAdmin(ev.currentTarget.checked)
 
@@ -51,7 +51,7 @@ const EditUser: FC<EditUserProps> = ({ user }) => {
       return
     }
     setLoading(true)
-    const data = new models.User()
+    const data = new structs.User()
     data.id = user.id
     data.userName = userName
     data.fullName = fullName
@@ -143,5 +143,5 @@ const EditUser: FC<EditUserProps> = ({ user }) => {
 export default EditUser
 
 interface EditUserProps {
-  user: models.User
+  user: structs.User
 }

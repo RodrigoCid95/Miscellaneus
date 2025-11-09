@@ -3,7 +3,7 @@ import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, Dialog
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
 import { useProvidersContext } from "../../../context/providers"
 import { DeleteProvider as dProvider } from "../../../../../../wailsjs/go/controllers/Providers"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -125,5 +125,5 @@ const DeleteProvider: FC<DeleteProviderProps> = ({ item }) => {
 export default DeleteProvider
 
 interface DeleteProviderProps {
-  item: models.Provider
+  item: structs.Provider
 }

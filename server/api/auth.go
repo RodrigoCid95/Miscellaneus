@@ -1,9 +1,10 @@
 package api
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/models/interfaces"
+	"Miscellaneous/models/structs"
+	"Miscellaneous/server/errors"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 
@@ -21,31 +22,26 @@ type AuthAPI struct{}
 func (a *AuthAPI) Login(c echo.Context) error {
 	var credentials Credentials
 	if err := c.Bind(&credentials); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-credentials", "Credenciales requeridas."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-credentials",
+			Message:    "Credenciales requeridas.",
+		}, c)
 	}
 
-	if credentials.UserName == "" {
-		return c.JSON(utils.APIBadRequest("missing-username", "El nombre de usuario es requerido."))
-	}
-	if credentials.Password == "" {
-		return c.JSON(utils.APIBadRequest("missing-password", "La contraseña es requerida."))
-	}
-
-	result := core.Users.Get(credentials.UserName)
-	if result == nil {
-		return c.JSON(utils.APIBadRequest("user-not-found", "Usuario no encontrado."))
+	user, err := modules.Auth.Login(interfaces.LoginArgs{
+		UserName: credentials.UserName,
+		Password: credentials.Password,
+	})
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
 
-	hash := utils.GenerateHash(credentials.Password)
-	if hash != result.Hash {
-		return c.JSON(utils.APIBadRequest("wrong-password", "La contraseña es incorrecta."))
-	}
-
-	middlewares.SM.RegisterSession(c, &models.User{
-		Id:       result.Id,
-		UserName: result.UserName,
-		FullName: result.FullName,
-		IsAdmin:  result.IsAdmin,
+	middlewares.SM.RegisterSession(c, &structs.User{
+		Id:       user.Id,
+		UserName: user.UserName,
+		FullName: user.FullName,
+		IsAdmin:  user.IsAdmin,
 	})
 
 	return c.NoContent(http.StatusAccepted)

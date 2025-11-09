@@ -6,7 +6,7 @@ import { ProductsContext, useProductsContext } from "../../context/products"
 import New from './components/New'
 import List from './components/List'
 import Searcher from "./components/Searcher"
-import { models } from "../../../../../wailsjs/go/models"
+import { structs } from "../../../../../wailsjs/go/models"
 import { GetProducts, GetFilterProducts } from "../../../../../wailsjs/go/controllers/Products"
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
@@ -32,7 +32,7 @@ const Products = () => {
 
 export default () => {
   const [loading, setLoading] = useState<boolean>(false)
-  const [items, setItems] = useState<models.Product[]>([])
+  const [items, setItems] = useState<structs.Product[]>([])
 
   const loadProducts = () => {
     setLoading(true)

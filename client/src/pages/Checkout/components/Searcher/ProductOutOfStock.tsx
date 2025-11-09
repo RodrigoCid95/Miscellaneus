@@ -1,6 +1,6 @@
 import { type FC } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger } from "@fluentui/react-components"
-import { models } from "../../../../../wailsjs/go/models"
+import { structs } from "../../../../../wailsjs/go/models"
 
 const ProductOutOfStock: FC<ProductOutOfStockProps> = ({ product, onClose }) => {
 
@@ -41,6 +41,6 @@ const ProductOutOfStock: FC<ProductOutOfStockProps> = ({ product, onClose }) => 
 export default ProductOutOfStock
 
 export interface ProductOutOfStockProps {
-  product: models.Product
+  product: structs.Product
   onClose(): void
 }

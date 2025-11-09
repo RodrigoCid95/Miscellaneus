@@ -2,7 +2,7 @@ import { type FC, useState } from "react"
 import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, DialogSurface, DialogTitle, DialogBody, DialogContent, Checkbox, DialogActions, Spinner, tokens } from "@fluentui/react-components"
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
 import { useUsersContext } from "../../../context/users"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { DeleteUser as dUser } from "../../../../../../wailsjs/go/controllers/Users"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
@@ -125,5 +125,5 @@ const DeleteUser: FC<DeleteUserProps> = ({ user }) => {
 export default DeleteUser
 
 interface DeleteUserProps {
-  user: models.User
+  user: structs.User
 }

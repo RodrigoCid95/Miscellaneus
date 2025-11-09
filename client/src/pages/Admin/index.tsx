@@ -6,7 +6,7 @@ import { ConfigContext, useConfigContext } from './context/config'
 import { ProfileContext, useProfileContext } from './context/profile'
 import LogoutButton from '../../components/Logout'
 import { SaveConfig, GetConfig } from '../../../wailsjs/go/controllers/Config'
-import { config, models } from '../../../wailsjs/go/models'
+import { structs } from '../../../wailsjs/go/models'
 import { GetProfile } from '../../../wailsjs/go/controllers/Profile'
 
 const useStyles = makeStyles({
@@ -184,7 +184,7 @@ const AdminAppProvider: FC<any> = ({ children }) => {
 }
 
 const ConfigProvider: FC<any> = ({ children }) => {
-  const [config, setConfig] = useState<config.ConfigData | undefined>(undefined)
+  const [config, setConfig] = useState<structs.ConfigData | undefined>(undefined)
 
   const loadConfig = () => {
     GetConfig()
@@ -195,7 +195,7 @@ const ConfigProvider: FC<any> = ({ children }) => {
     loadConfig()
   }, [])
 
-  const setConfiguration = async (config: config.ConfigData) => {
+  const setConfiguration = async (config: structs.ConfigData) => {
     await SaveConfig(config)
     setConfig(config)
   }
@@ -208,7 +208,7 @@ const ConfigProvider: FC<any> = ({ children }) => {
 }
 
 const ProfileProvider: FC<any> = ({ children }) => {
-  const [profile, setProfile] = useState<models.User | undefined>(undefined)
+  const [profile, setProfile] = useState<structs.User | undefined>(undefined)
 
   useEffect(() => {
     GetProfile()

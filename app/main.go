@@ -3,10 +3,9 @@ package main
 import (
 	"Miscellaneous/app"
 	"Miscellaneous/controllers"
-	"Miscellaneous/core/libs"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/driver"
+	"Miscellaneous/core/modules"
 	"embed"
-	"path/filepath"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -18,10 +17,9 @@ import (
 var appAssets embed.FS
 
 func main() {
-	dataDir := filepath.Join(".", ".data")
-	if !utils.DirExists(dataDir) {
-		utils.Mkdir(dataDir)
-	}
+	driver.Start()
+	modules.Wire(driver.Connection)
+	defer driver.Kill()
 
 	profile := &controllers.Profile{}
 	auth := &controllers.Auth{}
@@ -33,9 +31,13 @@ func main() {
 	history := &controllers.History{}
 	checkout := &controllers.Checkout{}
 
-	name := config.GetConfig().Name
+	data, err := modules.Config.GetConfig()
+	if err != nil {
+		panic(err)
+	}
+	name := data.Name
 
-	err := wails.Run(&options.App{
+	runErr := wails.Run(&options.App{
 		Title:       "Miscellaneous - " + name,
 		Width:       500,
 		Height:      768,
@@ -46,9 +48,7 @@ func main() {
 		Bind:        []any{profile, auth, config, users, providers, barcodes, products, history, checkout},
 	})
 
-	if err != nil {
-		println("Error:", err.Error())
+	if runErr != nil {
+		println("Error:", runErr.Error())
 	}
-
-	libs.DB.Close()
 }

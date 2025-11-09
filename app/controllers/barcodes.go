@@ -1,52 +1,54 @@
 package controllers
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/errors"
+	"Miscellaneous/models/structs"
 )
 
 type BarCodes struct{}
 
-func (bc *BarCodes) CreateBarCode(data models.NewBarCode) error {
-	if data.Name == "" {
-		return utils.NewError("missing-name", "Falta el nombre del Código de barras.")
+func (bc *BarCodes) CreateBarCode(data structs.NewBarCode) error {
+	err := modules.BarCodes.Create(data)
+	if err != nil {
+		return errors.ProcessError(err)
 	}
-	if data.Value == "" {
-		return utils.NewError("missing-value", "Falta el valor del Código de barras.")
-	}
-
-	core.BarCodes.Create(data)
 
 	return nil
 }
 
-func (bc *BarCodes) GetBarCodes() []models.BarCode {
-	return core.BarCodes.GetAll()
+func (bc *BarCodes) GetBarCodes() ([]structs.BarCode, error) {
+	results, err := modules.BarCodes.GetAll()
+	if err != nil {
+		return results, errors.ProcessError(err)
+	}
+
+	return results, nil
 }
 
-func (bc *BarCodes) UpdateBarCode(data models.BarCode) error {
-	if data.Name == "" {
-		return utils.NewError("missing-name", "Falta el nombre del Código de barras.")
+func (bc *BarCodes) UpdateBarCode(data structs.BarCode) error {
+	err := modules.BarCodes.Update(data)
+	if err != nil {
+		return errors.ProcessError(err)
 	}
-	if data.Value == "" {
-		return utils.NewError("missing-value", "Falta el valor del Código de barras.")
-	}
-
-	core.BarCodes.Update(data)
 
 	return nil
 }
 
-func (bc *BarCodes) DeleteBarCode(id string) {
-	core.BarCodes.Delete(id)
-}
-
-func (bc *BarCodes) GetBarCodeSrc(id string) string {
-	barcode := core.BarCodes.Get(id)
-	if bc == nil {
-		return ""
+func (bc *BarCodes) DeleteBarCode(id string) error {
+	err := modules.BarCodes.Delete(id)
+	if err != nil {
+		return errors.ProcessError(err)
 	}
 
-	return utils.GenerateDataURLBarcode(barcode.Value, barcode.Tag)
+	return nil
+}
+
+func (bc *BarCodes) GetBarCodeSrc(id string) (string, error) {
+	src, err := modules.BarCodes.GetSrc(id)
+	if err != nil {
+		return "", errors.ProcessError(err)
+	}
+
+	return src, nil
 }

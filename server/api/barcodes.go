@@ -1,9 +1,9 @@
 package api
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/models/structs"
+	"Miscellaneous/server/errors"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 
@@ -13,61 +13,68 @@ import (
 type BarCodesAPI struct{}
 
 func (bc *BarCodesAPI) CreateBarCode(c echo.Context) error {
-	var data models.NewBarCode
+	var data structs.NewBarCode
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-credentials",
+			Message:    "Credenciales requeridas.",
+		}, c)
 	}
 
-	if data.Name == "" {
-		return c.JSON(utils.APIBadRequest("missing-name", "Falta el nombre del Código de barras."))
+	err := modules.BarCodes.Create(data)
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
-	if data.Value == "" {
-		return c.JSON(utils.APIBadRequest("missing-value", "Falta el valor del Código de barras."))
-	}
-
-	core.BarCodes.Create(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (bc *BarCodesAPI) GetBarCodes(c echo.Context) error {
-	results := core.BarCodes.GetAll()
+	results, err := modules.BarCodes.GetAll()
+	if err != nil {
+		return errors.ProcessError(err, c)
+	}
+
 	return c.JSON(http.StatusOK, results)
 }
 
 func (bc *BarCodesAPI) UpdateBarCode(c echo.Context) error {
-	var data models.BarCode
+	var data structs.BarCode
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "Datos requeridos.",
+		}, c)
 	}
 
-	if data.Name == "" {
-		return c.JSON(utils.APIBadRequest("missing-name", "Falta el nombre del Código de barras."))
+	err := modules.BarCodes.Update(data)
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
-	if data.Value == "" {
-		return c.JSON(utils.APIBadRequest("missing-value", "Falta el valor del Código de barras."))
-	}
-
-	core.BarCodes.Update(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (bc *BarCodesAPI) DeleteBarCode(c echo.Context) error {
 	id := c.Param("id")
-	core.BarCodes.Delete(id)
+	err := modules.BarCodes.Delete(id)
+	if err != nil {
+		return errors.ProcessError(err, c)
+	}
+
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (bc *BarCodesAPI) GetBarCodeSrc(c echo.Context) error {
 	id := c.Param("id")
-	barcode := core.BarCodes.Get(id)
-	if bc == nil {
-		return c.String(http.StatusOK, "")
+	src, err := modules.BarCodes.GetSrc(id)
+	if err != nil {
+		return errors.ProcessError(err, c)
 	}
 
-	result := utils.GenerateDataURLBarcode(barcode.Value, barcode.Tag)
-	return c.String(http.StatusOK, result)
+	return c.String(http.StatusOK, src)
 }
 
 func RegisterBarcodesAPI(e *echo.Echo) {

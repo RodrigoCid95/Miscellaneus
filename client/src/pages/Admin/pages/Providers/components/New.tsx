@@ -2,7 +2,7 @@ import { type FC, useState } from "react"
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Field, Input, makeStyles, Spinner, tokens, ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, PeopleAdd20Filled, PeopleAdd20Regular } from "@fluentui/react-icons"
 import { useProvidersContext } from "../../../context/providers"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 import { SaveProvider } from "../../../../../../wailsjs/go/controllers/Providers"
 
 const AddIcon = bundleIcon(PeopleAdd20Filled, PeopleAdd20Regular)
@@ -29,10 +29,10 @@ const NewProvider: FC<NewProviderProps> = () => {
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const [name, setName] = useState<models.Provider['name']>('')
+  const [name, setName] = useState<structs.Provider['name']>('')
   const [msgNameValidation, setMsgNameValidation] = useState<string>('')
 
-  const [phone, setPhone] = useState<models.Provider['phone']>('')
+  const [phone, setPhone] = useState<structs.Provider['phone']>('')
   const [msgPhoneValidation, setMsgPhoneValidation] = useState<string>('')
 
   const createProvider = () => {
@@ -45,7 +45,7 @@ const NewProvider: FC<NewProviderProps> = () => {
       return
     }
     setLoading(true)
-    const newProvider: models.NewProvider = { name, phone }
+    const newProvider: structs.NewProvider = { name, phone }
     SaveProvider(newProvider)
       .then(() => {
         setOpen(false)

@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react'
-import { models } from '../../../../wailsjs/go/models'
+import { structs } from '../../../../wailsjs/go/models'
 
 const ProvidersContext = createContext<{
   loading: boolean
   loadProviders: () => void
-  items: models.Provider[]
+  items: structs.Provider[]
 }>({
   loading: false,
   loadProviders: () => { },

@@ -5,7 +5,7 @@ import List from './components/List'
 import { ToolbarButton } from "@fluentui/react-components"
 import { bundleIcon, ArrowSync20Filled, ArrowSync20Regular } from "@fluentui/react-icons"
 import NewBarcode from "./components/New"
-import { models } from "../../../../../wailsjs/go/models"
+import { structs } from "../../../../../wailsjs/go/models"
 import { GetBarCodes } from "../../../../../wailsjs/go/controllers/BarCodes"
 
 const ReloadIcon = bundleIcon(ArrowSync20Filled, ArrowSync20Regular)
@@ -30,7 +30,7 @@ const BarCodes = () => {
 
 export default () => {
   const [loading, setLoading] = useState<boolean>(false)
-  const [items, setItems] = useState<models.BarCode[]>([])
+  const [items, setItems] = useState<structs.BarCode[]>([])
 
   const loadBarCodes = () => {
     setLoading(true)

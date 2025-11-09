@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package grpcs;
+
+import "common.proto";
+
+option go_package = "Miscellaneous/models/protos;grpcs";
+
+message BarCode {
+  string id = 1;
+  string name = 2;
+  string tag = 3;
+  string value = 4;
+}
+
+message NewBarCode {
+  string name = 1;
+  string tag = 2;
+  string value = 3;
+}
+
+message BarCodeList {
+  repeated BarCode barcodes = 1;
+}
+
+service BarCodes {
+  rpc Create (NewBarCode) returns (Empty);
+  rpc Get (IdRequest) returns (BarCode);
+  rpc GetAll (Empty) returns (BarCodeList);
+  rpc Update (BarCode) returns (Empty);
+  rpc Delete (IdRequest) returns (Empty);
+}

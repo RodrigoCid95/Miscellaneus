@@ -3,7 +3,7 @@ import { makeStyles, CheckboxOnChangeData, Dialog, DialogTrigger, Button, Dialog
 import { bundleIcon, Delete20Filled, Delete20Regular } from "@fluentui/react-icons"
 import { useProductsContext } from "../../../context/products"
 import { DeleteProduct as dProduct } from "../../../../../../wailsjs/go/controllers/Products"
-import { models } from "../../../../../../wailsjs/go/models"
+import { structs } from "../../../../../../wailsjs/go/models"
 
 const DeleteIcon = bundleIcon(Delete20Filled, Delete20Regular)
 const useStyles = makeStyles({
@@ -87,5 +87,5 @@ const DeleteProduct: FC<DeleteProductProps> = ({ item }) => {
 export default DeleteProduct
 
 interface DeleteProductProps {
-  item: models.Product
+  item: structs.Product
 }

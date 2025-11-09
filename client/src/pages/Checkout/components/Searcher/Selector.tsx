@@ -2,11 +2,11 @@ import { type FC } from "react"
 import { Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions, DialogTrigger, Button, createTableColumn, TableCellLayout, TableColumnDefinition, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow } from "@fluentui/react-components"
 import { useCheckout } from "../../context/checkout"
 import { useSearcher } from "../../context/searcher"
-import { models } from "../../../../../wailsjs/go/models"
+import { structs } from "../../../../../wailsjs/go/models"
 
 
-const columns: TableColumnDefinition<models.Product>[] = [
-  createTableColumn<models.Product>({
+const columns: TableColumnDefinition<structs.Product>[] = [
+  createTableColumn<structs.Product>({
     columnId: 'name',
     compare: (a, b) => {
       return a.name.localeCompare(b.name)
@@ -22,7 +22,7 @@ const columns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'descriptions',
     renderHeaderCell: () => {
       return 'Descripción'
@@ -35,7 +35,7 @@ const columns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'price',
     renderHeaderCell: () => {
       return 'Precio'
@@ -48,7 +48,7 @@ const columns: TableColumnDefinition<models.Product>[] = [
       )
     },
   }),
-  createTableColumn<models.Product>({
+  createTableColumn<structs.Product>({
     columnId: 'existents',
     renderHeaderCell: () => {
       return 'Existencias'
@@ -67,7 +67,7 @@ const Selector: FC<SelectorProps> = () => {
   const { push } = useCheckout()
   const { productsToSelection, setProductsToSelection, setLoading } = useSearcher()
 
-  const handleOnSelect = (product: models.Product) => {
+  const handleOnSelect = (product: structs.Product) => {
     if (product.stock > 0) {
       setProductsToSelection(null)
       push([product])
@@ -97,7 +97,7 @@ const Selector: FC<SelectorProps> = () => {
                 items={productsToSelection}
                 columns={columns}
                 sortable
-                getRowId={(item: models.Product) => item.id}
+                getRowId={(item: structs.Product) => item.id}
               >
                 <DataGridHeader>
                   <DataGridRow>
@@ -106,9 +106,9 @@ const Selector: FC<SelectorProps> = () => {
                     )}
                   </DataGridRow>
                 </DataGridHeader>
-                <DataGridBody<models.Product>>
+                <DataGridBody<structs.Product>>
                   {({ item, rowId }) => (
-                    <DataGridRow<models.Product> key={rowId} onClick={() => handleOnSelect(item)}>
+                    <DataGridRow<structs.Product> key={rowId} onClick={() => handleOnSelect(item)}>
                       {({ renderCell }) => (
                         <DataGridCell>{renderCell(item)}</DataGridCell>
                       )}

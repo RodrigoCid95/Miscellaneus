@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react'
-import { models } from '../../../../wailsjs/go/models'
+import { structs } from '../../../../wailsjs/go/models'
 
 const BarCodesContext = createContext<{
   loading: boolean
   loadBarCodes: () => void
-  items: models.BarCode[]
+  items: structs.BarCode[]
 }>({
   loading: false,
   loadBarCodes: () => { },

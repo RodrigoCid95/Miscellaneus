@@ -2,7 +2,7 @@ import { type FC, type ReactNode, useState } from "react"
 import { Field, Input } from "@fluentui/react-components"
 import { PasswordFormContext, usePasswordForm } from "../context/passwordForm"
 import { api, APIError } from "../../../utils/api"
-import { models } from "./../../../../wailsjs/go/models"
+import { structs } from "./../../../../wailsjs/go/models"
 import { UpdatePassword } from "../../../../wailsjs/go/controllers/Profile"
 
 const PasswordFormProvider: FC<PasswordFormProviderProps> = ({ children }) => {
@@ -33,7 +33,7 @@ const PasswordFormProvider: FC<PasswordFormProviderProps> = ({ children }) => {
       return
     }
     setLoading(true)
-    const data = new models.PasswordProfileData()
+    const data = new structs.PasswordProfileData()
     data.currentPass = pass1
     data.newPass = pass2
     api(UpdatePassword, data)

@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react'
-import { models } from '../../../../wailsjs/go/models'
+import { structs } from '../../../../wailsjs/go/models'
 
 const HistoryContext = createContext<{
   loading: boolean
-  items: models.Sale[]
-  remove: (id: models.Sale['id']) => void
+  items: structs.Sale[]
+  remove: (id: structs.Sale['id']) => void
   loadHistory: () => void
 }>({
   loading: false,

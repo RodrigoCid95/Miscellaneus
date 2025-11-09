@@ -2,7 +2,7 @@ import { type FC } from 'react'
 import { makeStyles, tokens, TableColumnDefinition, createTableColumn, TableCellLayout, Spinner, DataGrid, DataGridBody, DataGridCell, DataGridHeader, DataGridHeaderCell, DataGridRow, Text, Button, Card } from '@fluentui/react-components'
 import { bundleIcon, BoxArrowLeft20Filled, BoxArrowLeft20Regular } from '@fluentui/react-icons'
 import { useHistory } from '../../context/history'
-import { models } from '../../../../../wailsjs/go/models'
+import { structs } from '../../../../../wailsjs/go/models'
 
 const RestoreIcon = bundleIcon(BoxArrowLeft20Filled, BoxArrowLeft20Regular)
 const useStyles = makeStyles({
@@ -158,12 +158,12 @@ export default () => {
   )
 }
 
-interface HistoryListItem extends models.HistoryItem {
+interface HistoryListItem extends structs.HistoryItem {
   start: number
   end: number
 }
 interface HistoryListProps {
   loading: boolean
-  items: models.HistoryItem[]
+  items: structs.HistoryItem[]
 
 }

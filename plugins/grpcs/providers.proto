@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package grpcs;
+
+import "common.proto";
+
+option go_package = "Miscellaneous/models/protos;grpcs";
+
+message Provider {
+  string id = 1;
+  string name = 2;
+  string phone = 3;
+}
+
+message NewProvider {
+  string name = 1;
+  string phone = 2;
+}
+
+message ProviderList {
+  repeated Provider providers = 1;
+}
+
+service Providers {
+  rpc GetAll (Empty) returns (ProviderList);
+  rpc Get (IdRequest) returns (Provider);
+  rpc Create (NewProvider) returns (Empty);
+  rpc Update (Provider) returns (Empty);
+  rpc Delete (IdRequest) returns (Empty);
+}

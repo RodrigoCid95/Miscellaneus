@@ -7,7 +7,7 @@ import { bundleIcon, BarcodeScanner20Filled, BarcodeScanner20Regular } from "@fl
 import { BrowserCodeReader } from '@zxing/browser'
 import { useCheckout } from "../../context/checkout"
 import { SearcherContext, useSearcher } from '../../context/searcher'
-import { models } from "../../../../../wailsjs/go/models"
+import { structs } from "../../../../../wailsjs/go/models"
 import { GetFilterProducts } from '../../../../../wailsjs/go/controllers/Products'
 
 const BarCodeIcon = bundleIcon(BarcodeScanner20Filled, BarcodeScanner20Regular)
@@ -128,8 +128,8 @@ const Searcher: FC<SearcherProps> = () => {
 export default () => {
   const { push } = useCheckout()
   const [openNotFound, setOpenNotFound] = useState<boolean>(false)
-  const [productsToSelection, setProductsToSelection] = useState<models.Product[] | null>(null)
-  const [productOutOfStock, setProductOutOfStock] = useState<models.Product | null>(null)
+  const [productsToSelection, setProductsToSelection] = useState<structs.Product[] | null>(null)
+  const [productOutOfStock, setProductOutOfStock] = useState<structs.Product | null>(null)
   const [value, setValue] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 

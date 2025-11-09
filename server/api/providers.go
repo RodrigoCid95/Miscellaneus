@@ -1,9 +1,9 @@
 package api
 
 import (
-	"Miscellaneous/core"
-	"Miscellaneous/core/models"
-	"Miscellaneous/core/utils"
+	"Miscellaneous/core/modules"
+	"Miscellaneous/models/structs"
+	"Miscellaneous/server/errors"
 	"Miscellaneous/server/middlewares"
 	"net/http"
 
@@ -13,49 +13,54 @@ import (
 type ProvidersAPI struct{}
 
 func (p *ProvidersAPI) SaveProvider(c echo.Context) error {
-	var data models.NewProvider
+	var data structs.NewProvider
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "Datos requeridos.",
+		}, c)
 	}
 
-	if data.Name == "" {
-		return c.JSON(utils.APIBadRequest("missing-name", "Falta el nombre del proveedor."))
+	if err := modules.Providers.Create(data); err != nil {
+		return errors.ProcessError(err, c)
 	}
-	if data.Phone == "" {
-		return c.JSON(utils.APIBadRequest("missing-phone", "Falta el número de teléfono."))
-	}
-
-	core.Providers.Create(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (p *ProvidersAPI) GetProviders(c echo.Context) error {
-	results := core.Providers.GetAll()
+	results, err := modules.Providers.GetAll()
+	if err != nil {
+		return errors.ProcessError(err, c)
+	}
+
 	return c.JSON(http.StatusOK, results)
 }
 
 func (p *ProvidersAPI) UpdateProvider(c echo.Context) error {
-	var data models.Provider
+	var data structs.Provider
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(utils.APIBadRequest("missing-data", "Datos requeridos."))
+		return errors.ProcessError(&structs.CoreError{
+			IsInternal: false,
+			Code:       "missing-data",
+			Message:    "Datos requeridos.",
+		}, c)
 	}
 
-	if data.Name == "" {
-		return c.JSON(utils.APIBadRequest("missing-name", "Falta el nombre del proveedor."))
+	if err := modules.Providers.Update(data); err != nil {
+		return errors.ProcessError(err, c)
 	}
-	if data.Phone == "" {
-		return c.JSON(utils.APIBadRequest("missing-phone", "Falta el número de teléfono."))
-	}
-
-	core.Providers.Update(data)
 
 	return c.NoContent(http.StatusAccepted)
 }
 
 func (p *ProvidersAPI) DeleteProvider(c echo.Context) error {
 	id := c.Param("id")
-	core.Providers.Delete(id)
+	if err := modules.Providers.Delete(id); err != nil {
+		return errors.ProcessError(err, c)
+	}
+
 	return c.NoContent(http.StatusAccepted)
 }
 
