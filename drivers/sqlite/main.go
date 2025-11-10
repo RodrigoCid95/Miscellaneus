@@ -15,6 +15,7 @@ func main() {
 	}
 
 	plugins.NewServer(&plugins.ServerOptions{
+		Name:            "sqlite",
 		BarCodesServer:  servers.BarCodesServer{},
 		CheckoutServer:  servers.CheckoutServer{},
 		HistoryServer:   servers.HistoryServer{},

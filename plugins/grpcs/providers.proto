@@ -4,7 +4,7 @@ package grpcs;
 
 import "common.proto";
 
-option go_package = "Miscellaneous/models/protos;grpcs";
+option go_package = "Miscellaneous/grpcs/protos;grpcs";
 
 message Provider {
   string id = 1;

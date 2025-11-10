@@ -24,12 +24,14 @@ type ServerOptions struct {
 	ProvidersServer grpcs.ProvidersServer
 	UsersServer     grpcs.UsersServer
 	OnKill          func()
+	Name            string
 }
 
 type connStatsHandler struct {
 	mu        sync.Mutex
-	connected int
+	connected int32
 	OnKill    func()
+	OnChange  func(count int32)
 }
 
 func (h *connStatsHandler) TagConn(ctx context.Context, info *stats.ConnTagInfo) context.Context {
@@ -52,6 +54,7 @@ func (h *connStatsHandler) HandleConn(ctx context.Context, s stats.ConnStats) {
 			h.OnKill()
 		}
 	}
+	h.OnChange(h.connected)
 }
 
 func (h *connStatsHandler) TagRPC(ctx context.Context, info *stats.RPCTagInfo) context.Context {
@@ -60,8 +63,29 @@ func (h *connStatsHandler) TagRPC(ctx context.Context, info *stats.RPCTagInfo) c
 
 func (h *connStatsHandler) HandleRPC(ctx context.Context, s stats.RPCStats) {}
 
+type InfoServer struct {
+	grpcs.UnimplementedInfoServer
+	name  string
+	count int32
+}
+
+func (is InfoServer) GetName(context.Context, *grpcs.Empty) (*grpcs.GetInfoRequest, error) {
+	return &grpcs.GetInfoRequest{Name: is.name}, nil
+}
+
+func (is InfoServer) GetConnectionsCount(context.Context, *grpcs.Empty) (*grpcs.GetConnectionsCountRequest, error) {
+	return &grpcs.GetConnectionsCountRequest{Count: is.count}, nil
+}
+
 func NewServer(opts *ServerOptions) {
-	addr := getSocketAddress()
+	name := "Driver"
+	if opts.Name != "" {
+		name = opts.Name
+	}
+	addr := "/tmp/misc-" + name + ".sock"
+	if runtime.GOOS == "windows" {
+		addr = `\\.\pipe\misc-` + name
+	}
 	lis, err := createListener(addr)
 	if err != nil {
 		log.Fatalf("No se pudo crear listener: %v", err)
@@ -69,12 +93,18 @@ func NewServer(opts *ServerOptions) {
 	}
 
 	var s *grpc.Server = nil
-	s = grpc.NewServer(grpc.StatsHandler(&connStatsHandler{
+	infoServer := InfoServer{name: name}
+	connStats := &connStatsHandler{
 		OnKill: func() {
 			opts.OnKill()
 			os.Exit(0)
 		},
-	}))
+		OnChange: func(count int32) {
+			infoServer.count = count
+		},
+	}
+	s = grpc.NewServer(grpc.StatsHandler(connStats))
+	grpcs.RegisterInfoServer(s, infoServer)
 	grpcs.RegisterBarCodesServer(s, opts.BarCodesServer)
 	grpcs.RegisterCheckoutServer(s, opts.CheckoutServer)
 	grpcs.RegisterHistoryServer(s, opts.HistoryServer)
@@ -100,11 +130,4 @@ func createListener(addr string) (net.Listener, error) {
 	}
 	_ = os.Remove(addr)
 	return net.Listen("unix", addr)
-}
-
-func getSocketAddress() string {
-	if runtime.GOOS == "windows" {
-		return `\\.\pipe\miscellaneous`
-	}
-	return "/tmp/miscellaneous.sock"
 }

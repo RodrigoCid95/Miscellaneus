@@ -314,7 +314,7 @@ const file_history_proto_rawDesc = "" +
 	"\aHistory\x12/\n" +
 	"\bFindByID\x12\x10.grpcs.IdRequest\x1a\x11.grpcs.SaleResult\x127\n" +
 	"\n" +
-	"GetByRange\x12\x15.grpcs.GetByRangeArgs\x1a\x12.grpcs.HistoryListB#Z!Miscellaneous/models/protos;grpcsb\x06proto3"
+	"GetByRange\x12\x15.grpcs.GetByRangeArgs\x1a\x12.grpcs.HistoryListB\"Z Miscellaneous/grpcs/protos;grpcsb\x06proto3"
 
 var (
 	file_history_proto_rawDescOnce sync.Once

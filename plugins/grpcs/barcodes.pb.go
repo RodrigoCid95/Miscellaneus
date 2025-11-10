@@ -215,7 +215,7 @@ const file_barcodes_proto_rawDesc = "" +
 	"\x03Get\x12\x10.grpcs.IdRequest\x1a\x0e.grpcs.BarCode\x12*\n" +
 	"\x06GetAll\x12\f.grpcs.Empty\x1a\x12.grpcs.BarCodeList\x12&\n" +
 	"\x06Update\x12\x0e.grpcs.BarCode\x1a\f.grpcs.Empty\x12(\n" +
-	"\x06Delete\x12\x10.grpcs.IdRequest\x1a\f.grpcs.EmptyB#Z!Miscellaneous/models/protos;grpcsb\x06proto3"
+	"\x06Delete\x12\x10.grpcs.IdRequest\x1a\f.grpcs.EmptyB\"Z Miscellaneous/grpcs/protos;grpcsb\x06proto3"
 
 var (
 	file_barcodes_proto_rawDescOnce sync.Once

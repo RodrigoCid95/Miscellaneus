@@ -2,6 +2,7 @@ package driver
 
 import (
 	"Miscellaneous/models/structs"
+	"Miscellaneous/plugins/grpcs"
 	"Miscellaneous/utils/config"
 	"Miscellaneous/utils/fs"
 	"Miscellaneous/utils/paths"
@@ -24,13 +25,32 @@ var ConfigDriver *config.ConfigDriver
 var coreConfig *structs.CoreConfigData
 var driverProcess *exec.Cmd
 var Connection *grpc.ClientConn
+var driverPath string
+var socketPath string
 
 func Start() {
 	setup()
 	loadConfig()
-	runDriver()
-	awaitSocket()
-	connectToDriver()
+	ok, _ := existsSocket()
+	if ok {
+		connectToDriver()
+		infoClient := grpcs.NewInfoClient(Connection)
+		req, err := infoClient.GetName(context.Background(), &grpcs.Empty{})
+		if err != nil {
+			panic(err)
+		}
+		name := req.GetName()
+		if name != coreConfig.Driver {
+			Kill()
+			runDriver()
+			awaitSocket()
+			connectToDriver()
+		}
+	} else {
+		runDriver()
+		awaitSocket()
+		connectToDriver()
+	}
 }
 
 func awaitSocket() {
@@ -57,14 +77,14 @@ func awaitSocket() {
 
 func existsSocket() (bool, error) {
 	if runtime.GOOS == "windows" {
-		conn, err := winio.DialPipe(`\\.\pipe\miscellaneous`, nil)
+		conn, err := winio.DialPipe(socketPath, nil)
 		if err != nil {
 			return false, nil
 		}
 		conn.Close()
 		return true, nil
 	}
-	socketPath := "/tmp/miscellaneous.sock"
+
 	info, err := os.Stat(socketPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -87,7 +107,7 @@ func runDriver() {
 		return
 	}
 	fmt.Println("Driver no encontrado, iniciando...")
-	driverProcess = exec.Command(coreConfig.Driver)
+	driverProcess = exec.Command(driverPath)
 	driverProcess.Stdout = os.Stdout
 	driverProcess.Stderr = os.Stderr
 	driverProcess.Stdin = os.Stdin
@@ -99,7 +119,7 @@ func runDriver() {
 func connectToDriver() {
 	if runtime.GOOS == "windows" {
 		dialer := func(ctx context.Context, addr string) (net.Conn, error) {
-			return winio.DialPipe(`\\.\pipe\miscellaneous`, nil)
+			return winio.DialPipe(socketPath, nil)
 		}
 		conn, err := grpc.DialContext(
 			context.Background(),
@@ -113,9 +133,9 @@ func connectToDriver() {
 		Connection = conn
 		return
 	}
-	addr := "unix:///tmp/miscellaneous.sock"
+
 	conn, err := grpc.Dial(
-		addr,
+		socketPath,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
@@ -128,19 +148,17 @@ func loadConfig() {
 	coreConfig = &structs.CoreConfigData{}
 	ConfigDriver.GetData("Core", coreConfig)
 
-	driverPath := paths.ResolvePath(".", "drivers", serializeName(coreConfig.Driver))
+	driverName := coreConfig.Driver
+	socketPath = "/tmp/misc-sock-" + coreConfig.Driver + ".sock"
+	if runtime.GOOS == "windows" {
+		driverName = driverName + ".exe"
+		socketPath = `\\.\pipe\misc-` + coreConfig.Driver
+	}
+	driverPath = paths.ResolvePath(".", "drivers", driverName)
 
 	if !fs.FileExists(driverPath) {
 		panic("El driver no es valido.")
 	}
-	coreConfig.Driver = driverPath
-}
-
-func serializeName(name string) string {
-	if runtime.GOOS == "windows" {
-		return name + ".exe"
-	}
-	return name
 }
 
 func setup() {

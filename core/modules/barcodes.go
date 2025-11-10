@@ -128,7 +128,11 @@ func (bc BarcodesModule) GetSrc(id string) (string, *structs.CoreError) {
 		}
 	}
 
-	result = barcodes.GenerateDataURLBarcode(barcode.Value, barcode.Tag)
+	if barcode == nil {
+		result = barcodes.GenerateDataURLBarcode(id, id)
+	} else {
+		result = barcodes.GenerateDataURLBarcode(barcode.Value, barcode.Tag)
+	}
 
 	return result, nil
 }

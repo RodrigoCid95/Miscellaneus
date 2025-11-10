@@ -108,7 +108,7 @@ const file_common_proto_rawDesc = "" +
 	"\fcommon.proto\x12\x05grpcs\"\x1b\n" +
 	"\tIdRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\a\n" +
-	"\x05EmptyB#Z!Miscellaneous/models/protos;grpcsb\x06proto3"
+	"\x05EmptyB\"Z Miscellaneous/grpcs/protos;grpcsb\x06proto3"
 
 var (
 	file_common_proto_rawDescOnce sync.Once

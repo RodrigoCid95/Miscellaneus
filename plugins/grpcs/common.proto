@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package grpcs;
 
-option go_package = "Miscellaneous/models/protos;grpcs";
+option go_package = "Miscellaneous/grpcs/protos;grpcs";
 
 message IdRequest {
   string id = 1;

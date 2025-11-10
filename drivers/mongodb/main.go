@@ -30,6 +30,7 @@ func main() {
 	usersCollection := db.Database.Collection("users")
 
 	plugins.NewServer(&plugins.ServerOptions{
+		Name:            "mongodb",
 		BarCodesServer:  servers.BarCodesServer{Collect: db.Database.Collection("barcodes")},
 		CheckoutServer:  servers.CheckoutServer{Collect: salesCollection},
 		HistoryServer:   servers.HistoryServer{Collect: salesCollection},

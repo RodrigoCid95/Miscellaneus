@@ -193,7 +193,7 @@ const file_profile_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\tR\x02id2}\n" +
 	"\aProfile\x127\n" +
 	"\rUpdateProfile\x12\x18.grpcs.UpdateProfileArgs\x1a\f.grpcs.Empty\x129\n" +
-	"\x0eUpdatePassword\x12\x19.grpcs.UpdatePasswordArgs\x1a\f.grpcs.EmptyB#Z!Miscellaneous/models/protos;grpcsb\x06proto3"
+	"\x0eUpdatePassword\x12\x19.grpcs.UpdatePasswordArgs\x1a\f.grpcs.EmptyB\"Z Miscellaneous/grpcs/protos;grpcsb\x06proto3"
 
 var (
 	file_profile_proto_rawDescOnce sync.Once

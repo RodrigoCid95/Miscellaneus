@@ -501,7 +501,7 @@ const file_products_proto_rawDesc = "" +
 	"\x06Create\x12\x11.grpcs.NewProduct\x1a\f.grpcs.Empty\x12*\n" +
 	"\x06Update\x12\x12.grpcs.DataProduct\x1a\f.grpcs.Empty\x12(\n" +
 	"\x06Delete\x12\x10.grpcs.IdRequest\x1a\f.grpcs.Empty\x123\n" +
-	"\vUpdateStock\x12\x16.grpcs.UpdateStockArgs\x1a\f.grpcs.EmptyB#Z!Miscellaneous/models/protos;grpcsb\x06proto3"
+	"\vUpdateStock\x12\x16.grpcs.UpdateStockArgs\x1a\f.grpcs.EmptyB\"Z Miscellaneous/grpcs/protos;grpcsb\x06proto3"
 
 var (
 	file_products_proto_rawDescOnce sync.Once

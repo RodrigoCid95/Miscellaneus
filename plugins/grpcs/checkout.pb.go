@@ -297,7 +297,7 @@ const file_checkout_proto_rawDesc = "" +
 	"\n" +
 	"GetHistory\x12\x10.grpcs.IdRequest\x1a\x10.grpcs.SalesList\x12,\n" +
 	"\n" +
-	"DeleteSale\x12\x10.grpcs.IdRequest\x1a\f.grpcs.EmptyB#Z!Miscellaneous/models/protos;grpcsb\x06proto3"
+	"DeleteSale\x12\x10.grpcs.IdRequest\x1a\f.grpcs.EmptyB\"Z Miscellaneous/grpcs/protos;grpcsb\x06proto3"
 
 var (
 	file_checkout_proto_rawDescOnce sync.Once

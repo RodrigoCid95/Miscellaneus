@@ -196,7 +196,7 @@ const file_providers_proto_rawDesc = "" +
 	"\x03Get\x12\x10.grpcs.IdRequest\x1a\x0f.grpcs.Provider\x12*\n" +
 	"\x06Create\x12\x12.grpcs.NewProvider\x1a\f.grpcs.Empty\x12'\n" +
 	"\x06Update\x12\x0f.grpcs.Provider\x1a\f.grpcs.Empty\x12(\n" +
-	"\x06Delete\x12\x10.grpcs.IdRequest\x1a\f.grpcs.EmptyB#Z!Miscellaneous/models/protos;grpcsb\x06proto3"
+	"\x06Delete\x12\x10.grpcs.IdRequest\x1a\f.grpcs.EmptyB\"Z Miscellaneous/grpcs/protos;grpcsb\x06proto3"
 
 var (
 	file_providers_proto_rawDescOnce sync.Once

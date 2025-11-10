@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package grpcs;
+
+import "common.proto";
+
+option go_package = "Miscellaneous/grpcs/protos;grpcs";
+
+message GetInfoRequest {
+  string name = 1;
+}
+
+message GetConnectionsCountRequest {
+  int32 Count = 1;
+}
+
+service Info {
+  rpc GetName(Empty) returns (GetInfoRequest);
+  rpc GetConnectionsCount(Empty) returns (GetConnectionsCountRequest);
+}
