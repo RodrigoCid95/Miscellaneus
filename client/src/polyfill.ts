@@ -265,13 +265,11 @@ const Checkout: CheckoutController = {
   },
 }
 
-const controllers = {
+export const controllers = {
   Auth, Profile, Users, Providers,
   BarCodes, Products, History,
   Config, Checkout
 }
-
-Object.defineProperty(window, 'go', { value: { controllers } })
 
 Config
   .GetConfig()

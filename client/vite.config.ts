@@ -18,7 +18,6 @@ export default defineConfig(() => {
       rollupOptions: {
         input: {
           index: path.join(__dirname, 'index.html'),
-          server: path.join(__dirname, 'index-server.html'),
         },
       },
     },

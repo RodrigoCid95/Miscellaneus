@@ -95,7 +95,7 @@ func setRoutes(e *echo.Echo) {
 	www := echo.MustSubFS(assets, "www")
 
 	e.StaticFS("/", www)
-	e.FileFS("/", "index-server.html", www)
+	e.FileFS("/", "index.html", www)
 
 	api.RegisterAuthAPI(e)
 	api.RegisterProfileAPI(e)
