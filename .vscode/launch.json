@@ -46,22 +46,5 @@
       "request": "attach",
       "processId": "${command:pickProcess}"
     },
-    {
-      "name": "Dev Client",
-      "request": "launch",
-      "runtimeArgs": [
-        "run-script",
-        "dev"
-      ],
-      "runtimeExecutable": "npm",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "type": "node",
-      "cwd": "${workspaceFolder}/client",
-      "env": {
-        "BACKEND": "http://localhost:3000"
-      }
-    },
   ]
 }

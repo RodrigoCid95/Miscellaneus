@@ -113,6 +113,18 @@
       "dependsOn": [
         "Build: Server 2 App"
       ]
-    }
+    },
+    {
+      "label": "Dev: Client",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/client"
+      },
+      "command": "npm",
+      "args": [
+        "run",
+        "dev:server"
+      ]
+    },
   ]
 }
