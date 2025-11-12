@@ -25,12 +25,18 @@ const processResponse = async <R>(response: Response): Promise<R> => {
   throw data
 }
 
+const getURL = (path: string = '/'): string => {
+  const url = new URL(path, import.meta.env.VITE_BACKEND || window.location.origin)
+  return url.href
+}
+
 const headers = new Headers()
 headers.append('Content-Type', 'application/json')
 
 const Auth: AuthController = {
   async Login(credentials) {
-    const resp = await fetch(`${window.location.origin}/api/auth`, {
+    const resp = await fetch(getURL('/api/auth'), {
+      credentials: "include",
       method: 'post',
       headers,
       body: JSON.stringify(credentials),
@@ -39,7 +45,10 @@ const Auth: AuthController = {
     return result
   },
   async Logout() {
-    const resp = await fetch(`${window.location.origin}/api/auth`, { method: 'delete' })
+    const resp = await fetch(getURL('/api/auth'), {
+      credentials: "include",
+      method: 'delete'
+    })
     const result = await processResponse<void>(resp)
     return result
   }
@@ -47,12 +56,13 @@ const Auth: AuthController = {
 
 const Profile: ProfileController = {
   async GetProfile() {
-    const resp = await fetch('/api/profile')
+    const resp = await fetch(getURL('/api/profile'), { credentials: "include" })
     const result = await processResponse<structs.User>(resp)
     return result
   },
   async UpdatePassword(arg1) {
-    const resp = await fetch(`${window.location.origin}/api/profile`, {
+    const resp = await fetch(getURL('/api/profile'), {
+      credentials: "include",
       method: 'post',
       headers,
       body: JSON.stringify(arg1)
@@ -61,7 +71,8 @@ const Profile: ProfileController = {
     return result
   },
   async UpdateProfile(arg1) {
-    const resp = await fetch(`${window.location.origin}/api/profile`, {
+    const resp = await fetch(getURL('/api/profile'), {
+      credentials: "include",
       method: 'put',
       headers,
       body: JSON.stringify(arg1)
@@ -73,7 +84,8 @@ const Profile: ProfileController = {
 
 const Users: UsersController = {
   async CreateUser(data) {
-    const resp = await fetch('/api/users', {
+    const resp = await fetch(getURL('/api/users'), {
+      credentials: "include",
       method: 'post',
       headers,
       body: JSON.stringify(data)
@@ -82,12 +94,13 @@ const Users: UsersController = {
     return response
   },
   async GetUsers() {
-    const resp = await fetch('/api/users')
+    const resp = await fetch(getURL('/api/users'), { credentials: "include" })
     const response = await processResponse<structs.User[]>(resp)
     return response || []
   },
   async UpdateUser(data) {
-    const resp = await fetch('/api/users', {
+    const resp = await fetch(getURL('/api/users'), {
+      credentials: "include",
       method: 'put',
       headers,
       body: JSON.stringify(data)
@@ -96,7 +109,7 @@ const Users: UsersController = {
     return response
   },
   async DeleteUser(id) {
-    const resp = await fetch(`/api/users/${id}`, { method: 'delete' })
+    const resp = await fetch(getURL(`/api/users/${id}`), { credentials: "include", method: 'delete' })
     const response = await processResponse<void>(resp)
     return response
   },
@@ -104,7 +117,8 @@ const Users: UsersController = {
 
 const Providers: ProvidersController = {
   async SaveProvider(data) {
-    const resp = await fetch('/api/providers', {
+    const resp = await fetch(getURL('/api/providers'), {
+      credentials: "include",
       method: 'post',
       headers,
       body: JSON.stringify(data)
@@ -113,12 +127,13 @@ const Providers: ProvidersController = {
     return response
   },
   async GetProviders() {
-    const resp = await fetch('api/providers')
+    const resp = await fetch(getURL('api/providers'), { credentials: "include" })
     const response = await processResponse<structs.Provider[]>(resp)
     return response || []
   },
   async UpdateProvider(data) {
-    const resp = await fetch('/api/providers', {
+    const resp = await fetch(getURL('/api/providers'), {
+      credentials: "include",
       method: 'put',
       headers,
       body: JSON.stringify(data)
@@ -127,7 +142,7 @@ const Providers: ProvidersController = {
     return response
   },
   async DeleteProvider(id) {
-    const resp = await fetch(`/api/providers/${id}`, { method: 'delete' })
+    const resp = await fetch(getURL(`/api/providers/${id}`), { credentials: "include", method: 'delete' })
     const response = await processResponse<void>(resp)
     return response
   },
@@ -135,7 +150,8 @@ const Providers: ProvidersController = {
 
 const BarCodes: BarCodesController = {
   async CreateBarCode(data) {
-    const resp = await fetch('/api/bar-codes', {
+    const resp = await fetch(getURL('/api/bar-codes'), {
+      credentials: "include",
       method: 'post',
       headers,
       body: JSON.stringify(data)
@@ -144,12 +160,13 @@ const BarCodes: BarCodesController = {
     return response
   },
   async GetBarCodes() {
-    const resp = await fetch('/api/bar-codes')
+    const resp = await fetch(getURL('/api/bar-codes'), { credentials: "include" })
     const response = await processResponse<structs.BarCode[]>(resp)
     return response || []
   },
   async UpdateBarCode(data) {
-    const resp = await fetch('api/bar-codes', {
+    const resp = await fetch(getURL('api/bar-codes'), {
+      credentials: "include",
       method: 'put',
       headers,
       body: JSON.stringify(data)
@@ -158,14 +175,15 @@ const BarCodes: BarCodesController = {
     return response
   },
   async DeleteBarCode(id) {
-    const resp = await fetch(`/api/bar-codes/${id}`, {
+    const resp = await fetch(getURL(`/api/bar-codes/${id}`), {
+      credentials: "include",
       method: 'delete'
     })
     const response = await processResponse<void>(resp)
     return response
   },
   async GetBarCodeSrc(id) {
-    const resp = await fetch(`/api/bar-codes/${id}`)
+    const resp = await fetch(getURL(`/api/bar-codes/${id}`), { credentials: "include" })
     const response = await processResponse<string>(resp)
     return response
   },
@@ -173,7 +191,8 @@ const BarCodes: BarCodesController = {
 
 const Products: ProductsController = {
   async CreateProduct(data) {
-    const resp = await fetch(`${window.location.origin}/api/products`, {
+    const resp = await fetch(getURL('/api/products'), {
+      credentials: "include",
       method: 'post',
       headers,
       body: JSON.stringify(data)
@@ -182,21 +201,22 @@ const Products: ProductsController = {
     return response
   },
   async GetProducts() {
-    const resp = await fetch(`${window.location.origin}/api/products`)
+    const resp = await fetch(getURL('/api/products'), { credentials: "include" })
     const response = await processResponse<structs.Product[]>(resp)
     return response || []
   },
   async GetFilterProducts(data) {
-    let url = `${window.location.origin}/api/products`
+    let url = '/api/products'
     if (data !== "") {
-      url = `${window.location.origin}/api/products/${data}`
+      url = `/api/products/${data}`
     }
-    const resp = await fetch(url)
+    const resp = await fetch(getURL(url), { credentials: "include" })
     const response = await processResponse<structs.Product[]>(resp)
     return response || []
   },
   async UpdateProduct(data) {
-    const resp = await fetch(`${window.location.origin}/api/products`, {
+    const resp = await fetch(getURL('/api/products'), {
+      credentials: "include",
       method: 'put',
       headers,
       body: JSON.stringify(data)
@@ -205,7 +225,7 @@ const Products: ProductsController = {
     return response
   },
   async DeleteProduct(data) {
-    const resp = await fetch(`${window.location.origin}/api/products/${data}`, { method: 'delete' })
+    const resp = await fetch(getURL(`/api/products/${data}`), { credentials: "include", method: 'delete' })
     const response = await processResponse<void>(resp)
     return response
   },
@@ -213,17 +233,17 @@ const Products: ProductsController = {
 
 const History: HistoryController = {
   async GetDayHistory(data) {
-    const resp = await fetch(`${window.location.origin}/api/history/day/${data.year}/${data.month}/${data.day}`)
+    const resp = await fetch(getURL(`/api/history/day/${data.year}/${data.month}/${data.day}`), { credentials: "include" })
     const response = await processResponse<Array<structs.HistoryItem>>(resp)
     return response || []
   },
   async GetWeekHistory(data) {
-    const resp = await fetch(`${window.location.origin}/api/history/week/${data.year}/${data.week}`)
+    const resp = await fetch(getURL(`/api/history/week/${data.year}/${data.week}`), { credentials: "include" })
     const response = await processResponse<Array<structs.HistoryItem>>(resp)
     return response || []
   },
   async GetMonthHistory(data) {
-    const resp = await fetch(`${window.location.origin}/api/history/month/${data.year}/${data.month}`)
+    const resp = await fetch(getURL(`/api/history/month/${data.year}/${data.month}`), { credentials: "include" })
     const response = await processResponse<Array<structs.HistoryItem>>(resp)
     return response || []
   },
@@ -231,12 +251,13 @@ const History: HistoryController = {
 
 const Config: ConfigController = {
   async GetConfig() {
-    const resp = await fetch(`${window.location.origin}/api/config`)
+    const resp = await fetch(getURL('/api/config'), { credentials: "include" })
     const response = await processResponse<structs.ConfigData>(resp)
     return response || {}
   },
   async SaveConfig(data) {
-    const resp = await fetch(`${window.location.origin}/api/config`, {
+    const resp = await fetch(getURL('/api/config'), {
+      credentials: "include",
       method: 'put',
       headers,
       body: JSON.stringify(data)
@@ -249,17 +270,17 @@ const Config: ConfigController = {
 
 const Checkout: CheckoutController = {
   async GetHistory() {
-    const resp = await fetch(`${window.location.origin}/api/sales`)
+    const resp = await fetch(getURL('/api/sales'), { credentials: "include" })
     const response = await processResponse<Array<structs.Sale>>(resp)
     return response || []
   },
   async RestoreHistory(id) {
-    const resp = await fetch(`${window.location.origin}/api/sales/${id}`, { headers, method: 'delete' })
+    const resp = await fetch(getURL(`/api/sales/${id}`), { credentials: "include", headers, method: 'delete' })
     const response = await processResponse<void>(resp)
     return response
   },
   async SaveCheckout(data) {
-    const resp = await fetch(`${window.location.origin}/api/sales`, { headers, method: 'put', body: JSON.stringify(data) })
+    const resp = await fetch(getURL('/api/sales'), { credentials: "include", headers, method: 'put', body: JSON.stringify(data) })
     const response = await processResponse<void>(resp)
     return response
   },

@@ -12,6 +12,7 @@ import (
 	"encoding/gob"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -19,6 +20,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 )
+
+type ServerConfigData struct {
+	AllowOrigins string `ini:"allow origins"`
+}
 
 //go:embed all:www
 var assets embed.FS
@@ -68,7 +73,7 @@ func main() {
 		httpServer.Logger.SetLevel(log.INFO)
 
 		httpsServer := echo.New()
-		setRoutes(httpsServer)
+		initServer(httpsServer)
 
 		go func() {
 			httpServer.Logger.Fatal(httpServer.Start(":80"))
@@ -77,13 +82,41 @@ func main() {
 		httpsServer.Logger.Fatal(httpsServer.StartTLS(":443", certificate.CertPath, certificate.KeyPath))
 	} else {
 		httpServer := echo.New()
-		setRoutes(httpServer)
+		initServer(httpServer)
 
 		httpServer.Logger.Fatal(httpServer.Start(":" + port))
 	}
 }
 
-func setRoutes(e *echo.Echo) {
+func initServer(e *echo.Echo) {
+	if driver.ConfigDriver.HasSection("Server") {
+		config := &ServerConfigData{}
+		driver.ConfigDriver.GetData("Server", &config)
+		if config.AllowOrigins != "" {
+			allowOrigins := []string{}
+			parts := strings.SplitSeq(config.AllowOrigins, ",")
+			for v := range parts {
+				allowOrigins = append(allowOrigins, v)
+			}
+			e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+				AllowOrigins:     allowOrigins,
+				AllowCredentials: true,
+				AllowMethods: []string{
+					http.MethodGet,
+					http.MethodPost,
+					http.MethodPut,
+					http.MethodDelete,
+					http.MethodOptions,
+				},
+				AllowHeaders: []string{
+					echo.HeaderOrigin,
+					echo.HeaderContentType,
+					echo.HeaderAccept,
+					echo.HeaderAuthorization,
+				},
+			}))
+		}
+	}
 	key := fs.ReadFile(certificate.KeyPath)
 	cookieStore := sessions.NewFilesystemStore(mainDirs[2], key)
 	e.Use(session.Middleware(cookieStore))

@@ -65,6 +65,8 @@ func (s *SessionManager) RegisterSession(c echo.Context, user *structs.User) boo
 		Path:     "/",
 		MaxAge:   86400 * 7,
 		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+		Secure:   c.Scheme() == "https",
 	}
 
 	sess.Values["user"] = user
