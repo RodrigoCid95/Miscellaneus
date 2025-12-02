@@ -12,6 +12,11 @@ app/server
 app/.data
 app/www
 
+drivers/sqlite/*.db
+drivers/sqlite/*.db*
+
 server/.data
 server/www
 server/__debug_bin.exe
+
+dist

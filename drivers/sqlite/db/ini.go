@@ -1,32 +1,64 @@
 package db
 
 import (
+	"Miscellaneous/utils/assets"
 	"Miscellaneous/utils/config"
-	"Miscellaneous/utils/paths"
+	"Miscellaneous/utils/fs"
 	"database/sql"
+	"path/filepath"
 
 	_ "modernc.org/sqlite"
 )
 
 type sqliteConfig struct {
+	Name string `ini:"name"`
 	Path string `ini:"path"`
 }
+
+type exteralSqliteConfig struct {
+	Name string `flag:"name" env:"DB_NAME" usage:"Nombre de la base de datos."`
+	Path string `flag:"path" env:"DB_PATH" usage:"Directorio de la base de datos."`
+}
+
+const configNameSection = "SQLite"
 
 var Client *sql.DB
 
 func init() {
-	configPath := paths.ResolvePath("miscellaneous.conf")
-	configDriver := config.ConfigDriver{Path: configPath}
-	configNameSection := "SQLite"
-
 	data := sqliteConfig{
-		Path: "misc.db",
+		Name: "misc.db",
+		Path: "",
 	}
-	if !configDriver.HasSection(configNameSection) {
-		configDriver.PutData(configNameSection, &data)
+	if !config.ConfigController.HasSection(configNameSection) {
+		config.ConfigController.PutData(configNameSection, &data)
 	}
 
-	dbPath := paths.ResolvePath(data.Path)
+	config.ConfigController.GetData(configNameSection, &data)
+
+	data.Path = assets.ResolvePath(data.Path)
+
+	externalData := exteralSqliteConfig{}
+	config.LoadExternalConfig(&externalData)
+
+	if externalData.Path != "" {
+		data.Path = fs.ResolvePath(externalData.Path)
+	}
+
+	if externalData.Name != "" {
+		data.Name = externalData.Name
+	}
+
+	dbAssets := assets.Assets{Path: data.Path}
+	dbPath := dbAssets.Resolve(data.Name)
+
+	if !fs.FileExists(dbPath) {
+		base := filepath.Dir(dbPath)
+		if !fs.DirExists(base) {
+			fs.Mkdir(base)
+		}
+		fs.WriteFile(dbPath, "")
+	}
+
 	db, err := sql.Open("sqlite", dbPath)
 	Client = db
 	if err != nil {

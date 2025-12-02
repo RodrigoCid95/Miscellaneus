@@ -4,8 +4,6 @@ import (
 	"Miscellaneous/mongo/db"
 	"Miscellaneous/mongo/servers"
 	"Miscellaneous/plugins/plugins"
-	"Miscellaneous/utils/fs"
-	"Miscellaneous/utils/paths"
 	"context"
 	"slices"
 
@@ -13,11 +11,6 @@ import (
 )
 
 func main() {
-	configPath := paths.ResolvePath("miscellaneous.conf")
-	if !fs.FileExists(configPath) {
-		fs.WriteFile(configPath, "")
-	}
-
 	collectionNames := []string{"users", "providers", "barcodes", "products", "sales"}
 	names, _ := db.Database.ListCollectionNames(context.Background(), bson.M{})
 	for _, name := range collectionNames {

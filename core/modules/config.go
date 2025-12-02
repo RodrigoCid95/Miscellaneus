@@ -1,10 +1,12 @@
 package modules
 
 import (
-	"Miscellaneous/core/driver"
 	"Miscellaneous/models/interfaces"
 	"Miscellaneous/models/structs"
+	"Miscellaneous/utils/config"
 )
+
+var systemConfigName = "System"
 
 type ConfigModule struct {
 	interfaces.ConfigModel
@@ -12,7 +14,7 @@ type ConfigModule struct {
 
 func (cm ConfigModule) GetConfig() (*structs.ConfigData, *structs.CoreError) {
 	data := structs.ConfigData{}
-	driver.ConfigDriver.GetData("System", &data)
+	config.ConfigController.GetData(systemConfigName, &data)
 	return &data, nil
 }
 
@@ -25,6 +27,6 @@ func (cm ConfigModule) SaveConfig(data structs.ConfigData) *structs.CoreError {
 		}
 	}
 
-	driver.ConfigDriver.PutData("System", data)
+	config.ConfigController.PutData(systemConfigName, data)
 	return nil
 }

@@ -6,8 +6,9 @@ import (
 	"Miscellaneous/models/structs"
 	"Miscellaneous/server/api"
 	"Miscellaneous/server/certificate"
+	massets "Miscellaneous/utils/assets"
+	"Miscellaneous/utils/config"
 	"Miscellaneous/utils/fs"
-	"Miscellaneous/utils/paths"
 	"embed"
 	"encoding/gob"
 	"net/http"
@@ -28,10 +29,11 @@ type ServerConfigData struct {
 //go:embed all:www
 var assets embed.FS
 
+var serverAssets = massets.NewAssest("server")
 var mainDirs []string = []string{
-	paths.ResolvePath("server"),
-	paths.ResolvePath("server", "certs"),
-	paths.ResolvePath("server", "sessions"),
+	serverAssets.Path,
+	serverAssets.Resolve("certs"),
+	serverAssets.Resolve("sessions"),
 }
 
 func main() {
@@ -89,12 +91,12 @@ func main() {
 }
 
 func initServer(e *echo.Echo) {
-	if driver.ConfigDriver.HasSection("Server") {
-		config := &ServerConfigData{}
-		driver.ConfigDriver.GetData("Server", &config)
-		if config.AllowOrigins != "" {
+	if config.ConfigController.HasSection("Server") {
+		data := &ServerConfigData{}
+		config.ConfigController.GetData("Server", &data)
+		if data.AllowOrigins != "" {
 			allowOrigins := []string{}
-			parts := strings.SplitSeq(config.AllowOrigins, ",")
+			parts := strings.SplitSeq(data.AllowOrigins, ",")
 			for v := range parts {
 				allowOrigins = append(allowOrigins, v)
 			}

@@ -4,16 +4,9 @@ import (
 	"Miscellaneous/plugins/plugins"
 	"Miscellaneous/sqlite/db"
 	"Miscellaneous/sqlite/servers"
-	"Miscellaneous/utils/fs"
-	"Miscellaneous/utils/paths"
 )
 
 func main() {
-	configPath := paths.ResolvePath("miscellaneous.conf")
-	if !fs.FileExists(configPath) {
-		fs.WriteFile(configPath, "")
-	}
-
 	plugins.NewServer(&plugins.ServerOptions{
 		Name:            "sqlite",
 		BarCodesServer:  servers.BarCodesServer{},

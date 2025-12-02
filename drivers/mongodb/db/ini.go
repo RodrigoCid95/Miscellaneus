@@ -2,7 +2,6 @@ package db
 
 import (
 	"Miscellaneous/utils/config"
-	"Miscellaneous/utils/paths"
 	"context"
 	"strconv"
 
@@ -11,21 +10,19 @@ import (
 )
 
 type mongoConfig struct {
-	Host     string `ini:"host"`
-	Port     int    `ini:"port"`
-	UseSrv   bool   `ini:"use srv"`
-	Database string `ini:"name database"`
-	UserName string `ini:"user name"`
-	Password string `ini:"password"`
-	Options  string `ini:"options"`
+	Host     string `ini:"host" flag:"host" env:"DB_HOST" usage:"Host de mongodb."`
+	Port     int    `ini:"port" flag:"port" env:"DB_PORT" usage:"Puerto del host de mongodb."`
+	UseSrv   bool   `ini:"use srv" flag:"use-srv" env:"USE_SRV" usage:"Indica si se va a usar srv en la cadena de conexión."`
+	Database string `ini:"name database" flag:"name" env:"DB_NAME" usage:"Nombre de la base de datos"`
+	UserName string `ini:"user name" flag:"user" env:"DB_USER" usage:"Nombre de usuario de la base de datos."`
+	Password string `ini:"password" flag:"password" env:"DB_PASSWORD" usage:"Contraseña de la base de datos."`
+	Options  string `ini:"options" flag:"options" env:"DB_OPTIONS" usage:"Opciones usadas en la cadena de conexión con mongodb."`
 }
 
 var Client *mongo.Client
 var Database *mongo.Database
 
 func init() {
-	configPath := paths.ResolvePath("miscellaneous.conf")
-	configDriver := config.ConfigDriver{Path: configPath}
 	configNameSection := "MongoDB"
 
 	data := mongoConfig{
@@ -36,11 +33,13 @@ func init() {
 		UserName: "",
 		Password: "",
 	}
-	if !configDriver.HasSection(configNameSection) {
-		configDriver.PutData(configNameSection, &data)
+	if !config.ConfigController.HasSection(configNameSection) {
+		config.ConfigController.PutData(configNameSection, &data)
 	}
 
-	configDriver.GetData(configNameSection, &data)
+	config.ConfigController.GetData(configNameSection, &data)
+	config.LoadExternalConfig(&data)
+
 	uri := "mongodb"
 	if data.UseSrv {
 		uri += "+srv"

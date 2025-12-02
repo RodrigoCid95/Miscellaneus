@@ -14,9 +14,6 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "env": {
-        "PORT": "3000"
-      },
       "program": "${workspaceFolder}/server/main.go"
     },
     {

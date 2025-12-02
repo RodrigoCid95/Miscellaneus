@@ -6,6 +6,8 @@ type ConfigData struct {
 }
 
 type CoreConfigData struct {
-	Driver  string `ini:"driver"`
-	Timeout int64  `ini:"timeout"`
+	DriverPath  string
+	DriversPath string `ini:"drivers"`
+	Driver      string `ini:"driver"`
+	Timeout     int64  `ini:"timeout"`
 }

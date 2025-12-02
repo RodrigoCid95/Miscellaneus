@@ -1,7 +1,7 @@
 package certificate
 
 import (
-	"Miscellaneous/utils/paths"
+	"Miscellaneous/utils/assets"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -14,8 +14,9 @@ import (
 	"time"
 )
 
-var CertPath string = paths.ResolvePath("server", "certs", "misc.crt")
-var KeyPath string = paths.ResolvePath("server", "certs", "misc.key")
+var serverAssets = assets.NewAssest("server")
+var CertPath string = serverAssets.Resolve("certs", "misc.crt")
+var KeyPath string = serverAssets.Resolve("certs", "misc.key")
 
 func Generate() error {
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)

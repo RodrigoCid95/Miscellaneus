@@ -3,9 +3,9 @@ package driver
 import (
 	"Miscellaneous/models/structs"
 	"Miscellaneous/plugins/grpcs"
+	"Miscellaneous/utils/assets"
 	"Miscellaneous/utils/config"
 	"Miscellaneous/utils/fs"
-	"Miscellaneous/utils/paths"
 	"context"
 	"fmt"
 	"log"
@@ -20,12 +20,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var ConfigDriver *config.ConfigDriver
-
 var coreConfig *structs.CoreConfigData
 var driverProcess *exec.Cmd
 var Connection *grpc.ClientConn
-var driverPath string
 var socketPath string
 
 func Start() {
@@ -107,7 +104,8 @@ func runDriver() {
 		return
 	}
 	fmt.Println("Driver no encontrado, iniciando...")
-	driverProcess = exec.Command(driverPath)
+	driverProcess = exec.Command(coreConfig.DriverPath)
+	driverProcess.Env = append(driverProcess.Env, "CONFIG_PATH="+config.ConfigController.Path)
 	driverProcess.Stdout = os.Stdout
 	driverProcess.Stderr = os.Stderr
 	driverProcess.Stdin = os.Stdin
@@ -144,44 +142,67 @@ func connectToDriver() {
 	Connection = conn
 }
 
+type externalConfig struct {
+	DriversPath string `flag:"drivers" env:"DRIVERS_PATH" usage:"Directorio en donde se encutran los drivers."`
+	Driver      string `flag:"driver" env:"DRIVER" usage:"Nombre del driver."`
+}
+
 func loadConfig() {
 	coreConfig = &structs.CoreConfigData{}
-	ConfigDriver.GetData("Core", coreConfig)
+	config.ConfigController.GetData("Core", coreConfig)
 
-	driverName := coreConfig.Driver
+	extermalConfig := externalConfig{}
+	config.LoadExternalConfig(&extermalConfig)
+
+	if extermalConfig.DriversPath != "" {
+		coreConfig.DriversPath = fs.ResolvePath(extermalConfig.DriversPath)
+	}
+
+	if extermalConfig.Driver != "" {
+		coreConfig.Driver = extermalConfig.Driver
+	}
+
+	if coreConfig.Driver == "" {
+		panic("No se definio un driver.")
+	}
+
 	socketPath = "/tmp/misc-sock-" + coreConfig.Driver + ".sock"
 	if runtime.GOOS == "windows" {
-		driverName = driverName + ".exe"
 		socketPath = `\\.\pipe\misc-` + coreConfig.Driver
+		coreConfig.Driver = coreConfig.Driver + ".exe"
 	}
-	driverPath = paths.ResolvePath(".", "drivers", driverName)
 
-	if !fs.FileExists(driverPath) {
-		panic("El driver no es valido.")
+	drivers := assets.NewAssest(coreConfig.DriversPath)
+	coreConfig.DriverPath = drivers.Resolve(coreConfig.Driver)
+	fmt.Printf("Driver cargado: %s\n", coreConfig.Driver)
+	fmt.Printf("Ruta de driver: %s\n", coreConfig.DriverPath)
+	if !fs.FileExists(coreConfig.DriverPath) {
+		panic("El driver no existe.")
 	}
 }
 
 func setup() {
 	systemConfigName := "System"
-	codeConfigName := "Core"
-	configPath := paths.ResolvePath("miscellaneous.conf")
-	if !fs.FileExists(configPath) {
-		fs.WriteFile(configPath, "")
-	}
-	ConfigDriver = &config.ConfigDriver{Path: configPath}
+	coreConfigName := "Core"
 
-	if !ConfigDriver.HasSection(systemConfigName) {
-		ConfigDriver.PutData(systemConfigName, &structs.ConfigData{
-			Name:      "Mi Tienda",
-			IpPrinter: "0.0.0.0",
-		})
+	if !config.ConfigController.HasSection(systemConfigName) {
+		config.ConfigController.PutData(
+			systemConfigName,
+			&structs.ConfigData{
+				Name:      "Mi Tienda",
+				IpPrinter: "0.0.0.0",
+			},
+		)
 	}
 
-	if !ConfigDriver.HasSection(codeConfigName) {
-		ConfigDriver.PutData(codeConfigName, &structs.CoreConfigData{
-			Driver:  "sqlite",
-			Timeout: 5,
-		})
+	if !config.ConfigController.HasSection(coreConfigName) {
+		config.ConfigController.PutData(
+			coreConfigName,
+			&structs.CoreConfigData{
+				Driver:  "",
+				Timeout: 5,
+			},
+		)
 	}
 }
 

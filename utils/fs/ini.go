@@ -1,6 +1,9 @@
 package fs
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
 func DirExists(path string) bool {
 	info, err := os.Stat(path)
@@ -42,4 +45,17 @@ func ReadFile(path string) []byte {
 		return nil
 	}
 	return content
+}
+
+func ResolvePath(elem ...string) string {
+	path := filepath.Join(elem...)
+	if !filepath.IsAbs(path) {
+		baseDir, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		return filepath.Join(baseDir, path)
+	}
+
+	return path
 }
